@@ -1,0 +1,15 @@
+requires:
+- py-more-itertools
+- py-atomicwrites
+- py-attrs
+- py-funcsigs
+- py-pathlib2
+- py-pluggy
+- py-scandir
+- py-packaging
+- py-wcwidth
+- py-iniconfig
+- py-toml
+- py-exceptiongroup
+- py-Pygments
+---

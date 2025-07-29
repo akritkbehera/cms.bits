@@ -1,0 +1,6 @@
+requires:
+- py-argon2-cffi-bindings
+- py-hatchling
+- py-hatch-vcs
+- py-hatch-fancy-pypi-readme
+---

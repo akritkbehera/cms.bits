@@ -1,0 +1,6 @@
+build_requires:
+- py-maturin
+requires:
+- bz2lib
+---
+PipPreBuild='export RUSTFLAGS="-L native=${BZ2LIB_ROOT}/lib"'

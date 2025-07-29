@@ -2,4 +2,6 @@ requires:
  - py-poetry-core
 patches:
  - poetry-cyclic-deps.patch
+sources:
+- https://files.pythonhosted.org/packages/2e/25/c6516829d49afce7f3852ef7dd708b3d19cf647a6b5b834c369a59af52fe/poetry_plugin_export-%(version)s.tar.gz
 ---

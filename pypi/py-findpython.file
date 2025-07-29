@@ -1,0 +1,4 @@
+requires:
+- py-pdm-backend
+- py-packaging
+---

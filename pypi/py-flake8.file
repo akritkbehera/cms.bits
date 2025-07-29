@@ -1,0 +1,7 @@
+requires:
+- py-mccabe
+- py-pycodestyle
+- py-pyflakes
+- py-entrypoints
+- py-importlib-metadata
+---

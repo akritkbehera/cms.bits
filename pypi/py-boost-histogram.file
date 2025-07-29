@@ -1,0 +1,7 @@
+requires:
+- CMake
+- py-numpy
+- py-scikit-build-core
+- py-typing-extensions
+- py-setuptools-scm
+---

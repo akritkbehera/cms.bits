@@ -1,0 +1,12 @@
+build_requires:
+- CMake
+- ninja
+requires:
+- py-scikit-build
+- py-cython
+- py-numpy
+- py-msgpack
+- py-ndindex
+- py-py-cpuinfo
+- py-rich
+---

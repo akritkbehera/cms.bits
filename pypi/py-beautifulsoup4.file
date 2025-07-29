@@ -1,0 +1,4 @@
+requires:
+- py-soupsieve
+- py-typing-extensions
+---

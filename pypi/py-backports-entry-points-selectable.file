@@ -1,0 +1,4 @@
+sources:
+- https://files.pythonhosted.org/packages/fc/25/dae014b114397a6f60578d7358bf5fcb103f71556e5363a50d7b42e9bc51/backports.entry_points_selectable-%(version)s.tar.gz
+---
+Pypi_name='backports.entry-points-selectable'

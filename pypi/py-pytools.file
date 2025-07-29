@@ -1,0 +1,9 @@
+requires:
+- py-decorator
+- py-appdirs
+- py-six
+- py-numpy
+- py-platformdirs
+- py-typing-extensions
+- py-hatchling
+---

@@ -1,0 +1,7 @@
+package: py-make
+sources:
+- https://github.com/fholmer/make/archive/refs/tags/%(version)s.tar.gz
+requires: 
+- py-Jinja2 
+- py-jinja2-time
+---

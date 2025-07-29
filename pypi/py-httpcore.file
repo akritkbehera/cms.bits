@@ -1,0 +1,7 @@
+build_requires:
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+requires:
+- py-certifi
+- py-h11
+---

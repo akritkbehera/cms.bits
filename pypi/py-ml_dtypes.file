@@ -1,0 +1,4 @@
+requires:
+- py-pybind11
+- py-numpy
+---

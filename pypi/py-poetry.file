@@ -1,0 +1,25 @@
+build_requires:
+- py-build
+- py-installer
+- py-lockfile
+- py-pyproject-hooks
+- py-trove-classifiers
+requires:
+- py-cachecontrol
+- py-cachy
+- py-cleo
+- py-html5lib
+- py-keyring
+- py-pexpect
+- py-pkginfo
+- py-virtualenv
+- py-fastjsonschema
+- py-requests-toolbelt
+- py-shellingham
+- py-tomlkit
+- py-dulwich
+- py-jsonschema
+- py-poetry-plugin-export
+- py-findpython
+- py-pbs-installer
+---

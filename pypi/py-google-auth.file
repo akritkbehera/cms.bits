@@ -1,0 +1,6 @@
+requires:
+- py-cachetools
+- py-pyasn1-modules
+- py-rsa
+- py-six
+---

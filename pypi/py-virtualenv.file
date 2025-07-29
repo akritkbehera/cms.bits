@@ -1,0 +1,13 @@
+build_requires:
+- py-hatchling
+- py-hatch-vcs
+requires:
+- py-appdirs
+- py-distlib
+- py-filelock
+- py-six
+- py-importlib-metadata
+- py-importlib-resources
+- py-backports-entry-points-selectable
+- py-platformdirs
+---

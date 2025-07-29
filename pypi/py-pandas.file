@@ -1,0 +1,10 @@
+requires:
+- py-python-dateutil
+- py-pytz
+- py-numpy
+- py-cython
+- py-versioneer
+- py-tzdata
+- py-meson-python
+- py-meson
+---

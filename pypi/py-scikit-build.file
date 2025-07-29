@@ -1,0 +1,10 @@
+requires:
+- py-distro
+- py-packaging
+- setuptools
+- py-tomli
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+- py-hatch-vcs
+- py-setuptools-scm
+---

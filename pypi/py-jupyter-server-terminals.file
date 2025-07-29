@@ -1,0 +1,5 @@
+build_requires:
+- py-hatchling
+requires:
+- py-terminado
+---

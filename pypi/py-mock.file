@@ -1,0 +1,5 @@
+requires:
+- py-six
+- py-funcsigs
+- py-pbr
+---

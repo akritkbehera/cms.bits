@@ -1,0 +1,6 @@
+requires:
+- py-numpy
+- py-packaging
+- py-scikit-build
+- py-scikit-build-core
+---

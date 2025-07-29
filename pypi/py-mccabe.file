@@ -1,0 +1,3 @@
+requires:
+- py-pytest-runner
+---

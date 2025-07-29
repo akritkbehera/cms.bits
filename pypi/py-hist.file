@@ -1,0 +1,8 @@
+build_requires:
+- py-hatchling
+- py-hatch-vcs
+requires:
+- py-numpy
+- py-boost-histogram
+- py-histoprint
+---

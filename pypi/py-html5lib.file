@@ -1,0 +1,7 @@
+requires:
+- py-six
+- py-packaging
+- py-webencodings
+- py-pyparsing
+- py-appdirs
+---

@@ -1,0 +1,6 @@
+requires:
+- py-ipython_genutils
+- py-six
+- py-decorator
+- py-hatchling
+---

@@ -1,0 +1,10 @@
+build_requires:
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+- py-hatch-vcs
+requires:
+- py-attrs
+- py-jsonschema-specifications
+- py-referencing
+- py-rpds-py
+---

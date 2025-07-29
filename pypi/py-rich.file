@@ -1,0 +1,8 @@
+build_requires:
+- py-poetry
+requires:
+- py-colorama
+- py-commonmark
+- py-Pygments
+- py-markdown-it-py
+---

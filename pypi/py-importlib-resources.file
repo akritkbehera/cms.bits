@@ -1,0 +1,7 @@
+requires:
+- py-pathlib2
+- py-contextlib2
+- py-singledispatch
+- py-importlib-metadata
+- py-zipp
+---

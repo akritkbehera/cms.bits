@@ -1,0 +1,9 @@
+requires:
+- py-numpy
+- py-setuptools-scm
+- py-toml
+- py-click
+- py-uhi
+- py-hatchling
+- py-hatch-vcs
+---

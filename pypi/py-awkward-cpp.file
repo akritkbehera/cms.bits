@@ -1,0 +1,11 @@
+build_requires:
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+- py-scikit-build-core
+- py-pyproject-metadata
+- CMake
+requires:
+- py-pybind11
+- py-numpy
+---
+PipPreBuild="CMAKE_PREFIX_PATH=$CMake_ROOT"

@@ -1,0 +1,6 @@
+requires:
+- py-flit-core
+- py-msgpack
+- py-requests
+---
+PipPatchSource="sed -i -e 's|name="CacheControl"|name="cachecontrol"|' pyproject.toml"

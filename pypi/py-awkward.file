@@ -1,0 +1,14 @@
+build_requires:
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+requires:
+- py-numpy
+- CMake
+- py-awkward-cpp
+- py-importlib-metadata
+- py-typing-extensions
+- py-fsspec
+- py-packaging
+sources:
+- git+https://github.com/scikit-hep/awkward?obj=main/v%(version)s&export=awkward-%(version)s&submodules=1&output=/source.tar.gz
+---

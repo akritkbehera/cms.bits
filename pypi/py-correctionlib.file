@@ -1,0 +1,16 @@
+build_requires:
+- py-setuptools-scm
+- py-scikit-build
+- CMake
+- py-make
+- py-scikit-build-core
+requires:
+- py-pybind11
+- py-numpy
+- py-pydantic
+- py-python-rapidjson
+- py-rich
+sources:
+- https://files.pythonhosted.org/packages/d2/3a/fd8d6857110e1ab3860bfaf439f7e1453b49e7ece348e667132c4868f127/correctionlib-%(version)s.tar.gz
+---
+export CMAKE_BUILD_PARALLEL_LEVEL=${JOBS:-1}

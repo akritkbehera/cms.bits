@@ -1,0 +1,8 @@
+build_requires:
+- setuptools
+- py-tomli
+- py-setuptools-rust
+requires:
+- bz2lib
+---
+PipPreBuild='export RUSTFLAGS="-L native=${BZ2LIB_ROOT}/lib"'

@@ -1,0 +1,9 @@
+build_requires:
+- rust
+- py-maturin
+requires:
+- py-setuptools-rust
+- py-cffi
+- py-six
+---
+PipPreBuild='export CARGO_HOME=/tmp/cargo_home; export CARGO_HTTP_CAINFO=/etc/ssl/cert.pem'

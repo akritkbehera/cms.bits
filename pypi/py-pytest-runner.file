@@ -1,0 +1,5 @@
+requires:
+- py-setuptools-scm
+sources:
+- https://files.pythonhosted.org/packages/d7/7d/60976d532519c3a0b41e06a59ad60949e2be1af937cf02738fec91bfd808/pytest-runner-%(version)s.tar.gz
+---

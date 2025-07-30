@@ -1,0 +1,8 @@
+requires:
+- py-numpy
+- py-onnx
+- py-protobuf
+- py-six
+sources:
+- https://github.com/microsoft/onnxconverter-common/archive/v%(version)s.tar.gz
+---

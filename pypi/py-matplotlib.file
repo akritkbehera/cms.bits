@@ -1,0 +1,20 @@
+requires:
+- py-numpy
+- py-pillow
+- py-pybind11
+- py-cycler
+- py-kiwisolver
+- py-pyparsing
+- py-python-dateutil
+- py-certifi
+- py-fonttools
+- py-packaging
+- py-contourpy
+- py-importlib-resources
+- zlib
+- libpng
+- FreeType
+---
+PipPreBuild='  export CFLAGS="-I${FREETYPE_ROOT}/include/freetype2 -I${LIBPNG_ROOT}/include/libpng16" \
+  export LDFLAGS="-L${FREETYPE_ROOT}/lib -L${LIBPNG_ROOT}/lib" \
+  export PKG_CONFIG=false'

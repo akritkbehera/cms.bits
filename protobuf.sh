@@ -31,7 +31,7 @@ cd cmake
 cmake -G Ninja \
       -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
       -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_CXX_STANDARD=17 \
+      -DCMAKE_CXX_STANDARD=$CXXSTD \
       -Dprotobuf_BUILD_TESTS=OFF \
       -Dprotobuf_BUILD_SHARED_LIBS=ON \
       -Dutf8_range_ENABLE_INSTALL=ON \

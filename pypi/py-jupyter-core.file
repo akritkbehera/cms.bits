@@ -1,0 +1,5 @@
+requires:
+- py-traitlets
+- py-platformdirs
+---
+PipPostBuild="rm $INSTALLROOT/lib/*/site-packages/jupyter.py*"

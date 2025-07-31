@@ -20,6 +20,7 @@ if [ -f src/Makefile.am ]; then
 else
     echo "Warning: src/Makefile.am not found"
 fi
+
 mkdir -p config
 aclocal -I config -I "$LIBTOOL_ROOT/share/aclocal"
 autoheader

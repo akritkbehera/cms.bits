@@ -15,24 +15,19 @@ tar -xzf "$SOURCEDIR/$SOURCE0" \
     -C "$BUILDDIR"
 
 
-LDFLAGS="-L$LIBXML2_ROOT/lib -lxml2"
-
-aclocal -I config -I "$AUTOTOOLS_ROOT/share/aclocal"
-libtoolize --copy --force
-autoheader
-automake --add-missing --copy
-autoconf
 
 export CPPFLAGS="-I${LIBXML2_ROOT}/include/libxml2"
 export LDFLAGS="-L${LIBXML2_ROOT}/lib"
 export PKG_CONFIG_PATH="${LIBXML2_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
-./configure \
-  --prefix="$INSTALLROOT" \
-  --disable-silent-rules \
-  --with-libxml-prefix="$LIBXML2_ROOT" \
-  --without-crypto \
-  --without-python
+
+export LIBS="-lxml2"
+
+./autogen.sh \
+--prefix=$INSTALLROOT \
+--disable-silent-rules \
+--with-libxml-prefix=$LIBXML2_ROOT \
+--without-crypto --without-python
 
 make ${JOBS:+-j${JOBS}}
 make install

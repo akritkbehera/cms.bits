@@ -21,6 +21,15 @@ chkDefined PipDepsMatch "grep \\\"^\\\${PKG_NAME}  *${PKGVERSION}  *requires \\\
 chkDefined PipDepsCommand "pip3 check --disable-pip-version-check"
 chkDefined PipInstallCommand "pip3 install --no-clean --no-deps --no-index --no-build-isolation --no-cache-dir --disable-pip-version-check --user -v ${PipInstallOptions} ${PipBuildOptions} \\\${PYPI_SRC}"
 
+WHEEL_PATH=$(find "$SOURCEDIR" -maxdepth 1 -name '*.whl' | head -n 1)
+if [ -n "$WHEEL_PATH" ]; then
+  echo "Installing Wheel: $WHEEL_PATH"
+  cp "$WHEEL_PATH" "$BUILDDIR/"
+  PYPI_SRC=$(basename "$WHEEL_PATH")
+  runIt PipInstallCommand
+  return 0
+fi
+
 runIt PipPrePrep
 rm -rf cmsdist-patch-${PKGNAME}
 mkdir cmsdist-patch-${PKGNAME}
@@ -44,7 +53,7 @@ pushd $PYPI_SRC
 popd
 runIt PipPostPrep
 
-
+runIt PipPostBuild
 export PYTHONUSERBASE="$INSTALLROOT"
 export TMPDIR="$BUILDDIR/bits-tmp"
 mkdir -p $TMPDIR

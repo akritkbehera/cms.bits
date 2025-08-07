@@ -1,0 +1,5 @@
+requires:
+- py-MarkupSafe
+sources:
+- pip://Mako/%(version)s
+---

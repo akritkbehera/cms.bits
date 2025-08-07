@@ -1,0 +1,6 @@
+requires:
+- py-deprecated
+- py-PyJWT
+- py-PyNaCl
+- py-requests
+---

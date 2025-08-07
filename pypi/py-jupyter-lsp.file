@@ -1,0 +1,8 @@
+build_requires:
+- setuptools
+requires:
+- py-importlib-metadata
+- py-jupyter-server
+sources:
+- pip://jupyter-lsp/%(version)s
+---

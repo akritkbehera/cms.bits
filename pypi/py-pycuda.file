@@ -1,0 +1,9 @@
+requires:
+- py-numpy
+- cuda
+- py-pytools
+- py-pytest
+- py-decorator
+- py-appdirs
+- py-Mako
+---

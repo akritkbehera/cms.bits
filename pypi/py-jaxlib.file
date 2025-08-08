@@ -1,5 +1,7 @@
-patches:
- - temp.patch
 sources:
- - pip://jaxlib/%(version)s?pip_options=--python-version=%(python_major_minor_str)s%%20--abi=cp%(python_major_minor_str)s%%20--no-deps%%20--no-binary%%3D:none,arch%%3Dx86_64:&output=/jaxlib-%(version)s-py%(python_major_version)s-none-any.whl
+- pip://jaxlib/%(version)s?pip_options=--no-deps%%20--no-binary%%3D:none,arch%%3Dx86_64:&output=/jaxlib-%(version)s-py3-none-any.whl
+requires:
+- py-ml_dtypes
+- py-numpy
+- py-scipy
 ---

@@ -6,3 +6,7 @@ sbsa.sh
 pypi/__pycache__/packages.cpython-39.pyc
 defaults-cms.sh
 pypi/__pycache__/packages.cpython-39.pyc
+flash.sh
+temp.txt
+build_all.sh
+build_results.txt

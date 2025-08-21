@@ -1,0 +1,43 @@
+function process_download_url()
+{
+  if [ -f download.url ] ; then
+    for line in $(grep '=' download.url | grep -v '^ *#') ; do
+      url=$(echo $line | cut -d= -f2-)
+      outfile=$(echo $url | sed 's|.*/||')
+      rm -f ${outfile}
+      curl -L -k -s -o ${outfile} ${url}
+      if [ "$(echo $line | cut -d= -f1)" != "$(md5sum ${outfile}  | cut -d' ' -f1)" ] ; then exit 1; fi ;
+    done
+    rm -f download.url
+  fi
+}
+
+function runIt(){
+  if [[ -v $1 ]]; then
+   eval "${!1}"
+  elif declare -F "$1" > /dev/null; then
+    $1
+  fi
+}
+
+[ "${DATA_NAME}" != "" ]  || DATA_NAME="data"
+[ "${DATA_NAME}" != "." ]  || DATA_NAME=""
+[ "${DATA_REPO}" != "" ]  || DATA_REPO=$(echo ${PKGNAME} | sed 's|^data-||')
+[ "${DATA_DIR}" != "" ]   || DATA_DIR=$(echo ${PKGNAME} | sed 's#^data-##;s#-#/#g')/${DATA_NAME}
+[ "${EXPORT_DIR}" != "" ] || EXPORT_DIR="${DATA_REPO}-$(echo ${PKGVERSION} | sed 's|^V||')"
+
+runIt PrePrep
+tar -xvf ${SOURCEDIR}/${SOURCE0}
+pushd ${EXPORT_DIR}
+  runIt PostPrep
+
+  runIt PreBuild
+  find . -type d -exec chmod 0755 {} \;
+  find . -type f -exec chmod 0644 {} \;
+  runIt PostBuild
+popd
+
+runIt PreInstall
+mkdir -p ${INSTALLROOT}/${DATA_DIR}
+mv -T ${BUILDDIR}/${EXPORT_DIR} ${INSTALLROOT}/${DATA_DIR}
+runIt PostInstall

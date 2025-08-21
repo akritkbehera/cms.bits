@@ -10,3 +10,6 @@ flash.sh
 temp.txt
 build_all.sh
 build_results.txt
+.pip.sh.swp
+cms-log
+envflags.yaml

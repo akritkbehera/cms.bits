@@ -7,4 +7,6 @@ requires:
 - py-trove-classifiers
 - py-calver
 - py-packaging
+sources:
+- pip://hatchling/%(version)s
 ---

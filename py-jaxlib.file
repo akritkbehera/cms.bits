@@ -1,3 +1,0 @@
-sources:
- - pip://jaxlib/%(version)s?pip_options=--no-deps%%20--no-binary%%3D:none,arch%%3Dx86_64:&output=/jaxlib-%(version)s-py3-none-any.whl
----

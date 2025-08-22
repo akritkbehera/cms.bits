@@ -26,14 +26,9 @@ unset PYTHONUSERBASE
 unset PYTHONHOME
 unset PYTHONPATH
 
-if ! rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
-      --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/; then
-    exit 1
-fi
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/;
 
-if ! mkdir -p "${INSTALLROOT}"/{include,lib,bin}; then
-    exit 1
-fi
+mkdir -p "${INSTALLROOT}"/{include,lib,bin};
 
 LDFLAGS=""
 CPPFLAGS=""

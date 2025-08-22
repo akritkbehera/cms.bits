@@ -1,6 +1,6 @@
 package: Python
 version: "%(tag_basename)s"
-tag: v3.9.14
+tag: "v3.9.14"
 source: https://github.com/python/cpython
 requires:
  - expat
@@ -16,9 +16,15 @@ requires:
 env:
   PYTHON3_LIB_SITE_PACKAGES: lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages
 ---
-if [[ ! -d "$SOURCEDIR" ]]; then
-    exit 1
-fi
+export DB6_ROOT
+export LIBFFI_ROOT
+export CC=${GCC_ROOT}/bin/gcc
+export CXX=${GCC_ROOT}/bin/g++
+
+export PATH=$(echo $PATH | awk -v RS=':' -v ORS=':' '!/python/ {print}' | sed 's/:$//')
+unset PYTHONUSERBASE
+unset PYTHONHOME
+unset PYTHONPATH
 
 if ! rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
       --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/; then
@@ -45,20 +51,20 @@ for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${
     fi
 done
 
-mkdir -p "$BUILDDIR/tmp"
+export LDFLAGS=$(echo $LDFLAGS)
+export CPPFLAGS=$(echo $CPPFLAGS)
 
-./configure \
-  --prefix="${INSTALLROOT}" \
-  --enable-shared \
-  --enable-ipv6 \
-  --with-system-ffi \
-  --without-ensurepip \
-  --with-system-expat \
-  LDFLAGS="$LDFLAGS" \
-  CPPFLAGS="$CPPFLAGS"
+
+LDFLAGS="$LDFLAGS -Wl,-rpath,$INSTALLROOT/lib" CPPFLAGS="$CPPFLAGS" ./configure \
+    --prefix="$INSTALLROOT" \
+    --enable-shared \
+    --enable-ipv6 \
+    --with-system-ffi \
+    --without-ensurepip \
+    --with-system-expat
 
 make ${JOBS+-j $JOBS}
-make install
+make altinstall
 
 pythonv=$(echo ${PKGVERSION} | sed 's|^v||' | cut -d. -f 1,2)
 python_major=$(echo ${pythonv} | cut -d. -f 1)

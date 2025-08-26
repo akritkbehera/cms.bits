@@ -11,9 +11,14 @@ prepend_path = {"PYTHON3PATH": ["%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"]}
 pypi_name=sys.argv[1][3:]
 variables = {
   "pypi_source_name": pypi_name.replace("-","_"),
-  "pypi_name": pypi_name}
+  "pypi_name": pypi_name,
+  "pypi_source_opt": "--no-binary=:all:",
+  "pypi_download_opts": "--python-version=%%(python_major_minor_str)s+--abi=cp%%(python_major_minor_str)s+--no-deps+%%(pypi_source_opt)s",
+  "pypi_pip": "pip3",
+  "pypi_source_name": "%s-%%(version)s.tar.gz" % pypi_name,
+}
 
-sources = ["https://pypi.io/packages/source/%s/%s/%%(pypi_source_name)s-%%(version)s.tar.gz" % (pypi_name[0], pypi_name)]
+sources = ["pip://%%(pypi_name)s/%%(version)s?pip_options=%%(pypi_download_opts)s&pip=%%(pypi_pip)s&output=/%%(pypi_source_name)s"]
 recipe = ""
 header = ""
 override_file = join (dir, "%s.file" % sys.argv[1])

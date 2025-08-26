@@ -5,6 +5,7 @@ build_requires:
   - zlib
   - gcc
   - xz
+  - autotools
 source: https://gitlab.gnome.org/GNOME/libxml2
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/

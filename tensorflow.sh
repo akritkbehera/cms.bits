@@ -1,0 +1,30 @@
+package: tensorflow
+version: v1
+requires:
+ - Python
+ - py-numpy
+ - py-mock
+ - py-typing-extensions
+ - py-keras-applications
+ - py-keras-preprocessing
+ - py-future
+ - py-wrapt
+ - py-gast
+ - setuptools
+ - py-opt-einsum
+ - py-flatbuffers
+ - eigen
+ - protobuf
+ - zlib
+ - libpng
+ - libjpeg-turbo
+ - curl
+ - giflib
+ - sqlite
+ - py-pybind11
+ - py-wheel
+ - cuda
+ - cudnn
+ - grpc
+ - flatbuffers
+---

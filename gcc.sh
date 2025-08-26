@@ -13,6 +13,8 @@ patches:
  - 77d01927bd7c989d431035251a5c196fe39bcec9.diff
 requires:
  - gcc-prerequisites
+prepend_path:
+  LD_LIBRARY_PATH: "$INSTALLROOT/lib64"
 ---
 for f in "$SOURCEDIR"/*; do
     case "$f" in
@@ -157,3 +159,4 @@ make ${JOBS:+-j "$JOBS"} profiledbootstrap
 cd $BUILDDIR/gcc-*/obj && make install
 ln -s gcc $INSTALLROOT/bin/cc
 find $INSTALLROOT/lib $INSTALLROOT/lib64 -name '*.la' -exec rm -f {} \; || true
+rm -rf $INSTALLROOT/lib/pkg-config

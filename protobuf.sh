@@ -30,8 +30,8 @@ patch -p1 <$PATCH0
 cd cmake
 cmake -G Ninja \
       -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_CXX_STANDARD=$CXXSTD \
+      -DCMAKE_BUILD_TYPE=$LLVM_BUILD_TYPE \
+      -DCMAKE_CXX_STANDARD=17 \
       -Dprotobuf_BUILD_TESTS=OFF \
       -Dprotobuf_BUILD_SHARED_LIBS=ON \
       -Dutf8_range_ENABLE_INSTALL=ON \

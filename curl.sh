@@ -1,12 +1,15 @@
 package: curl
 version: "7.79.0"
-tag: curl-7_79_0
-source: https://github.com/curl/curl.git
+sources: 
+ - https://curl.se/download/curl-%(version)s.tar.gz
 requires:
   - zlib
+  - gcc
+  - autotools
 ---
-set -x
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/$SOURCE0" \
+  --strip-components=1 \
+  -C "$BUILDDIR"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     KERBEROS_ROOT=/usr/heimdal
@@ -15,8 +18,6 @@ else
     KERBEROS_ROOT=/usr
     OS_TYPE="linux"
 fi
-
-./buildconf
 
 ./configure \
   --prefix="$INSTALLROOT" \

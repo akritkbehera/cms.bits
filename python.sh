@@ -15,7 +15,10 @@ requires:
  - gcc
 env:
   PYTHONHOME: "$PYTHON_ROOT"
-  PYTHON3_LIB_SITE_PACKAGES: lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages
+  PYTHONPATH: "$PYTHON_ROOT/lib/python/site-packages"
+  PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-package"
+prepend_path:
+  PATH: $BITS_PYTHON_PATH
 ---
 export DB6_ROOT
 export LIBFFI_ROOT
@@ -23,6 +26,7 @@ export CC=${GCC_ROOT}/bin/gcc
 export CXX=${GCC_ROOT}/bin/g++
 
 export PATH=$(echo $PATH | awk -v RS=':' -v ORS=':' '!/python/ {print}' | sed 's/:$//')
+# Unset all Python-related environment variables to avoid system Python leakage
 unset PYTHONUSERBASE
 unset PYTHONHOME
 unset PYTHONPATH
@@ -59,10 +63,23 @@ LDFLAGS="$LDFLAGS -Wl,-rpath,$INSTALLROOT/lib" CPPFLAGS="$CPPFLAGS" ./configure 
     --with-system-expat
 
 make ${JOBS+-j $JOBS}
-make altinstall
+make install
 
 pythonv=$(echo ${PKGVERSION} | sed 's|^v||' | cut -d. -f 1,2)
 python_major=$(echo ${pythonv} | cut -d. -f 1)
+
+# Create symlink so python3 points to our custom python
+ln -sf "$INSTALLROOT/bin/python${pythonv}" "$INSTALLROOT/bin/python${python_major}"
+
+# After install, ensure our Python is used
+export PATH="$INSTALLROOT/bin:$PATH"
+export PYTHONHOME="$INSTALLROOT"
+export PYTHONPATH="$INSTALLROOT/lib/python${pythonv}/site-packages"
+
+# Check which Python is being picked up
+which python${python_major}
+python${python_major} --version
+python${python_major} -c 'import sys; print(sys.executable)'
 
 sed -i -e "s|^#!.*python${pythonv} *$|#!/usr/bin/env python${python_major}|" ${INSTALLROOT}/bin/* ${INSTALLROOT}/lib/python${pythonv}/*.py
 sed -i -e "s|^#!/.*|#!/usr/bin/env python${pythonv}m|" ${INSTALLROOT}/lib/python${pythonv}/config-*/python-config.py
@@ -78,13 +95,12 @@ sed -i -e "s|^#! */usr/local/bin/python|#!/usr/bin/env python|" ${INSTALLROOT}/l
 find ${INSTALLROOT} -name '*.pyo' -exec rm {} \;
 
 # Remove documentation, examples and test files.
-rm -rf ${INSTALLROOT}/share ${INSTALLROOT}/lib/python${pythonv}/test ${INSTALLROOT}/lib/python${pythonv}/distutils/tests ${INSTALLROOT}/lib/python${pythonv}/lib2to3/tests
-
-ln -sf "$INSTALLROOT/bin/python3.9" "$INSTALLROOT/bin/python3"
-ln -sf "$INSTALLROOT/bin/python3.9" "$INSTALLROOT/bin/python"
+#rm -rf ${INSTALLROOT}/share ${INSTALLROOT}/lib/python${pythonv}/test ${INSTALLROOT}/lib/python${pythonv}/distutils/tests ${INSTALLROOT}/lib/python${pythonv}/lib2to3/tests
 
 echo "from os import environ" > ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
 echo "if 'PYTHON3PATH' in environ:" >> ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
 echo "   import os,site" >> ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
 echo "   for p in environ['PYTHON3PATH'].split(os.pathsep):">> ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
 echo "       site.addsitedir(p)">> ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
+
+export BITS_PYTHON_PATH="$PATH"

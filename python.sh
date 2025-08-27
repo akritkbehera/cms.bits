@@ -14,6 +14,7 @@ requires:
  - libuuid
  - gcc
 env:
+  PYTHONHOME: "$PYTHON_ROOT"
   PYTHON3_LIB_SITE_PACKAGES: lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages
 ---
 export DB6_ROOT
@@ -49,7 +50,6 @@ done
 export LDFLAGS=$(echo $LDFLAGS)
 export CPPFLAGS=$(echo $CPPFLAGS)
 
-
 LDFLAGS="$LDFLAGS -Wl,-rpath,$INSTALLROOT/lib" CPPFLAGS="$CPPFLAGS" ./configure \
     --prefix="$INSTALLROOT" \
     --enable-shared \
@@ -79,6 +79,9 @@ find ${INSTALLROOT} -name '*.pyo' -exec rm {} \;
 
 # Remove documentation, examples and test files.
 rm -rf ${INSTALLROOT}/share ${INSTALLROOT}/lib/python${pythonv}/test ${INSTALLROOT}/lib/python${pythonv}/distutils/tests ${INSTALLROOT}/lib/python${pythonv}/lib2to3/tests
+
+ln -sf "$INSTALLROOT/bin/python3.9" "$INSTALLROOT/bin/python3"
+ln -sf "$INSTALLROOT/bin/python3.9" "$INSTALLROOT/bin/python"
 
 echo "from os import environ" > ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
 echo "if 'PYTHON3PATH' in environ:" >> ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py

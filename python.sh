@@ -14,13 +14,9 @@ requires:
  - libuuid
  - gcc
 env:
-  PYTHONHOME: "$PYTHON_ROOT"
-  PYTHONPATH: "$PYTHON_ROOT/lib/python/site-packages"
-  PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-package"
+  PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages"
 ---
-echo $INSTALLROOT
 export STRIPPED=$(echo "$INSTALLROOT" | sed -E 's|(.*)/INSTALLROOT/[[:alnum:]]+/|\1/|') 
-
 export DB6_ROOT
 export LIBFFI_ROOT
 export CC=${GCC_ROOT}/bin/gcc

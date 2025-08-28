@@ -17,9 +17,10 @@ env:
   PYTHONHOME: "$PYTHON_ROOT"
   PYTHONPATH: "$PYTHON_ROOT/lib/python/site-packages"
   PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-package"
-prepend_path:
-  PATH: $BITS_PYTHON_PATH
 ---
+echo $INSTALLROOT
+export STRIPPED=$(echo "$INSTALLROOT" | sed -E 's|(.*)/INSTALLROOT/[[:alnum:]]+/|\1/|') 
+
 export DB6_ROOT
 export LIBFFI_ROOT
 export CC=${GCC_ROOT}/bin/gcc
@@ -54,7 +55,7 @@ done
 export LDFLAGS=$(echo $LDFLAGS)
 export CPPFLAGS=$(echo $CPPFLAGS)
 
-LDFLAGS="$LDFLAGS -Wl,-rpath,$INSTALLROOT/lib" CPPFLAGS="$CPPFLAGS" ./configure \
+LDFLAGS="-Wl,-rpath,$INSTALLROOT/lib -Wl,-rpath,$STRIPPED/lib" CPPFLAGS="$CPPFLAGS" ./configure \
     --prefix="$INSTALLROOT" \
     --enable-shared \
     --enable-ipv6 \
@@ -64,6 +65,7 @@ LDFLAGS="$LDFLAGS -Wl,-rpath,$INSTALLROOT/lib" CPPFLAGS="$CPPFLAGS" ./configure 
 
 make ${JOBS+-j $JOBS}
 make install
+
 
 pythonv=$(echo ${PKGVERSION} | sed 's|^v||' | cut -d. -f 1,2)
 python_major=$(echo ${pythonv} | cut -d. -f 1)
@@ -102,5 +104,3 @@ echo "if 'PYTHON3PATH' in environ:" >> ${INSTALLROOT}/lib/python${pythonv}/sitec
 echo "   import os,site" >> ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
 echo "   for p in environ['PYTHON3PATH'].split(os.pathsep):">> ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
 echo "       site.addsitedir(p)">> ${INSTALLROOT}/lib/python${pythonv}/sitecustomize.py
-
-export BITS_PYTHON_PATH="$PATH"

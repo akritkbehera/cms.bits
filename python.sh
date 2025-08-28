@@ -48,10 +48,10 @@ for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${
     fi
 done
 
-export LDFLAGS=$(echo $LDFLAGS)
-export CPPFLAGS=$(echo $CPPFLAGS)
+export CPPFLAGS
+export LDFLAGS=" $LDFLAGS -Wl,-rpath,'\$\$ORIGIN/../lib' -z origin -Wl,--disable-new-dtags"
 
-LDFLAGS="-Wl,-rpath,$INSTALLROOT/lib -Wl,-rpath,$STRIPPED/lib" CPPFLAGS="$CPPFLAGS" ./configure \
+LDFLAGS="$LDFLAGS" CPPFLAGS="$CPPFLAGS" ./configure \
     --prefix="$INSTALLROOT" \
     --enable-shared \
     --enable-ipv6 \

@@ -49,7 +49,7 @@ for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${
 done
 
 export CPPFLAGS
-export LDFLAGS=" $LDFLAGS -Wl,-rpath,'\$\$ORIGIN/../lib' -z origin -Wl,--disable-new-dtags"
+export LDFLAGS=" $LDFLAGS -Wl,-rpath,'\$\$ORIGIN/../lib' -z origin -Wl,--enable-new-dtags"
 
 LDFLAGS="$LDFLAGS" CPPFLAGS="$CPPFLAGS" ./configure \
     --prefix="$INSTALLROOT" \

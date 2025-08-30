@@ -16,6 +16,7 @@ requires:
 prepend_path:
   LD_LIBRARY_PATH: "$INSTALLROOT/lib64"
 ---
+
 for f in "$SOURCEDIR"/*; do
     case "$f" in
         *.diff|*.patch) cp -- "$f" "$BUILDDIR";;

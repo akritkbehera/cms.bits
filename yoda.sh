@@ -4,7 +4,7 @@ tag: "yoda-2.1.0"
 requires:
 - Python
 - ROOT
-- hdf
+- hdf5
 - highfive
 build_requires:
 - py-cython

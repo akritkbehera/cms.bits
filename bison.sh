@@ -1,0 +1,22 @@
+package: bison
+version: "3.8.2"
+sources:
+ - http://ftp.gnu.org/gnu/bison/bison-%(version)s.tar.gz
+build_requires:
+ - autotools
+requires:
+ - autotools
+ - gcc
+---
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
+
+CMS_BITS_MARCH=$(gcc -dumpmachine)
+
+./configure --build="$CMS_BITS_MARCH" --host="$CMS_BITS_MARCH" \
+            --prefix=$INSTALLROOT --disable-nls --disable-rpath \
+            --enable-dependency-tracking
+
+make ${JOBS+-j $JOBS}
+make install

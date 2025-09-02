@@ -1,6 +1,9 @@
 package: openmpi
 version: "%(tag_basename)s"
 tag: e6d2cb856f3fc649aa01bd5b688a003b3b33db7d
+build_requires:
+  - autotools
+  - flex
 requires:
  - gcc
  - libfabric
@@ -8,12 +11,20 @@ requires:
  - rdma-core
  - xpmem
  - ucx
+ - cuda
 sources:
  - https://github.com/open-mpi/ompi/archive/%(tag_basename)s.tar.gz
+env:
+  OPAL_PREFIX: "$OPENMPI_ROOT"
+prepend_path:
+  LD_LIBRARY_PATH: $OPENMPI_ROOT/lib
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR" 
+
+AUTOMAKE_JOBS=${JOBS:+-j$JOBS} ./autogen.pl
+unset HWLOC_VERSION
 
 CONFIGURE_OPTS="\
   --prefix=$INSTALLROOT \
@@ -40,13 +51,17 @@ CONFIGURE_OPTS="\
   --without-x \
   --with-pic \
   --with-gnu-ld \
-  --with-pmix=internal"
-
+  --with-pmix=internal \
+  "
 [ -z "$without_cuda" ] && CONFIGURE_OPTS+=" --with-cuda=$CUDA_ROOT"
-AUTOMAKE_JOBS=${JOBS:+-j$JOBS} ./autogen.pl
-unset HWLOC_VERSION
-./configure $CONFIGURE_OPTS
+
+export LDFLAGS=-Wl,--enable-new-dtags
+./configure $CONFIGURE_OPTS --with-wrapper-ldflags="-Wl,-rpath,\$ORIGIN/../lib -Wl,--enable-new-dtags"
 make ${JOBS:+-j$JOBS}
 make install
 
-find $INSTALLROOT/lib/ -name '*.la' -delete
+#sed -i \
+#  -e 's|-Wl,-rpath -Wl,@{libdir}||g' \
+#  -e 's|\(.*-Wl,-rpath,\$ORIGIN/../lib\).*--enable-new-dtags|\1 -Wl,--enable-new-dtags|' \
+#  $INSTALLROOT/share/openmpi/*wrapper-data.txt
+find $INSTALLROOT/lib/ -name '*.la' -delete 

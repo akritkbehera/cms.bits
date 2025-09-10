@@ -1,0 +1,4 @@
+package: mpi
+requires:
+ - openmpi
+---

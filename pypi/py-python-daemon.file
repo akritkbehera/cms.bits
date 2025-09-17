@@ -1,0 +1,5 @@
+requires:
+ - py-docutils
+ - py-lockfile
+---
+PipPatchSource="sed -i -e 's|setuptools.extern.packaging.version|packaging.version|' version.py test_version.py"

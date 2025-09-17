@@ -1,0 +1,9 @@
+requires:
+- py-numpy
+- py-matplotlib
+- py-scipy
+- py-requests
+- py-packaging
+- py-mplhep-data
+- py-uhi
+---

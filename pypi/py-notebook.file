@@ -1,0 +1,9 @@
+build_requires:
+- py-hatchling
+- py-hatch-jupyter-builder
+requires:
+- py-jupyterlab
+- py-jupyterlab-server
+- py-notebook-shim
+- py-tornado
+---

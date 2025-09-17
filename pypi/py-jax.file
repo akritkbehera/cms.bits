@@ -1,0 +1,8 @@
+requires:
+- py-ml_dtypes
+- py-numpy
+- py-opt-einsum
+- py-scipy
+- py-importlib-metadata
+- py-jaxlib
+---

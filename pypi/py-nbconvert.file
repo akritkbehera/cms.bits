@@ -1,0 +1,16 @@
+requires:
+- py-Jinja2
+- py-Pygments
+- py-bleach
+- py-defusedxml
+- py-entrypoints
+- py-mistune
+- py-pandocfilters
+- py-nbformat
+- py-testpath
+- py-jupyterlab-pygments
+- py-nbclient
+- py-beautifulsoup4
+- py-lxml
+- py-tinycss2
+---

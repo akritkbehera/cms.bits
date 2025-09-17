@@ -1,0 +1,52 @@
+build_requires:
+ - tensorflow
+requires:
+ - py-tensorboard
+ - py-tensorflow-estimator
+ - py-wrapt
+ - py-google-pasta
+ - py-scipy
+ - py-funcsigs
+ - py-pbr
+ - py-packaging
+ - py-appdirs
+ - py-pyparsing
+ - py-mock
+ - py-Werkzeug
+ - py-grpcio
+ - py-astunparse
+ - py-keras
+ - py-jax
+ - py-tensorflow-io-gcs-filesystem
+ - llvm
+sources:
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_16_0_X/master/none.file
+---
+arch=$(uname -m)
+export PYTHON_MAJOR_MINOR_VERSION=39
+PipPrePrep="exit"
+PipPostPrep="cp $TENSORFLOW_ROOT/*.whl ."
+PipPostBuild='
+  rm -f "$INSTALLROOT/bin/tensorboard"*
+  for f in "$INSTALLROOT/bin/"*; do
+    [ -f "$f" ] && mv "$f" "${f}3"
+  done
+'
+
+PipDepsPost="grep -v '\<libclang\>'"
+
+RelocateFiles="\
+lib/python\$PYTHON_MAJOR_MINOR_VERSION/site-packages/tensorflow/include/external/local_config_cuda/cuda/cuda/cuda_config.h \
+lib/python\$PYTHON_MAJOR_MINOR_VERSION/site-packages/tensorflow/include/third_party/gpus/cuda/cuda_config.h \
+lib/python\$PYTHON_MAJOR_MINOR_VERSION/site-packages/tensorflow/python/platform/build_info.py"
+
+PipPostInstall='
+  for f in $RelocateFiles; do
+    if [ -f "$INSTALLROOT/$f" ]; then
+      sed -i -e "s|.*/$BITS_WORK_DIR/$ARCHITECTURE/|$BITS_WORK_DIR/$ARCHITECTURE/|" "$INSTALLROOT/$f"
+    fi
+  done
+
+  sed -i "s|assert((arg_size(index)|assert(((size_t)arg_size(index)|" \
+    "$INSTALLROOT/lib/python$PYTHON_MAJOR_MINOR_VERSION/site-packages/tensorflow/include/tensorflow/compiler/tf2xla/xla_compiled_cpu_function.h"
+'

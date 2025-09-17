@@ -1,0 +1,24 @@
+requires:
+ - py-numexpr
+ - py-six
+ - hdf5
+ - bz2lib
+ - py-mock
+ - py-numpy
+ - py-six
+ - hdf5
+ - py-blosc2
+ - py-blosc
+ - openmpi
+---
+PipPreBuildPy='
+export CFLAGS="-pthread -I${C_BLOSC2_ROOT}/include -I${C_BLOSC_ROOT}/include -I${BZ2LIB_ROOT}/include";
+export LDFLAGS="-L${C_BLOSC2_ROOT}/lib64 -L${C_BLOSC_ROOT}/lib64 -L${BZ2LIB_ROOT}/lib";
+export HDF5_DIR="${HDF5_ROOT}";
+export CC="mpicc";
+export DISABLE_AVX2=true;
+export BLOSC2_DIR="${C_BLOSC2_ROOT}";
+export BLOSC_DIR="${C_BLOSC_ROOT}";
+export CMAKE_ARGS="-DCMAKE_PREFIX_PATH=${PY_NUMEXPR_ROOT};${PY_SIX_ROOT};${HDF5_ROOT};${BZ2LIB_ROOT};${PY_MOCK_ROOT};${PY_NUMPY_ROOT};${PY_BLOSC2_ROOT};${PY_BLOSC_ROOT};${OPENMPI_ROOT}";
+'
+PipInstallOptions='--global-option="--hdf5=${HDF5_ROOT}" --global-option="--bzip2=${BZ2LIB_ROOT}"'

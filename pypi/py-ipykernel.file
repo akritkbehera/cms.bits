@@ -1,0 +1,10 @@
+requires:
+- py-ipython
+- py-jupyter-client
+- py-debugpy
+- py-psutil
+- py-jedi
+- py-backcall
+- py-comm
+- py-nest-asyncio
+---

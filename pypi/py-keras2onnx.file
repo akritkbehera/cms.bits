@@ -1,0 +1,10 @@
+sources:
+ - https://github.com/onnx/keras-onnx/archive/v%(version)s.tar.gz
+requires:
+ - py-numpy
+ - py-protobuf
+ - py-requests
+ - py-onnx
+ - py-onnxconverter-common
+ - py-fire
+---

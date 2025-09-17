@@ -1,0 +1,3 @@
+sources:
+- pip3://hep_ml/%(version)s
+---

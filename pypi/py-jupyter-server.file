@@ -1,0 +1,23 @@
+build_requires:
+- py-hatch-jupyter-builder
+- py-jupyter-packaging
+requires:
+- py-anyio
+- py-argon2-cffi
+- py-Jinja2
+- py-jupyter-client
+- py-jupyter-core
+- py-jupyter-server-terminals
+- py-nbconvert
+- py-nbformat
+- py-packaging
+- py-prometheus-client
+- py-pyzmq
+- py-Send2Trash
+- py-terminado
+- py-tornado
+- py-traitlets
+- py-websocket-client
+- py-jupyter-events
+- py-overrides
+---

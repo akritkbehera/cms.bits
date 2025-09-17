@@ -1,0 +1,21 @@
+build_requires:
+ - py-scikit-build-core
+ - CMake
+requires:
+ - libzmq
+ - py-packaging
+ - py-scikit-build-core
+ - py-typing-extensions
+ - py-cython
+---
+patchsrc=$(cat <<EOF
+[global]
+zmq_prefix = $LIBZMQ_ROOT
+
+[build_ext]
+include_dirs = $LIBZMQ_ROOT/include
+library_dirs = $LIBZMQ_ROOT/lib
+EOF
+)
+PipPatchSource='printf "%s\n" "$patchsrc" > setup.cfg'
+PipPreBuildPy="export CMAKE_BUILD_PARALLEL_LEVEL=${JOBS:+$JOBS}"

@@ -1,0 +1,10 @@
+requires:
+ - py-numpy
+ - py-onnx
+ - py-protobuf
+ - py-onnxconverter-common
+ - py-skl2onnx
+ - py-keras2onnx
+sources:
+ - https://github.com/onnx/onnxmltools/archive/refs/tags/%(version)s.tar.gz
+---

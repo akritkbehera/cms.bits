@@ -1,0 +1,5 @@
+sources:
+ - git+https://github.com/tensorflow/io?obj=master/v%(version)s&export=%(package)s-%(version)s&output=/source.tar.gz
+patches:
+ - py-tensorflow-io-gcs-filesystem.patch
+---

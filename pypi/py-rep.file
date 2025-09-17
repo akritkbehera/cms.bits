@@ -1,0 +1,13 @@
+requires:
+- py-hep_ml
+- py-theanets
+- py-nose
+- py-nose-parameterized
+- py-mpld3
+- py-neurolab
+- py-pybrain
+- py-notebook
+- py-xgboost
+- py-matplotlib
+- py-bokeh
+---

@@ -1,0 +1,17 @@
+sources:
+ - pip://tensorboard/%(version)s?pip_options=--no-deps%%20--no-binary%%3D:none,arch%%3Dx86_64:&output=/tensorboard-%(version)s-py3-none-any.whl
+requires:
+ - py-numpy
+ - py-absl-py
+ - py-grpcio
+ - py-google-auth-oauthlib
+ - py-tensorboard-plugin-wit
+ - py-Markdown 
+ - py-Werkzeug 
+ - py-protobuf 
+ - py-html5lib 
+ - py-six 
+ - py-bleach
+ - py-tensorboard-data-server
+---
+PipPostBuild="mv $INSTALLROOT/bin/tensorboard $INSTALLROOT/bin/tensorboard3"

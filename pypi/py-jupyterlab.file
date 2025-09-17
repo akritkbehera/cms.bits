@@ -1,0 +1,19 @@
+build_requires:
+- py-hatchling
+- py-hatch-jupyter-builder
+requires:
+- py-async-lru
+- py-httpx
+- py-importlib-metadata
+- py-ipykernel
+- py-Jinja2
+- py-jupyter-core
+- py-jupyter-server
+- py-jupyter-lsp
+- py-jupyterlab-server
+- py-notebook-shim
+- py-packaging
+- py-tomli
+- py-tornado
+- py-traitlets
+---

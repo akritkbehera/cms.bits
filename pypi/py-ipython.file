@@ -1,0 +1,15 @@
+requires:
+- py-jedi
+- py-prompt_toolkit
+- py-backcall
+- py-matplotlib-inline
+- py-stack-data
+- py-traitlets
+- py-pickleshare
+- py-Pygments
+- py-prompt_toolkit
+- py-pexpect
+- py-simplegeneric
+- py-typing-extensions
+- py-exceptiongroup
+---

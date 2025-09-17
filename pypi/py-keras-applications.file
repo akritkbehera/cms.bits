@@ -1,0 +1,6 @@
+requires:
+- py-h5py
+- py-numpy
+sources:
+ - pip://keras-applications/%(version)s
+---

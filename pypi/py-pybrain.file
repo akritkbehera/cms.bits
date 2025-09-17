@@ -1,0 +1,3 @@
+sources:
+ - git+https://github.com/pybrain/pybrain?obj=master/%(version)s&export=pybrain-%(version)s&output=/source.tar.gz
+---

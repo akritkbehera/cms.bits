@@ -1,0 +1,12 @@
+build_requires:
+- py-hatchling
+requires:
+- py-babel
+- py-importlib-metadata
+- py-Jinja2
+- py-json5
+- py-jsonschema
+- py-jupyter-server
+- py-packaging
+- py-requests
+---

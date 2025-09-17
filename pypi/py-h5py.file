@@ -1,0 +1,9 @@
+requires:
+ - py-numpy
+ - hdf5
+ - py-six
+ - py-cython
+ - py-pkgconfig
+ - openmpi
+---
+PipPreBuildPy='export HDF5_DIR=${HDF5_ROOT} CC=mpicc'

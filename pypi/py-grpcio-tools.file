@@ -1,6 +1,4 @@
 requires:
 - py-protobuf
 - py-grpcio
-sources:
-- https://files.pythonhosted.org/packages/e2/cf/ec18bf6f10a978ffeb14c08a87ca88657618e3fc7bf78f48cc9ee8e47fd3/grpcio-tools-%(version)s.tar.gz
 ---

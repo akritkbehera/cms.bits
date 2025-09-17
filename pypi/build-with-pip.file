@@ -42,7 +42,7 @@ if [ -z "${WHL_WITH_PATCHES+x}" ] || [ "${WHL_WITH_PATCHES:-0}" -gt 0 ]; then
   popd
   rm -rf cmsdist-patch-${PKGNAME}
 
-  pushd $PYPI_SRC
+  if pushd $PYPI_SRC ; then
     if [ "${PATCH_COUNT}" -gt 0 ] ; then
       for (( num=0; num<${PATCH_COUNT}; num++ )) ; do
         patch_name="PATCH${num}"
@@ -51,7 +51,10 @@ if [ -z "${WHL_WITH_PATCHES+x}" ] || [ "${WHL_WITH_PATCHES:-0}" -gt 0 ]; then
       done
     fi
     runIt PipPatchSource
-  popd
+    popd
+  else
+    echo "WARNING: Could not enter $PYPI_SRC, skipping patching."
+  fi
 fi
 
 runIt PipPostPrep

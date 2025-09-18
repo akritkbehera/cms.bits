@@ -1,6 +1,3 @@
-variables:
-  xyz: python
-  pypi_source_name: "%(xyz)s-ldap"
 requires:
  - openldap
  - py-pyasn1-modules

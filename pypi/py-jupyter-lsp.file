@@ -3,6 +3,4 @@ build_requires:
 requires:
 - py-importlib-metadata
 - py-jupyter-server
-sources:
-- pip://jupyter-lsp/%(version)s
 ---

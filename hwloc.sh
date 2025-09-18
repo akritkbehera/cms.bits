@@ -1,14 +1,17 @@
 package: hwloc
-version: "%(tag_basename)s"
-tag: hwloc-2.12.0
-source: https://github.com/open-mpi/hwloc
+version: "2.12.2"
+sources:
+ - https://github.com/open-mpi/hwloc/archive/refs/tags/hwloc-%(version)s.tar.gz
 requires:
+ - autotools
  - gcc
  - libpciaccess
  - libxml2
  - numactl
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 sh autogen.sh
 

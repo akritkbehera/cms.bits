@@ -1,5 +1,3 @@
-sources:
-- pip://arrow/%(version)s
 build_requires:
 - py-flit-core
 requires:

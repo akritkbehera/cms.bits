@@ -1,8 +1,8 @@
 package: pytorch
-version: "v%(tag_basename)s"
+version: "2.6.0"
 tag: "2.6.0"
 sources: 
-- git+https://github.com/pytorch/pytorch?obj=main/v2.6.0&export=pytorch-2.6.0&submodules=1&output=/pytorch-2.6.0.tgz
+- git+https://github.com/pytorch/pytorch?obj=main/v%(version)s&export=pytorch-%(version)s&submodules=1&output=/pytorch-%(version)s.tgz
 - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/FindEigen3.cmake.file
 - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/FindFMT.cmake.file
 - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/scram-tools.file/tools/eigen/env.sh

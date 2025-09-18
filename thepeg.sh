@@ -1,5 +1,5 @@
 package: thepeg
-version: 2.2.2
+version: "2.2.2"
 sources:
  - http://www.hepforge.org/archive/thepeg/ThePEG-%(version)s.tar.bz2
 patches:
@@ -9,6 +9,7 @@ build_requires:
  - autotools
  - lhapdf
 requires:
+ - gcc
  - lhapdf
  - GSL
  - OpenBLAS
@@ -25,11 +26,10 @@ tar -xjf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
+autoreconf -fiv
 
-autotools -fiv
-
-CXX = "$(which g++) -fPIC"
-CC = "$(which gcc) -fPIC"
+export CXX="$(which g++) -fPIC"
+export CC="$(which gcc) -fPIC"
 PLATF_CONF_OPTS="--enable-shared --disable-static"
 
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"

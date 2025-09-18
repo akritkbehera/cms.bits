@@ -13,58 +13,71 @@ function chkDefined(){
   if ! isDefined $1 ; then eval "$1=\"$2\"" ; fi
 }
 
-unset $WHL_WITH_PATCHES
-if [[ "$SOURCE0" == *.whl ]]; then
-  WHL_WITH_PATCHES=0
-  echo "\$SOURCE0 ends with .whl"
-  if [ "${PATCH_COUNT}" -gt 0 ]; then
-    WHL_WITH_PATCHES=1
-  fi
-fi
+function unPackSource(){
+  case ${SOURCE0} in
+   *.tar.gz|*.tgz) tar -xzf ${SOURCEDIR}/${SOURCE0} ;;
+   *.whl) wheel unpack ${SOURCEDIR}/${SOURCE0} ;;
+   *)
+     echo "ERROR: Unknown file type, please update here to support unpacking of this type of file"
+     exit 1
+     ;;
+  esac
+}
+
+
+function packSource(){
+  case ${SOURCE0} in
+   *.tar.gz|*.tgz) ;;
+   *.whl)
+     rm -rf bits-pack-${PKGNAME}
+     mkdir bits-pack-${PKGNAME}
+     wheel pack --dest-dir bits-pack-${PKGNAME} $PYPI_SRC
+     mv bits-pack-${PKGNAME}/*.whl "${BUILDDIR}"/${SOURCE0}
+     rm -rf bits-pack-${PKGNAME} $PYPI_SRC
+     PYPI_SRC="${BUILDDIR}"/${SOURCE0}
+     ;;
+   *)
+     echo "ERROR: Unknown file type, please update here to support packing of this type of file"
+     exit 1
+     ;;
+  esac
+}
 
 [ "${Pypi_name}" != "" ] || Pypi_name=$(echo ${PKGNAME} | cut -f2-10 -d-)
-chkDefined PipUnpackCommand "tar -xzf ${SOURCEDIR}/${SOURCE0}"
+chkDefined PipUnpackCommand "unPackSource"
+chkDefined PipPackCommand "packSource"
 chkDefined PipPackageNameCommand "pip3 show ${Pypi_name} --disable-pip-version-check | grep '^Name:' | sed 's|^Name: *||;s| ||g'"
 chkDefined PipDepsPost "xargs --no-run-if-empty echo"
 chkDefined PipDepsMatch "grep \\\"^\\\${PKG_NAME}  *${PKGVERSION}  *requires \\\" | sed 's|,.*||;s|.* |py-|'"
 chkDefined PipDepsCommand "pip3 check --disable-pip-version-check"
 chkDefined PipInstallCommand "pip3 install --no-clean --no-deps --no-index --no-build-isolation --no-cache-dir --disable-pip-version-check --user -v ${PipInstallOptions} ${PipBuildOptions} \\\${PYPI_SRC}"
 
-if [ -z "${WHL_WITH_PATCHES+x}" ] || [ "${WHL_WITH_PATCHES:-0}" -gt 0 ]; then
-  runIt PipPrePrep
-  rm -rf cmsdist-patch-${PKGNAME}
-  mkdir cmsdist-patch-${PKGNAME}
-  pushd cmsdist-patch-${PKGNAME}
-    runIt PipUnpackCommand
-    pip_package_dirname=$(ls -d *)
-    PYPI_SRC="${BUILDDIR}"/${pip_package_dirname}
-    mv ${pip_package_dirname} "${PYPI_SRC}"
-  popd
-  rm -rf cmsdist-patch-${PKGNAME}
+runIt PipPrePrep
+rm -rf bits-patch-${PKGNAME}
+mkdir bits-patch-${PKGNAME}
+pushd bits-patch-${PKGNAME}
+  runIt PipUnpackCommand
+  pip_package_dirname=$(ls -d *)
+  PYPI_SRC="${BUILDDIR}"/${pip_package_dirname}
+  mv ${pip_package_dirname} "${PYPI_SRC}"
+popd
+rm -rf bits-patch-${PKGNAME}
 
-  if pushd $PYPI_SRC ; then
-    if [ "${PATCH_COUNT}" -gt 0 ] ; then
-      for (( num=0; num<${PATCH_COUNT}; num++ )) ; do
-        patch_name="PATCH${num}"
-        echo "Applying patch ${!patch_name}"
-        patch  --verbose -p1 < $SOURCEDIR/${!patch_name}
-      done
-    fi
-    runIt PipPatchSource
-    popd
-  else
-    echo "WARNING: Could not enter $PYPI_SRC, skipping patching."
+pushd $PYPI_SRC
+  if [ "${PATCH_COUNT}" -gt 0 ] ; then
+    for (( num=0; num<${PATCH_COUNT}; num++ )) ; do
+      patch_name="PATCH${num}"
+      echo "Applying patch ${!patch_name}"
+      patch  --verbose -p1 < $SOURCEDIR/${!patch_name}
+    done
   fi
-fi
+  runIt PipPatchSource
+popd
+runIt PipPackCommand
 
 runIt PipPostPrep
 
-if [ "${WHL_WITH_PATCHES}" -eq 0 ]; then
-  cp "$SOURCEDIR/$SOURCE0" "$BUILDDIR/"
-  PYPI_SRC=$SOURCE0
-fi
-
-export PYTHONHOME="$PYTHON_ROOT"
+runIt PipPreBuild
 export PYTHONUSERBASE="$INSTALLROOT"
 export TMPDIR="$BUILDDIR/bits-tmp"
 mkdir -p $TMPDIR
@@ -74,11 +87,11 @@ runIt PipPreBuildPy
 runIt PipInstallCommand
 PKG_NAME=$(runIt PipPackageNameCommand)
 [ "${PKG_NAME}" = "" ] && exit 1
-python3 -c "import sys; print('=== sys.path for pip3 check ==='); print('\\n'.join(sys.path))"
 pip3 check --disable-pip-version-check || true 
 runIt PipDepsCommand | runIt PipDepsMatch || true
 DEPS=$(runIt PipDepsCommand | runIt PipDepsMatch | runIt PipDepsPost | tr '\n' ' ') || true
 if [ "$DEPS" != "" ] ; then
+  echo "ERROR: Missing dependencies for ${PKGNAME} (python3) found: $DEPS"
   exit 1
 fi
 runIt relocatePy3SitePackages

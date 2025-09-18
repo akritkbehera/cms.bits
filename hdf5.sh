@@ -25,10 +25,13 @@ curl -L -k -s -o "$TMPDIR"/config.sub "$CONFIG_SUB_URL"
 CXXFLAGS=-I${OPENMPI_ROOT}/include \
 LDFLAGS="-L${OPENMPI_ROOT}/lib -lmpi" \
 
+CC="$OPENMPI_ROOT/bin/mpicc" \
+CXX="$OPENMPI_ROOT/bin/mpicxx" \
+FC="$OPENMPI_ROOT/bin/gfortran" \
 ./configure --prefix=$INSTALLROOT \
             --disable-sharedlib-rpath \
             --enable-parallel \
             --enable-threadsafe --enable-unsupported \
             --with-zlib=${ZLIB_ROOT}
-make  ${JOBS+-j $JOBS}
-make install
+make  ${JOBS+-j $JOBS} V=1
+make install V=1

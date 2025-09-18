@@ -9,10 +9,12 @@ requires:
 - zlib
 - gcc
 - gmake
+- libtool
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
-    -C "$BUILDDIR" 
+    -C "$BUILDDIR"
+
 if [ -f src/Makefile.am ]; then
     perl -p -i.bak -e 's|^library_includedir.*|library_includedir=\$(includedir)|' src/Makefile.am
     echo "Patched src/Makefile.am"

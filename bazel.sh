@@ -5,7 +5,6 @@ sources:
 build_requires:
  - java-env
  - Python
- - python-python3
 requires:
  - gcc
 patches:
@@ -27,5 +26,4 @@ fi
 bash ./compile.sh
 
 mkdir $INSTALLROOT/bin
-cp output/bazel $INSTALLROOT/bin/.
-~
+cp "$BUILDDIR/output/bazel" "$INSTALLROOT/bin/"

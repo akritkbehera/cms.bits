@@ -57,7 +57,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"
 
 
-sed -i -e "s|lib/python[^/]*/site-packages/|lib/python3.9/site-packages/|" third_party/systemlibs/pybind11.BUILD
+sed -i -e "s|lib/python[^/]*/site-packages/|lib/python$PYTHON_MAJOR_MINOR_VERSION/site-packages/|" third_party/systemlibs/pybind11.BUILD
 
 export pythonOnly="${pythonOnly:-no}"
 export build_type="${build_type:-opt}"

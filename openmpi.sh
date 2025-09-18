@@ -1,9 +1,13 @@
 package: openmpi
-version: "%(tag_basename)s"
-tag: e6d2cb856f3fc649aa01bd5b688a003b3b33db7d
+version: "5.0.8"
+variables:
+ branch: v5.0.x
+ tag: v%(version)s
+ HFI_NO_BACKTRACE: "1"
+ IPATH_NO_BACKTRACE: "1"
 build_requires:
-  - autotools
-  - flex
+ - autotools
+ - flex
 requires:
  - gcc
  - libfabric
@@ -12,28 +16,36 @@ requires:
  - xpmem
  - ucx
  - cuda
+ - zlib
 sources:
- - https://github.com/open-mpi/ompi/archive/%(tag_basename)s.tar.gz
+- git+https://github.com/open-mpi/ompi.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
+patches:
+ - openmpi-setenv-fix.patch
 env:
   OPAL_PREFIX: "$OPENMPI_ROOT"
+  PMIX_PREFIX: "$OPENMPI_ROOT"
 prepend_path:
   LD_LIBRARY_PATH: $OPENMPI_ROOT/lib
 ---
+export PYTHONHOME=$PYTHON_ROOT
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR" 
+patch -p1 -i "$SOURCEDIR/$PATCH0"
+echo "<runtime name=\"HFI_NO_BACKTRACE\" value=\"%(HFI_NO_BACKTRACE)s\"/>"
+echo "<runtime name=\"HFI_NO_BACKTRACE\" value=\"%(IPATH_NO_BACKTRACE)s\"/>"
+grep ' opal_setenv("IPATH_NO_BACKTRACE", "%(IPATH_NO_BACKTRACE)s", true, &environ)' opal/runtime/opal_init.c
+grep ' opal_setenv("HFI_NO_BACKTRACE", "%(HFI_NO_BACKTRACE)s", true, &environ)' opal/runtime/opal_init.c
 
 AUTOMAKE_JOBS=${JOBS:+-j$JOBS} ./autogen.pl
 unset HWLOC_VERSION
-
+CMS_BITS_MARCH=$(gcc -dumpmachine)
 CONFIGURE_OPTS="\
   --prefix=$INSTALLROOT \
   --disable-dependency-tracking \
   --enable-ipv6 \
-  --enable-mpi-cxx \
   --enable-shared \
   --disable-static \
-  --enable-cxx-exceptions \
   --disable-mpi-java \
   --enable-openib-rdmacm-ibaddr \
   --with-zlib=$ZLIB_ROOT \
@@ -48,15 +60,13 @@ CONFIGURE_OPTS="\
   --with-cma \
   --without-knem \
   --with-xpmem=$XPMEM_ROOT \
-  --without-x \
   --with-pic \
+  --disable-io-romio \
   --with-gnu-ld \
   --with-pmix=internal \
   "
 [ -z "$without_cuda" ] && CONFIGURE_OPTS+=" --with-cuda=$CUDA_ROOT"
-
-export LDFLAGS=-Wl,--enable-new-dtags
-./configure $CONFIGURE_OPTS --with-wrapper-ldflags="-Wl,-rpath,\$ORIGIN/../lib -Wl,--enable-new-dtags"
+./configure $CONFIGURE_OPTS
 make ${JOBS:+-j$JOBS}
 make install
 

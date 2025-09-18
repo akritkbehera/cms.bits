@@ -14,6 +14,8 @@ requires:
  - libuuid
  - gcc
 env:
+  PYTHON_MAJOR_MINOR_VERSION: $(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')
+  PYTHON_MAJOR_MINOR_STR: $(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||' | sed 's|\.||')
   PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages"
 ---
 export STRIPPED=$(echo "$INSTALLROOT" | sed -E 's|(.*)/INSTALLROOT/[[:alnum:]]+/|\1/|') 

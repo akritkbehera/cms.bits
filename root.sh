@@ -2,6 +2,10 @@ package: ROOT
 version: "v1"
 tag: cms/v6-36-00-patches/1715228c2c
 source: https://github.com/cms-sw/root
+env:
+ ROOTSYS: $ROOT_ROOT
+prepend_path:
+ PYTHON3PATH: $ROOT_ROOT/lib
 build_requires:
 - CMake
 - ninja

@@ -5,6 +5,7 @@ build_requires:
 requires:
  - c-blosc
 ---
-PipPreBuild="export USE_SYSTEM_BLOSC=1; \
-export Blosc_ROOT=\${C_BLOSC_ROOT}; \
-export CMAKE_ARGS='-DCMAKE_PREFIX_PATH=\"\${PY_SCIKIT_BUILD_ROOT} \${CMAKE_ROOT} \${NINJA_ROOT} \${C_BLOSC_ROOT}\"'"
+PipPreBuild="export CMAKE_ARGS='
+  -DUSE_SYSTEM_BLOSC=ON
+  -DCMAKE_PREFIX_PATH=${PY_SCIKIT_BUILD_ROOT};${CMAKE_ROOT};${NINJA_ROOT};${C_BLOSC_ROOT}
+'"

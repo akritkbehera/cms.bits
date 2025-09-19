@@ -13,9 +13,6 @@ patches:
  - 77d01927bd7c989d431035251a5c196fe39bcec9.diff
 requires:
  - gcc-prerequisites
-env:
-  CC: $GCC_ROOT/bin/gcc
-  CXX: $GCC_ROOT/bin/g++
 prepend_path:
   LD_LIBRARY_PATH: "$GCC_ROOT/lib64"
 ---

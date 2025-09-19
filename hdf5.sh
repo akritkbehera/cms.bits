@@ -16,18 +16,14 @@ CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"
 CONFIG_SUB_URL="${CONFIG_BASE_URL}/config.sub"
 
-TMPDIR="$BUILDDIR/bin/"
-rm -f "$TMPDIR"/config.{sub,guess}
+CONFIGDIR="$BUILDDIR/bin/"
+rm -f "$CONFIGDIR"/config.{sub,guess}
 
-curl -L -k -s -o "$TMPDIR"/config.guess "$CONFIG_GUESS_URL"
-curl -L -k -s -o "$TMPDIR"/config.sub "$CONFIG_SUB_URL"
+curl -L -k -s -o "$CONFIGDIR"/config.guess "$CONFIG_GUESS_URL"
+curl -L -k -s -o "$CONFIGDIR"/config.sub "$CONFIG_SUB_URL"
 
 CXXFLAGS=-I${OPENMPI_ROOT}/include \
 LDFLAGS="-L${OPENMPI_ROOT}/lib -lmpi" \
-
-CC="$OPENMPI_ROOT/bin/mpicc" \
-CXX="$OPENMPI_ROOT/bin/mpicxx" \
-FC="$OPENMPI_ROOT/bin/gfortran" \
 ./configure --prefix=$INSTALLROOT \
             --disable-sharedlib-rpath \
             --enable-parallel \

@@ -11,6 +11,8 @@ patches:
 requires:
   - compilation_flags
   - gcc
+  - autotools
+  - Python
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
@@ -19,7 +21,6 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"
 
 patch -p1 < "$SOURCEDIR/$PATCH0"
-
 
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"
@@ -41,7 +42,9 @@ if [[ -n "$arch_flags" ]]; then
     export CXXFLAGS="$CXXFLAGS $arch_flags"
 fi
 
-PYTHON=/home/akbehera/Desktop/cms.bits/sw/slc9_x86-64/Python/latest/bin/python3.9 \
+PYTHON=$PYTHON_ROOT/bin/python$PYTHON_MAJOR_MINOR_VERSION \
+CC=$GCC_ROOT/bin/gcc \
+CXX=$GCC_ROOT/bin/g++ \
   ./configure \
   --enable-shared \
   --enable-atlascone \

@@ -1,4 +1,4 @@
-package: l1metml
+package: L1METML
 version: 1.0.1
 sources:
  - https://github.com/cms-hls4ml/%(package)s/archive/refs/tags/v%(version)s.tar.gz

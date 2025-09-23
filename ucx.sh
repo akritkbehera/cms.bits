@@ -2,12 +2,15 @@ package: ucx
 version: "1.18.1"
 tag: v1.18.1
 source: https://github.com/openucx/ucx
+build_requires:
+ - autotools
 requires:
  - gcc
  - numactl
  - rdma-core
  - xpmem
  - cuda
+ - rocm
  - gdrcopy
 ---
 export without_rocm="yes"

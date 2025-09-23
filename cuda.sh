@@ -1,7 +1,7 @@
 package: cuda
-version: "12.9.0"
+version: "12.9.1"
 variables:
-  driversversion: 575.51.03
+  driversversion: 575.57.08
   aarch64_src: "linux-sbsa"
   x86_64_src: "linux"
   selected_src: "%%(%(platform_machine)s_src)s"
@@ -10,6 +10,8 @@ sources:
 requires:
   -  Python
   -  gcc
+env:
+  USE_CUDA: "1"
 ---
 ARCH=$(uname -m)
 CUDADRIVER_VERSION="%(driversversion)s"

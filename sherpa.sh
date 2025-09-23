@@ -7,9 +7,10 @@ patches:
  - sherpa-cpp20.patch
 build_requires:
  - mcfm
+ - swig
  - autotools
 requires:
- - swig
+ - gcc
  - hepmc
  - lhapdf
  - blackhat
@@ -17,6 +18,8 @@ requires:
  - Python
  - fastjet
  - openmpi
+prepend_path:
+ LD_LIBRARY_PATH: $SHERPA_ROOT/lib/SHERPA-MC
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
@@ -36,7 +39,7 @@ fi
 patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
 
-export PYTHON=$(which python3)
+export PYTHONHOME=$PYTHON_ROOT
 
 ./configure --prefix=$INSTALLROOT --enable-analysis --disable-silent-rules \
             --enable-fastjet=$FASTJET_ROOT \
@@ -45,7 +48,6 @@ export PYTHON=$(which python3)
             --enable-blackhat=$BLACKHAT_ROOT \
             --enable-pyext \
             --enable-ufo \
-            ${OPENLOOPS_ROOT+--enable-openloops=$OPENLOOPS_ROOT} \
             --enable-mpi \
             --with-sqlite3=$SQLITE_ROOT \
             --enable-analysis \

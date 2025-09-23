@@ -1,4 +1,4 @@
-package: cicada
+package: CICADA
 version: 1.4.0
 build_requires:
  - gmake

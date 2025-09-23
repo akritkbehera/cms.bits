@@ -1,4 +1,4 @@
-package: csctrackfinderemulation
+package: CSCTrackFinderEmulation
 version: "1.2"
 variables:
  tag: 8c0287fde4739d96fd3fd4a03e5ce5e6b986052e

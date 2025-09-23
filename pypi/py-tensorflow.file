@@ -1,5 +1,5 @@
 build_requires:
- - tensorflow
+ - tensorflow-sources
 requires:
  - py-tensorboard
  - py-tensorflow-estimator
@@ -24,7 +24,7 @@ sources:
 ---
 platform="$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m)"
 
-PipPrePrep='SOURCEDIR=$TENSORFLOW_ROOT SOURCE0=tensorflow-$PKG_VERSION-cp$PYTHON_MAJOR_MINOR_STR-cp$PYTHON_MAJOR_MINOR_STR-$platform.whl'
+PipPrePrep='SOURCEDIR=$TENSORFLOW_SOURCES_ROOT SOURCE0=tensorflow-$PKG_VERSION-cp$PYTHON_MAJOR_MINOR_STR-cp$PYTHON_MAJOR_MINOR_STR-$platform.whl'
 
 PipPostBuild='
   rm -f "$INSTALLROOT/bin/tensorboard"*

@@ -10,11 +10,21 @@ build_requires:
 - CMake 
 - gmake 
 requires:
+- gcc
+- vecgeom
 - clhep
 - expat
+- geant4-data
 - xerces-c
 - zlib
+- compilation_flags
+- compilation_flags_lto
+- compilation_flags_pgo
 ---
+eval "$setup_pgo"
+setup_pgo_flags "$BUILDDIR" "$PKGNAME/$PKGHASH"
+export BUILD_FLAGS="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR" 
@@ -24,15 +34,13 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     soext="dylib"
 fi
 
-rm -rf ../build
-mkdir ../build
-cd ../build
+rm -rf $BUILDROOT/build && mkdir $BUILDROOT/build && cd $BUILDROOT/build
 
 cmake_args=(
-  -DCMAKE_CXX_COMPILER="g++"
+  -DCMAKE_CXX_COMPILER="$GCC_ROOT/bin/g++"
   -DCMAKE_CXX_FLAGS="${BUILD_FLAGS}"
-  -DCMAKE_AR="$(which gcc-ar)"
-  -DCMAKE_RANLIB="$(which gcc-ranlib)"
+  -DCMAKE_AR="$GCC_ROOT/bin/gcc-ar"
+  -DCMAKE_RANLIB="$GCC_ROOT/bin/gcc-ranlib"
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"
   -DCMAKE_CXX_STANDARD:STRING="$CXXSTD"
   -DCMAKE_BUILD_TYPE="$LLVM_BUILD_TYPE"
@@ -48,12 +56,13 @@ cmake_args=(
   -DGEANT4_USE_SYSTEM_EXPAT=ON
   -DGEANT4_USE_SYSTEM_ZLIB=ON
   -DGEANT4_BUILD_MULTITHREADED=ON
-  -DXercesC_INCLUDE_DIR=$XERCES_C_ROOT/include \
-  -DXercesC_LIBRARY=$XERCES_C_ROOT/lib/libxerces-c.so \
-  -DXercesC_VERSION=3.1.3
+  -DXercesC_INCLUDE_DIR=$XERCES_C_ROOT/include 
+  -DXercesC_LIBRARY_RELEASE=$XERCES_C_ROOT/lib/libxerces-c.so
+  -DXercesC_LIBRARY=$XERCES_C_ROOT/lib/libxerces-c.so 
+  -DXercesC_VERSION=$XERCES_C_VERSION 
 )
 
-if [[ -n "$enable_vecgeom" ]]; then
+if [[ "$USE_VECGEOM" -eq 1 ]]; then
   cmake_args+=(
     -DGEANT4_USE_USOLIDS="all"
     -DVecGeom_DIR="${VECGEOM_ROOT}/lib64/cmake/VecGeom"
@@ -61,19 +70,17 @@ if [[ -n "$enable_vecgeom" ]]; then
   )
 fi
 
-cmake "${cmake_args[@]}" ../$PKGNAME
+cmake "${cmake_args[@]}" $BUILDDIR
 
-make ${JOBS:+-j$JOBS} 
+make ${JOBS:+-j$JOBS} VERBOSE=1
 make install
 
 mkdir -p $INSTALLROOT/lib64/archive
-cp $INSTALLROOT/lib64/archive
+cd $INSTALLROOT/lib64/archive
 find $INSTALLROOT/lib64 -name "*.a" -exec gcc-ar x {} \;
 gcc-ar rcs libgeant4-static.a *.o
 find . -name "*.o" -delete
 
-if [[ -n "$PGO_BUILD_FLAGS" ]]; then
-  sed -i -r -e 's| +(-fprofile-[^ ]+ )+||' "$INSTALLROOT/lib64/Geant4-*/Geant4Config.cmake" "$INSTALLROOT/bin/geant4-config"
+if [[ -n "$pgo_build_flags" ]]; then
+  sed -i -r -e 's| +(-fprofile-[^ ]+ )+||' "$INSTALLROOT/lib64/cmake/Geant4/Geant4Config.cmake" "$INSTALLROOT/bin/geant4-config"
 fi
-
-

@@ -13,6 +13,7 @@ patches:
  - 77d01927bd7c989d431035251a5c196fe39bcec9.diff
 requires:
  - gcc-prerequisites
+ - nfpm
 prepend_path:
   LD_LIBRARY_PATH: "$GCC_ROOT/lib64"
 ---

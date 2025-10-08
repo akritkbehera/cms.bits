@@ -1,65 +1,76 @@
 package: vecgeom
 version: "1.2.11"
-tag: 47dd602df7074fcc78036e93cd639ae6270207fd
+variables:
+ vecgeom_backend: Scalar
+ tag: 47dd602df7074fcc78036e93cd639ae6270207fd
 sources: 
-- git+https://gitlab.cern.ch/vecgeom/vecgeom.git?obj=master/%(tag_basename)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
+- git+https://gitlab.cern.ch/vecgeom/vecgeom.git?obj=master/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
 patches:
 - vecgeom-fix-vector.patch
 build_requires:
 - CMake 
 - gmake
 requires:
+- gcc
 - xerces-c
+- compilation_flags
+- compilation_flags_lto
+- compilation_flags_pgo
+- microarch-flag
+env:
+  USE_VECGEOM: "1"
 ---
-export VECGEOM_BACKEND="scalar"
+eval "$setup_pgo"
+setup_pgo_flags "$BUILDDIR" "$PKGNAME/$PKGHASH"
+export BUILD_FLAGS="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
+
 tar -xzf "$SOURCEDIR/$SOURCE0" \
     --strip-components=1 \
     -C "$BUILDDIR" 
 
 patch -p1 < $SOURCEDIR/$PATCH0
 
-if [ -z "$microarch" ]; then
-  microarch="-march=x86-64-v3"
+if [ "$(uname -m)" = "x86_64" ]; then
+  if [[ "%(vecgeom_backend)s" == "Vc" ]]; then
+    SEL_ARCH="$(echo "$selected_microarch" | sed 's|^-m||')"
+    VECGEOM_VECTOR_INST="$(grep ' set(VECGEOM_ISAS ' CMakeLists.txt | tr ' ' '\n' | grep -E "^${SEL_ARCH}$")"
+  fi
 fi
-echo $microarch
-SEL_ARCH=$(echo ${microarch} | sed 's|^-m||')
-echo $SEL_ARCH
-VECGEOM_VECTOR_INST="$(grep ' set(VECGEOM_ISAS ' CMakeLists.txt | tr ' ' '\n' | grep -E "^${SEL_ARCH}$")"
-echo $VECGEOM_VECTOR_INST
 
-cmake_args=(
+rm -rf $BUILDROOT/build && mkdir $BUILDROOT/build && cd $BUILDROOT/build
+
+make_args=(
   -DVecGeom_GIT_DESCRIBE="$PKG_VERSION"
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
   -DBUILD_TESTING=OFF
   -DVecGeom_VERSION="$PKG_VERSION"
   -DCMAKE_CXX_STANDARD:STRING="$CXXSTD"
-  -DCMAKE_AR="$(which gcc-ar)"
-  -DCMAKE_RANLIB="$(which gcc-ranlib)"
+  -DCMAKE_AR="$GCC_ROOT/bin/gcc-ar"
+  -DCMAKE_RANLIB="$GCC_ROOT/bin/gcc-ranlib"
   -DCMAKE_BUILD_TYPE="$LLVM_BUILD_TYPE"
-  -DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG $BUILDFLAGS"
+  -DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG $BUILD_FLAGS"
   -DCMAKE_VERBOSE_MAKEFILE=TRUE
-  -DCMAKE_SHARED_LIBRARY=OFF
-  -DCMAKE_STATIC_LIBRARY_CXX_FLAGS="$BUILDFLAGS"
-  -DCMAKE_STATIC_LIBRARY_C_FLAGS="$BUILDFLAGS"  
-  -DCMAKE_CXX_FLAGS="$BUILDFLAGS"
-  -DCMAKE_C_FLAGS="$BUILDFLAGS"
+  -DBUILD_SHARED_LIBS=OFF
+  -DCMAKE_STATIC_LIBRARY_CXX_FLAGS="$BUILD_FLAGS"
+  -DCMAKE_STATIC_LIBRARY_C_FLAGS="$BUILD_FLAGS"  
+  -DCMAKE_CXX_FLAGS="$BUILD_FLAGS"
+  -DCMAKE_C_FLAGS="$BUILD_FLAGS"
   -DVECGEOM_NO_SPECIALIZATION=ON
   -DVECGEOM_BUILTIN_VECCORE=ON
-  -DVECGEOM_BACKEND="$VECGEOM_BACKEND"
+  -DVECGEOM_BACKEND="%(vecgeom_backend)s"
   -DVECGEOM_GEANT4=OFF
   -DVECGEOM_ROOT=OFF
   -DCMAKE_PREFIX_PATH="$XERCES_C_ROOT"
-  )
+)
 
-if [[ $VECGEOM_BACKEND == "Vc" ]]; then
-  cmake_args+=(
-    -DVECGEOM_VECTOR="${VECGEOM_VECTOR_INST}" 
+if [[ "%(vecgeom_backend)s" == "Vc" ]]; then
+  make_args+=(
+    -DVECGEOM_VECTOR="${VECGEOM_VECTOR_INST}"
   )
 fi
 
-cmake "${cmake_args[@]}"
+cmake "${make_args[@]}" $BUILDDIR
 make ${jobs:+-j$jobs}
 make install verbose=1
-
 
 sed -i -e 's|set(VecCore_DIR .*|set(VecCore_DIR "$INSTALLROOT/lib64/cmake/VecCore")|' $INSTALLROOT/lib64/cmake/VecGeom/VecGeomConfig.cmake

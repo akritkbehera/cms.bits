@@ -9,6 +9,7 @@ sources:
 requires:
  - qd
  - Python
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
@@ -19,12 +20,12 @@ sed -i -e 's|else return Cached_OLHA_user_normal|else return new Cached_OLHA_use
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"
 CONFIG_SUB_URL="${CONFIG_BASE_URL}/config.sub"
-TMPDIR="$BUILDDIR"
+CONFIGDIR="$BUILDDIR"
 
-rm -f "$TMPDIR"/config.{sub,guess}
-curl -L -k -o "$TMPDIR"/config.guess "$CONFIG_GUESS_URL"
-curl -L -k -o "$TMPDIR"/config.sub "$CONFIG_SUB_URL"
-chmod +x "$TMPDIR"/config.{sub,guess}
+rm -f "$CONFIGDIR"/config.{sub,guess}
+curl -L -k -o "$CONFIGDIR"/config.guess "$CONFIG_GUESS_URL"
+curl -L -k -o "$CONFIGDIR"/config.sub "$CONFIG_SUB_URL"
+chmod +x "$CONFIGDIR"/config.{sub,guess}
 
 PYTHON=$(which python3) ./configure --prefix=$INSTALLROOT \
   --with-QDpath=$QD_ROOT \

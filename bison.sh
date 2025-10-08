@@ -7,6 +7,8 @@ build_requires:
 requires:
  - autotools
  - gcc
+env:
+  BISON_PKGDATA_DIR: $BISON_ROOT/share/bison
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

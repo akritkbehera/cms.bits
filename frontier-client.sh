@@ -6,6 +6,8 @@ requires:
  - expat
  - pacparser
  - zlib
+prepend_path:
+  PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

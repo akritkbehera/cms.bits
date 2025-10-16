@@ -1,7 +1,7 @@
 package: opencv
-version: v"%(tag_basename)s"
-tag: 4.9.0
-source: https://github.com/opencv/opencv
+version: 4.9.0
+sources:
+- https://github.com/opencv/opencv/archive/refs/tags/%(version)s.tar.gz
 build_requires:
 - CMake
 - ninja
@@ -14,13 +14,15 @@ requires:
 - zlib
 - eigen
 - OpenBLAS
+- gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR" 
 
-rm -rf ../build
-mkdir ../build
-cd ../build
-
+mkdir $BUILDROOT/build
+cd $BUILDROOT/build
+CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64"
 cmake_args=(
   -G Ninja \
   -DCLHEP_BUILD_CXXSTD="-std=c++$CXXSTD" \
@@ -37,7 +39,7 @@ cmake_args=(
   -DCMAKE_PREFIX_PATH="${LIBPNG_ROOT};${LIBTIFF_ROOT};${LIBJPEG_TURBO_ROOT};${ZLIB_ROOT};${PYTHON3_ROOT};${PY2_NUMPY_ROOT};${PY3_NUMPY_ROOT};${EIGEN_ROOT};${OPENBLAS_ROOT}"
 )
 
-cmake "${cmake_args[@]}" ../$PKGNAME
+cmake "${cmake_args[@]}" $BUILDDIR
 
 ninja -v ${JOBS:+-j$JOBS} 
 ninja install

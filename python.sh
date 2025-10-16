@@ -18,17 +18,8 @@ env:
   PYTHON_MAJOR_MINOR_STR: $(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||' | sed 's|\.||')
   PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages"
 ---
-export STRIPPED=$(echo "$INSTALLROOT" | sed -E 's|(.*)/INSTALLROOT/[[:alnum:]]+/|\1/|') 
 export DB6_ROOT
 export LIBFFI_ROOT
-export CC=${GCC_ROOT}/bin/gcc
-export CXX=${GCC_ROOT}/bin/g++
-
-export PATH=$(echo $PATH | awk -v RS=':' -v ORS=':' '!/python/ {print}' | sed 's/:$//')
-# Unset all Python-related environment variables to avoid system Python leakage
-unset PYTHONUSERBASE
-unset PYTHONHOME
-unset PYTHONPATH
 
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/;
 

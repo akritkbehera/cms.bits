@@ -6,6 +6,7 @@ requires:
 source: https://github.com/libarchive/bzip2
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+
 if [[ ${ARCHITECTURE:0:3} == "osx" ]]; then
   sed -e 's/ -shared/ -dynamiclib/' \
       -e 's/ -Wl,-soname -Wl,[^ ]*//' \

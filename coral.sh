@@ -17,6 +17,7 @@ build_requires:
  - SCRAMV1
  - cms-recipe-tools
 requires:
+ - coral-tools
  - pcre
  - Python
  - gcc
@@ -29,9 +30,6 @@ requires:
  - bz2lib
  - xerces-c
 ---
-required_tools='GCC ZLIB BZ2LIB EXPAT XZ DB6 LIBUUID GDBM LIBFFI SQLITE PYTHON3 CURL NUMACTL FMT ZSTD CUDA ROCM XPMEM GDRCOPY RDMA-CORE LIBPCIACCESS LIBXML2 HWLOC LIBFABRIC UCX PACPARSER OPENMPI ORACLE XERCES-C CPPUNIT PCRE FRONTIER_CLIENT BOOST'
-echo $required_tools
-exit 1
 scram_patches() {
   if [[ "$(uname -s)" == "Darwin" ]]; then
     patchsrc2="perl -p -i -e 's!(<classpath.*/tests\\+.*>)!!;' config/BuildFile.xml"

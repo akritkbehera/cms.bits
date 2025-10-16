@@ -1,5 +1,5 @@
 package: sqlite
-version: "%(tag_basename)s"
+version: 3.36.0
 tag: version-3.36.0
 source: https://github.com/sqlite/sqlite
 requires:

@@ -1,14 +1,12 @@
 package: re2
-version: "2021-06-01"
-sources: 
- - https://github.com/google/re2/archive/%(version)s.tar.gz
+version: "2021_06_01"
+tag: "2021-06-01"
+source: https://github.com/google/re2/
 build_requires:
  - CMake
  - gmake
 ---
-tar -xzf "$SOURCEDIR/${SOURCE0}" \
-    --strip-components=1 \
-    -C "$BUILDDIR"
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 
 cmake \
   -DCMAKE_INSTALL_PREFIX:PATH=$INSTALLROOT \

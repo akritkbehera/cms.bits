@@ -1,10 +1,10 @@
 package: libunwind
-version: 1.8.1-master
+version: 1.8.1
 variables:
   branch: master
   tag: f081cf42917bdd5c428b77850b473f31f81767cf
 sources:
-  - git://github.com/%(package)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
+  - git://github.com/%(package)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s-%(branch)s&output=/%(package)s-%(version)s-%(branch)s-%(tag)s.tgz
 build_requires:
   - autotools
   - gmake

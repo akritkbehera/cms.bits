@@ -1,8 +1,7 @@
 package: autoconf
-version: "v%(tag_basename)s"
-tag: "2.72"
+version: "2.72"
 sources:
-- https://ftp.gnu.org/gnu/autoconf/autoconf-%(tag_basename)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/autoconf/autoconf-%(version)s.tar.gz
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

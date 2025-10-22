@@ -19,6 +19,7 @@ env:
     MAGIC: "%(root_dir)s/share/misc/magic.mgc"
 ---
 CMS_BITS_MARCH=$(gcc -dumpmachine)
+export disable_rpm="yes"
 
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

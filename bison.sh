@@ -1,7 +1,7 @@
 package: bison
 version: "3.8.2"
 sources:
- - http://ftp.gnu.org/gnu/bison/bison-%(version)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/bison/bison-%(version)s.tar.gz
 build_requires:
  - autotools
 requires:

@@ -15,7 +15,6 @@ patches:
  - coral-2_3_21-gcc8.patch
 build_requires:
  - SCRAMV1
- - cms-recipe-tools
 requires:
  - coral-tools
  - pcre
@@ -30,6 +29,10 @@ requires:
  - bz2lib
  - xerces-c
 ---
+echo $SOURCEDIR
+tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
+tar -xzf "$SOURCEDIR/${SOURCE1}" -C "$BUILDDIR"
+
 scram_patches() {
   if [[ "$(uname -s)" == "Darwin" ]]; then
     patchsrc2="perl -p -i -e 's!(<classpath.*/tests\\+.*>)!!;' config/BuildFile.xml"
@@ -43,4 +46,4 @@ scram_patches() {
   patchsrc4='patch -p1 -s -i "$SOURCEDIR/$PATCH1"'
 }
 
-. ${CMS_RECIPE_TOOLS_ROOT}/ScramRecipe
+source scram-project-build.sh

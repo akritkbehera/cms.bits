@@ -1,6 +1,6 @@
 package: pcre2
-version: "%(tag_basename)s"
-tag: pcre2-10.36
+version: "10.36"
+tag: pcre2-%(version)s
 source: https://github.com/PCRE2Project/pcre2
 requires:
  - bz2lib

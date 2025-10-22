@@ -1,6 +1,5 @@
 package: m4
-version: "v%(tag_basename)s"
-tag: "1.4.19"
+version: "1.4.19"
 sources:
 - https://ftp.gnu.org/gnu/m4/m4-%(tag_basename)s.tar.gz
 ---

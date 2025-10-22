@@ -14,4 +14,4 @@ if [ -n "%(crabserver_packages)s" ]; then
 else
   export crabserver_packages="ServerUtilities.py"
 fi
-source crab-build.sh
+INCLUDE crab-build.sh

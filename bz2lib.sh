@@ -1,6 +1,6 @@
 package: bz2lib
-version: "%(tag_basename)s"
-tag: bzip2-1.0.6
+version: "1.0.6"
+tag: bzip2-%(version)s
 requires:
  - gcc
 source: https://github.com/libarchive/bzip2

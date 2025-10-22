@@ -1,7 +1,7 @@
 package: gdb
 version: "16.2"
 sources:
-- https://ftp.gnu.org/gnu/gdb/gdb-%(version)s.tar.gz
+- https://mirror.ibcp.fr/pub/gnu/gdb/gdb-%(version)s.tar.gz
 requires:
  - Python
  - zlib

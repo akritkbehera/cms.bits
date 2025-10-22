@@ -1,12 +1,11 @@
 package: gdbm
-version: "%(tag_basename)s"
-tag: "1.10"
+version: "1.10"
 build_requires:
  - gmake 
 requires:
  - gcc
 sources: 
-- http://ftp.gnu.org/gnu/gdbm/gdbm-%(tag_basename)s.tar.gz
+- https://mirror.ibcp.fr/pub/gnu/gdbm/gdbm-%(version)s.tar.gz
 ---
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"

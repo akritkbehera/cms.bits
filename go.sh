@@ -11,4 +11,4 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-rsync -a ./ $INSTALLROOT/
+rsync -a $BUILDDIR/ $INSTALLROOT/

@@ -19,19 +19,19 @@ requires:
  - zstd
  - libunwind
  - cuda
+prepend_path:
+  PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE1}" \
-    -C "$BUILDDIR" 
-
-mv $BUILDDIR/iwyu-* $BUILDDIR/include-what-you-use
-pushd $BUILDDIR/include-what-you-use
-    sed -ibak '/add_clang_subdirectory(libclang)/a add_subdirectory(include-what-you-use)' CMakeLists.txt
-popd
-
+    -C "$BUILDDIR"
 mkdir -p "$BUILDDIR/$PKGNAME-$PKGVERSION"
 tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR/$PKGNAME-$PKGVERSION" --strip-components=1
 
-rm -rf ../build && mkdir -p ../build && cd ../build
+mv $BUILDDIR/iwyu-$PKG_VERSION-"%(iwyuCommit)s" include-what-you-use
+cp -a $BUILDDIR/include-what-you-use $BUILDDIR/$PKGNAME-$PKGVERSION/clang/tools/
+sed -ibak '/add_clang_subdirectory(libclang)/a add_subdirectory(include-what-you-use)' $BUILDDIR/$PKGNAME-$PKGVERSION/clang/tools/CMakeLists.txt
+
+rm -rf $BUILDROOT/build && mkdir -p $BUILDROOT/build && cd $BUILDROOT/build
 
 host_triple=$(gcc -dumpmachine)
 
@@ -53,11 +53,11 @@ cmake_args=(
   -DCMAKE_PREFIX_PATH="${ZLIB_ROOT};${LIBXML2_ROOT};${ZSTD_ROOT};${LIBUNWIND_ROOT}"
 )
 
-if [ -n "${use_system_gcc}" ]; then
+if [ -z "${use_system_gcc}" ]; then
   cmake_args+=(-DLLVM_BINUTILS_INCDIR:STRING="${GCC_ROOT}/include")
 fi
 
-if [ -z "${without_cuda}" ]; then
+if [ -z "$USE_CUDA" ]; then
   cmake_args+=(
     -DLIBOMPTARGET_NVPTX_ALTERNATE_HOST_COMPILER=/usr/bin/gcc
     -DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES="${omptarget_cuda_archs}"
@@ -82,7 +82,7 @@ find $BUILDDIR/$PKGNAME-$PKGVERSION/clang/tools/scan-view -type f -exec install 
 rm -f $INSTALLROOT/bin/FileRadar.scpt $INSTALLROOT/bin/GetRadarVersion.scpt
 rm -f $INSTALLROOT/bin/set-xcode-analyzer
 
-if [ -n "${use_system_gcc}" ]; then
+if [ -z "${use_system_gcc}" ]; then
     pushd $INSTALLROOT/bin
         [ -e clang++.cfg ] && exit 1
         [ -e clang.cfg   ] && exit 1

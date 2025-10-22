@@ -13,14 +13,14 @@ variables:
   m4Version:    "1.4.19"
   flexVersion:  "2.6.4"
 sources:
- - https://gmplib.org/download/gmp/gmp-%(gmpVersion)s.tar.bz2
- - http://www.mpfr.org/mpfr-%(mpfrVersion)s/mpfr-%(mpfrVersion)s.tar.bz2
- - https://ftp.gnu.org/gnu/mpc/mpc-%(mpcVersion)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/gmp/gmp-%(gmpVersion)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/mpfr/mpfr-%(mpfrVersion)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/mpc/mpc-%(mpcVersion)s.tar.gz
  - https://libisl.sourceforge.io/isl-%(islVersion)s.tar.bz2
- - http://ftp.gnu.org/gnu/bison/bison-%(bisonVersion)s.tar.gz
- - https://sourceware.org/pub/binutils/releases/binutils-%(binutilsVersion)s.tar.bz2
+ - https://mirror.ibcp.fr/pub/gnu/bison/bison-%(bisonVersion)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/binutils/binutils-%(binutilsVersion)s.tar.gz
  - https://sourceware.org/pub/elfutils/%(elfutilsVersion)s/elfutils-%(elfutilsVersion)s.tar.bz2
- - http://ftp.gnu.org/gnu/m4/m4-%(m4Version)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/m4/m4-%(m4Version)s.tar.gz
  - https://github.com/westes/flex/releases/download/v%(flexVersion)s/flex-%(flexVersion)s.tar.gz
  - https://zlib.net/fossils/zlib-%(zlibVersion)s.tar.gz
  - https://github.com/facebook/zstd/releases/download/v%(zstdVersion)s/zstd-%(zstdVersion)s.tar.gz

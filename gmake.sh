@@ -1,8 +1,7 @@
 package: gmake
-version: "%(tag_basename)s"
-tag: "4.3"
+version: "4.3"
 sources:
- - ftp://ftp.gnu.org/gnu/make/make-%(tag_basename)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/make/make-%(version)s.tar.gz
 ---
 tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
 cd $BUILDDIR/make-*

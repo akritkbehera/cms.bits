@@ -1,8 +1,7 @@
 package: automake
-version: "v%(tag_basename)s"
-tag: '1.16.5'
+version: "1.16.5"
 sources: 
-- https://ftp.gnu.org/gnu/automake/automake-%(tag_basename)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/automake/automake-%(version)s.tar.gz
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

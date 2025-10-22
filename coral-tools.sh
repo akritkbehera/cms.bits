@@ -8,7 +8,6 @@ variables:
 requires:
  - compilation_flags_lto
  - compilation_flags
- - compilation_flags_pgo
  - cuda-flags
  - microarch-flag
  - SCRAMV1

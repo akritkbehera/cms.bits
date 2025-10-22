@@ -1,14 +1,7 @@
 package: demo
-version: 6.4.0
+version: "v1"
 requires:
- - Python
- - gcc
- - rpm
+ - zlib
 ---
-echo $DEMO_HASH
-echo $PYTHON_VERSION
-echo $PYTHON_HASH
-
-echo $FULL_RUNTIME_REQUIRES
 
 

@@ -1,6 +1,6 @@
 package: ROOT
-version: "v1"
-tag: cms/v6-36-00-patches/1715228c2c
+version: 6.36.05
+tag: 7947cea45c6fdee76ce1afc0f8a652df351b71bd
 source: https://github.com/cms-sw/root
 env:
  ROOTSYS: $ROOT_ROOT

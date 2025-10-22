@@ -1,8 +1,7 @@
 package: libtool
-version: "v%(tag_basename)s"
-tag: "2.5.4"
+version: "2.5.4"
 sources:
-- https://ftp.gnu.org/gnu/libtool/libtool-%(tag_basename)s.tar.gz
+- https://mirror.ibcp.fr/pub/gnu/libtool/libtool-%(version)s.tar.gz
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

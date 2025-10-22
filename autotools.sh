@@ -8,11 +8,11 @@ variables:
  gettext_version: "0.22"
  pkg_config_version: "0.29.2"
 sources:
- - https://ftp.gnu.org/gnu/m4/m4-%(m4_version)s.tar.gz
- - https://ftp.gnu.org/gnu/autoconf/autoconf-%(autoconf_version)s.tar.gz
- - https://ftp.gnu.org/gnu/automake/automake-%(automake_version)s.tar.gz
- - https://ftp.gnu.org/gnu/libtool/libtool-%(libtool_version)s.tar.gz
- - https://ftp.gnu.org/gnu/gettext/gettext-%(gettext_version)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/m4/m4-%(m4_version)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/autoconf/autoconf-%(autoconf_version)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/automake/automake-%(automake_version)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/libtool/libtool-%(libtool_version)s.tar.gz
+ - https://mirror.ibcp.fr/pub/gnu/gettext/gettext-%(gettext_version)s.tar.gz
  - https://pkgconfig.freedesktop.org/releases/pkg-config-%(pkg_config_version)s.tar.gz
 requires:
 - gcc

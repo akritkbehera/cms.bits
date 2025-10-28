@@ -14,7 +14,7 @@ requires:
   - triton-inference-client
   - professor2
   - rivet
-  - frontier-client
+  - frontier_client
   - onnxruntime
   - openldap
   - pacparser

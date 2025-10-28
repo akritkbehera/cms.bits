@@ -2,6 +2,7 @@ package: rivet
 version: 4.1.0
 variables:
   override_microarch: ""
+  package_vectorization: ""
 requires:
  - hepmc3
  - fastjet
@@ -10,30 +11,46 @@ requires:
  - hdf5
  - highfive
  - microarch-flag
-build_requires:
  - Python
+build_requires:
  - py-cython
  - autotools
 sources:
 - git+https://gitlab.com/hepcedar/rivet.git?obj=master/%(package)s-%(version)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
-- file://scram-tools.file/tools/eigen/env.sh 
 patches:
  - rivet-duplicate-libs.patch
  - rivet-pyextfjcontrib.patch
+prepend_path:
+  PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
-if [[ -z "%(override_microarch)s" ]]; then
-  export selected_microarch="-march=$default_microarch_name"
-else:
-  export selected_microarch="%(override_microarch)s"
-fi
-
+export PYTHONHOME=$PYTHON_ROOT
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
 patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
-source $SOURCEDIR/$SOURCE1
+
+export ROOT_CXXMODULES="0"
+export PKG_VECTORIZATION='%(package_vectorization)s'
+export CMSDISTDIR=$BITS_REPO_DIR
+export CMS_CXX_STANDARD=$CXXSTD
+export COMPILER_CXXFLAGS="$arch_build_flags"
+if [[ -z $arch_build_flags ]]; then
+  if [[ -n '%(override_microarch)s' ]]; then
+    export COMPILER_CXXFLAGS='%(override_microarch)s'
+  else
+    export COMPILER_CXXFLAGS="$default_microarch_name"
+  fi
+fi
+export ORACLE_ENV_ROOT=""
+export CUDA_FLAGS="$nvcc_cuda_flags"
+export LTO_FLAGS="$lto_build_flags"
+export PGO_FLAGS="$pgo_build_flags" 
+
+if [[ " $REQUIRES " == *" Python "* ]]; then
+  export PYTHON3_LIB_SITE_PACKAGES
+fi
 
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"

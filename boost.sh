@@ -13,6 +13,7 @@ requires:
 - openmpi
 - xz
 - zstd
+- gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
@@ -58,7 +59,7 @@ b2 -q \
    --without-math \
    --without-random \
    --without-wave \
-   --user-config=${PWD}/user-config.jam \
+   --user-config=${BUILDDIR}/user-config.jam \
    toolset=${TOOLSET} \
    link=shared \
    threading=multi \
@@ -75,3 +76,23 @@ b2 -q \
    stage
 
 mkdir -p $INSTALLROOT/lib $INSTALLROOT/include
+
+pushd stage/lib
+  find . -name "*.so*" -type f | tar cf - -T - | (cd $INSTALLROOT/lib; tar xfp -)
+  find . -name "*.cmake" -type f | tar cf - -T - | (cd $INSTALLROOT//lib; tar xfp -)
+popd
+find boost -name '*.[hi]*' | tar cf - -T - | ( cd $INSTALLROOT//include; tar xfp -)
+
+# Fix paths inside CMake files
+find "$INSTALLROOT/lib/cmake" -name '*.cmake' -exec \
+  sed -i \
+  -e "s#$BUILDDIR/stage#$INSTALLROOT/#g" \
+  -e 's#_BOOST_INCLUDEDIR "${_BOOST_CMAKEDIR}/../../../"#_BOOST_INCLUDEDIR "${_BOOST_CMAKEDIR}/../../include/"#g' {} +
+
+# Fix library symlinks (.so → .so.<version>)
+find "$INSTALLROOT/lib" -name "*.so.*" | while read -r l; do
+  dir=$(dirname "$l")
+  base=$(basename "$l")
+  sofile=$(echo "$base" | sed -e 's|\.so\..*|.so|')
+  (cd "$dir" && ln -sf "$base" "$sofile")
+done

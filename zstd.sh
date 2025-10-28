@@ -1,6 +1,6 @@
 package: zstd
-version: "%(tag_basename)s"
-tag: v1.5.7
+version: "1.5.7"
+tag: v%(version)s
 source: https://github.com/facebook/zstd
 build_requires:
  - CMake
@@ -16,7 +16,7 @@ cmake build/cmake \
  -DCMAKE_BUILD_TYPE=$LLVM_BUILD_TYPE \
  -DZSTD_BUILD_PROGRAMS:BOOL=OFF \
  -DZSTD_LEGACY_SUPPORT:BOOL=OFF \
- -DCMAKE_INSTALL_PREFIX:STRING=%{i} \
+ -DCMAKE_INSTALL_PREFIX:STRING=$INSTALLROOT \
  -DCMAKE_INSTALL_LIBDIR:STRING=lib \
  -Dzstd_VERSION:STRING=${PKGVERSION}
 

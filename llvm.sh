@@ -57,7 +57,7 @@ if [ -z "${use_system_gcc}" ]; then
   cmake_args+=(-DLLVM_BINUTILS_INCDIR:STRING="${GCC_ROOT}/include")
 fi
 
-if [ -z "$USE_CUDA" ]; then
+if [ -n "$CUDA_ROOT" ]; then
   cmake_args+=(
     -DLIBOMPTARGET_NVPTX_ALTERNATE_HOST_COMPILER=/usr/bin/gcc
     -DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES="${omptarget_cuda_archs}"

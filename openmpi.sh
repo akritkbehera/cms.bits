@@ -18,7 +18,7 @@ requires:
  - cuda
  - zlib
 sources:
-- git+https://github.com/open-mpi/ompi.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
+ - git+https://github.com/open-mpi/ompi.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
 patches:
  - openmpi-setenv-fix.patch
 env:

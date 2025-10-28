@@ -10,7 +10,6 @@ sources:
     - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_16_0_X/g14/rpm-set_runpath.file
 build_requires:
     - autotools
-    - gcc
     - bootstrap-bundle
     - patchelf-bootstrap
 env:

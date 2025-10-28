@@ -1,11 +1,17 @@
 package: opencv
 version: 4.9.0
+variables:
+  branch: master
+  github_user: opencv
+  override_microarch: ""
+  package_vectorization: ""
 sources:
-- https://github.com/opencv/opencv/archive/refs/tags/%(version)s.tar.gz
+- git+https://github.com/%(github_user)s/opencv.git?obj=%(branch)s/%(version)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(version)s.tgz
 build_requires:
 - CMake
 - ninja
 requires:
+- gcc
 - Python
 - py-numpy
 - libpng
@@ -14,17 +20,23 @@ requires:
 - zlib
 - eigen
 - OpenBLAS
-- gcc
 ---
+export CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64"
+
+if [ "$(uname -m)" = "aarch64" ]; then
+  export CMS_EIGEN_CXX_FLAGS="-DEIGEN_NEON_GEBP_NR=4 ${CMS_EIGEN_CXX_FLAGS}"
+fi
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR" 
 
 mkdir $BUILDROOT/build
 cd $BUILDROOT/build
-CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64"
+
 cmake_args=(
   -G Ninja \
+  -DCMAKE_CXX_STANDARD=20 \
   -DCLHEP_BUILD_CXXSTD="-std=c++$CXXSTD" \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
   -DCMAKE_BUILD_TYPE=$LLVM_BUILD_TYPE \
@@ -33,9 +45,11 @@ cmake_args=(
   -DWITH_EXAMPLES=OFF \
   -DWITH_QT=OFF \
   -DWITH_GTK=OFF \
-  -DPYTHON3_EXECUTABLE:FILEPATH="${PYTHON_ROOT}/bin/python" \
-  -DPYTHON3_INCLUDE_DIR:PATH="${PYTHON_ROOT}/include/python*/" \
-  -DPYTHON3_LIBRARY:FILEPATH="${PYTHON_ROOT}/lib/libpython*.*.so" \
+  -DPYTHON3_EXECUTABLE:FILEPATH="${PYTHON_ROOT}/bin/python3" \
+  -DPYTHON3_INCLUDE_DIR:PATH="${PYTHON_ROOT}/include/python3.9/" \
+  -DPYTHON3_LIBRARY:FILEPATH="${PYTHON_ROOT}/lib/libpython3.9.so" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CXX_FLAGS="$CMS_EIGEN_CXX_FLAGS $default_microarch_name"\
   -DCMAKE_PREFIX_PATH="${LIBPNG_ROOT};${LIBTIFF_ROOT};${LIBJPEG_TURBO_ROOT};${ZLIB_ROOT};${PYTHON3_ROOT};${PY2_NUMPY_ROOT};${PY3_NUMPY_ROOT};${EIGEN_ROOT};${OPENBLAS_ROOT}"
 )
 

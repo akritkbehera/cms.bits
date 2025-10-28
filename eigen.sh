@@ -5,12 +5,14 @@ source: https://github.com/cms-externals/eigen-git-mirror
 build_requires:
 - CMake
 - gcc
+prepend_path:
+  PKG_CONFIG_PATH: $EIGEN_ROOT/share/pkgconfig
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$PKGNAME-$PKGVERSION"/
 
 cmake $PKGNAME-$PKGVERSION \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
   -DBUILD_TESTING=OFF \
-  -DCMAKE_CXX_STANDARD=20
+  -DCMAKE_CXX_STANDARD=$CXXSTD
 
 make install

@@ -13,3 +13,4 @@ build_results.txt
 .pip.sh.swp
 cms-log
 envflags.yaml
+scram-tools/

@@ -6,4 +6,4 @@ requires:
 - py-cffi
 - py-six
 ---
-PipPreBuild='export CARGO_HOME=/tmp/cargo_home; export CARGO_HTTP_CAINFO=/etc/ssl/cert.pem'
+PipPreBuild='export CARGO_HOME=/tmp/cargo_home; export CARGO_HTTP_CAINFO=/etc/ssl/cert.pem; export OPENSSL_DIR=/usr'

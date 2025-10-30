@@ -6,6 +6,8 @@ sources:
  - git://github.com/NixOS/patchelf.git?obj=%(git_branch)s/%(version)s&export=patchelf-%(version)s&output=/patchelf-%(version)s.tgz
 build_requires:
  - autotools
+requires:
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

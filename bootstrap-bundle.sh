@@ -7,8 +7,6 @@ build_requires:
   - file-bootstrap
   - xz-bootstrap
   - libarchive-bootstrap
-prefer-system:
-  - gcc
 ---
 libdir="lib64"
 soname="so"

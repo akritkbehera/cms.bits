@@ -1,4 +1,4 @@
-package: axol1tl
+package: AXOL1TL
 version: 5.0.1
 build_requires:
  - gmake

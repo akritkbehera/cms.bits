@@ -2,6 +2,8 @@ package: OpenBLAS
 version: "%(tag_basename)s"
 tag: v0.3.27
 source: https://github.com/OpenMathLib/OpenBLAS
+requires:
+ - gcc
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 

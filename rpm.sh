@@ -9,9 +9,10 @@ sources:
     - git+https://github.com/%(github_user)s/%(github_repo)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
     - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_16_0_X/g14/rpm-set_runpath.file
 build_requires:
-    - autotools
     - bootstrap-bundle
     - patchelf-bootstrap
+    - gcc
+    - autotools
 env:
     RPM_CONFIGDIR: "%(root_dir)s/libx/rpm"
     RPM_POPTEXEC_PATH: "%(root_dir)s/bin"
@@ -27,33 +28,32 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 autoreconf -fiv
 
 CFLAGS_PLATF="-fPIC"
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    CFLAGS_PLATF="-arch x86_64 -fPIC -D_FORTIFY_SOURCE=0"
+if [[ $(uname) == "darwin"* ]]; then
+    export CFLAGS_PLATF="-arch x86_64 -fPIC -D_FORTIFY_SOURCE=0"
     export LIBS_PLATF="-liconv"
 else
     case "$(uname -m)" in
         aarch64)
-            LIBS_PLATF="-ldl -lrt -pthread"
+            export LIBS_PLATF="-ldl -lrt -pthread"
             ;;
         x86_64)
-            LIBS_PLATF="-ldl"
+            export LIBS_PLATF="-ldl"
             ;;
     esac
 fi
 
-USER_CFLAGS="-ggdb -O0"
-USER_CXXFLAGS="-ggdb -O0"
+export USER_CFLAGS="-ggdb -O0"
+export USER_CXXFLAGS="-ggdb -O0"
 
-if [[ -z "${use_system_gcc:-}" && "$OSTYPE" == "linux-gnu" ]]; then
-    OS_CFLAGS="-I$GCC_ROOT/include"
-    OS_CXXFLAGS="-I$GCC_ROOT/include"
-    OS_CPPFLAGS="-I$GCC_ROOT/include"
-    OS_LDFLAGS="-L$GCC_ROOT/lib"
+if [[ -n "$GCC_ROOT" && $(uname) == "Linux" ]]; then
+    export OS_CFLAGS="-I$GCC_ROOT/include"
+    export OS_CXXFLAGS="-I$GCC_ROOT/include"
+    export OS_CPPFLAGS="-I$GCC_ROOT/include"
+    export OS_LDFLAGS="-L$GCC_ROOT/lib"
 fi
 
 
 perl -p -i -e's|-O2|-O0|' ./configure
-
 ./configure \
   --prefix="$INSTALLROOT" \
   --build="$CMS_BITS_MARCH" \

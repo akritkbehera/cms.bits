@@ -3,6 +3,8 @@ version: "0.4.3"
 build_requires:
 - CMake
 - Python
+requires:
+- gcc
 sources: 
 - https://github.com/dpiparo/vdt/archive/v%(version)s.tar.gz
 patches:
@@ -14,13 +16,23 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 < $SOURCEDIR/$PATCH0
 
-[[ "$(uname -m)" == "x86_64" ]] && SSE=ON || SSE=OFF
-cmake . \
-    -DCMAKE_INSTALL_PREFIX=${INSTALLROOT:-/usr/local} \
-    -DPYTHONLIBS_VERSION_STRING=${PYTHON_VERSION:-3.9} \
-    -DPRELOAD:BOOL=ON \
-    -DSSE:BOOL=$SSE \
-    -DNEON:BOOL=OFF
+cmake_args=(
+  -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
+  -DPYTHONLIBS_VERSION_STRING=%(python_major_minor)s
+  -DNEON:BOOL=OFF
+  )
+
+if [[ "$(uname -m)" == "x86_64" ]]; then
+  cmake_args+=(
+    -DSSE:BOOL=ON
+  )
+else
+  cmake_args+=(
+    -DSSE:BOOL=OFF
+  )
+fi
+
+cmake "${cmake_args[@]}" $BUILDDIR
 
 make ${JOBS:+-j$JOBS} VERBOSE=1
 make install

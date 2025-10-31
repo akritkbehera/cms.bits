@@ -205,7 +205,7 @@ requires:
   - py-mpmath
   - py-msgpack
   - py-multidict
-  - py-nbclassic
+#  - py-nbclassic
   - py-nbclient
   - py-nbconvert
   - py-nbformat
@@ -355,7 +355,7 @@ requires:
   - py-termcolor
   - py-terminado
   - py-testpath
-  - py-test-download
+#  - py-test-download
   - py-tinycss2
   - py-toml
   - py-tomli
@@ -393,4 +393,3 @@ requires:
   - py-zipp
   - py-iminuit
 ---
-

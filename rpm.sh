@@ -148,7 +148,6 @@ else
     dynamic_path_var="LD_LIBRARY_PATH"
     dynamic_lib_ext="so"
 fi
-tree -L 1 $INSTALLROOT
 MAGIC=$INSTALLROOT/share/misc/magic.mgc \
 PATH="$INSTALLROOT/bin:${PATH}" \
 $INSTALLROOT/bin/set_runpath \

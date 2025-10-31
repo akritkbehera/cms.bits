@@ -1,19 +1,22 @@
 package: yoda
-version: "v2.1.0"
+version: "2.1.0"
 tag: "yoda-2.1.0"
 requires:
-- Python
-- ROOT
-- hdf5
-- highfive
+ - Python
+ - gcc
+ - ROOT
+ - hdf5
+ - highfive
 build_requires:
-- py-cython
-- autotools
+ - py-cython
+ - autotools
 source: https://gitlab.com/hepcedar/yoda.git
+prepend_path:
+  PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 autoreconf -fiv
-export PYTHONHOME=$PYTHON_ROOT
+sed -i 's|/usr/bin/env python|/usr/bin/env python3|g' $(grep -rl '/usr/bin/env python' .)
 PYTHON=$(which python3) ./configure --prefix=$INSTALLROOT --enable-root --with-highfive=${HIGHFIVE_ROOT} CXX="mpicxx"
 make ${JOBS:+-j$JOBS}
 make install

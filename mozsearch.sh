@@ -23,4 +23,4 @@ cd clang-plugin
 GCC_ROOT=${GCC_ROOT} make ${JOBS:+-j$JOBS} build
 
 mkdir -p $INSTALLROOT/lib64
-cp clang-plugin/libclang-index-plugin.so $INSTALLROOT/lib64
+cp $BUILDDIR/clang-plugin/libclang-index-plugin.so $INSTALLROOT/lib64

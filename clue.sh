@@ -1,15 +1,10 @@
 package: clue
 version: 1.0.0
-variables:
- commit: "1_0_0"
-sources:
- - https://gitlab.cern.ch/kalos/%(package)s/-/archive/%(commit)s/%(package)s-%(commit)s.tar.gz
+tag: V_1_0_0
+source: https://gitlab.cern.ch/kalos/clue.git
 requires:
  - alpaka
 ---
-tar -xzf "$SOURCEDIR/${SOURCE0}" \
-    --strip-components=1 \
-    -C "$BUILDDIR"
-
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 mkdir -p $INSTALLROOT/include
 cp -ar clueLib/include $INSTALLROOT/include

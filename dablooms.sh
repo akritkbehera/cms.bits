@@ -1,9 +1,10 @@
 package: dablooms
 version: 0.9.1
-sources:
- - https://github.com/bitly/dablooms/archive/v%(version).tar.gz
+tag: v%(version)s
+source: https://github.com/bitly/dablooms
 ---
-tar -xzf "$SOURCEDIR/${SOURCE0}" \
-    --strip-components=1 \
-    -C "$BUILDDIR"
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 
+make all
+
+make install prefix=$INSTALLROOT

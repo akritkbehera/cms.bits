@@ -1,6 +1,6 @@
 package: libfabric
 version: "2.1.0"
-tag: v2.1.0
+tag: v%(version)s
 source: https://github.com/ofiwg/libfabric
 requires:
  - curl
@@ -9,9 +9,9 @@ requires:
  - xpmem
  - cuda
  - gdrcopy
+ - autotools
  - gcc
 ---
-
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 
 ./autogen.sh
@@ -52,8 +52,7 @@ configure_args+=(
 )
 
 # CUDA configuration
-if [[ -z "${without_cuda}" ]]; then
-    # CUDA enabled (default)
+if [[ -n "$CUDA_ROOT" ]]; then
     configure_args+=(
         "--enable-cuda-dlopen"
         "--enable-gdrcopy-dlopen"
@@ -61,7 +60,6 @@ if [[ -z "${without_cuda}" ]]; then
         "--with-gdrcopy=${GDRCOPY_ROOT}"
     )
 else
-    # CUDA disabled
     configure_args+=(
         "--disable-cuda-dlopen"
         "--disable-gdrcopy-dlopen"
@@ -71,14 +69,12 @@ else
 fi
 
 # ROCm configuration
-if [[ -z "${without_rocm}" ]]; then
-    # ROCm enabled (default)
+if [[ -n "$ROCM_ROOT" ]]; then
     configure_args+=(
         "--enable-rocr-dlopen"
         "--with-rocr=${ROCM_ROOT}"
     )
 else
-    # ROCm disabled
     configure_args+=(
         "--disable-rocr-dlopen"
         "--without-rocr"

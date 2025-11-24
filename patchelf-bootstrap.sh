@@ -2,14 +2,14 @@ package: patchelf-bootstrap
 version: "0.13"
 variables:
  git_branch: master
-sources: 
- - git://github.com/NixOS/patchelf.git?obj=%(git_branch)s/%(version)s&export=patchelf-%(version)s&output=/patchelf-%(version)s.tgz
+sources:
+ - https://github.com/NixOS/patchelf/releases/download/%(version)s/patchelf-%(version)s.tar.bz2
 build_requires:
  - autotools
 requires:
- - gcc
+ - autotools
 ---
-tar -xzf "$SOURCEDIR/${SOURCE0}" \
+tar -xjf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 

@@ -4,6 +4,7 @@ sources:
  - https://mirror.ibcp.fr/pub/gnu/make/make-%(version)s.tar.gz
 ---
 tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
+
 cd $BUILDDIR/make-*
 ./configure --prefix=$INSTALLROOT
 make ${JOBS+-j $JOBS}

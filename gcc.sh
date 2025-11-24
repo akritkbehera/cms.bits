@@ -13,47 +13,30 @@ patches:
  - 77d01927bd7c989d431035251a5c196fe39bcec9.diff
 requires:
  - gcc-prerequisites
-prepend_path:
-  LD_LIBRARY_PATH: "$GCC_ROOT/lib64"
 ---
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
-for f in "$SOURCEDIR"/*; do
-    case "$f" in
-        *.diff|*.patch) cp -- "$f" "$BUILDDIR";;
-        *.tar.gz|*.tgz) tar -xzf "$f" -C "$BUILDDIR";;
-        *.tar.bz2) tar -xjf "$f" -C "$BUILDDIR";;
-        *.tar.xz) tar -xJf "$f" -C "$BUILDDIR";;
-        *.tar) tar -xf "$f" -C "$BUILDDIR";;
-    esac
-done
+patch -p1 <$SOURCEDIR/$PATCH0
+patch -p1 <$SOURCEDIR/$PATCH1
 
-cp $PATCH0 $PATCH1 gcc-*/
-cd gcc-*
-patch -p1 < $PATCH0
-patch -p1 < $PATCH1
-cd $BUILDDIR
-<<'DISABLE'
 cat << \EOF > ${PKGNAME}-req
 #!/bin/sh
 %{__find_requires} $* | \
 sed -e '/GLIBC_PRIVATE/d'
 EOF
-%global __find_requires %{_builddir}/%{moduleName}/%{name}-req
-chmod +x %{__find_requires}
-DISABLE
-OS="$(uname)"
-ARCH="$(uname -m)"
+chmod +x $BUILDDIR/$PKGNAME-req
 
-patch_gcc_cms() {
-  cd gcc-*
-  # Only on 64-bit Linux
-  if [[ "$OS" == "Linux" ]] && [[ "$ARCH" == "x86_64" ]]; then
-    cat <<\EOF_CONFIG_GCC >> gcc/config.gcc
+export MARCH=$(gcc -dumpmachine)
+
+# Only on 64-bit Linux
+if [[ "$(uname -s)" == "Linux" ]] && [[ "$(uname -m)" == "x86_64" ]]; then
+  cat <<\EOF_CONFIG_GCC >> gcc/config.gcc
 # CMS patch to include gcc/config/i386/cms.h when building gcc
 tm_file="$tm_file i386/cms.h"
 EOF_CONFIG_GCC
-
-    cat <<\EOF_CMS_H > gcc/config/i386/cms.h
+  cat <<\EOF_CMS_H > gcc/config/i386/cms.h
 #undef LINK_SPEC
 #define LINK_SPEC "%{" SPEC_64 ":-m elf_x86_64} %{" SPEC_32 ":-m elf_i386} \
  %{shared:-shared} \
@@ -64,22 +47,19 @@ EOF_CONFIG_GCC
      %{" SPEC_64 ":%{!dynamic-linker:-dynamic-linker " GNU_USER_DYNAMIC_LINKER64 "}}} \
    %{static:-static}} -z common-page-size=4096 -z max-page-size=4096"
 EOF_CMS_H
-  fi
+fi
 
-  # Always include the general CMS header
-  cat <<\EOF_CONFIG_GCC >> gcc/config.gcc
+# Always include the general CMS header
+cat <<\EOF_CONFIG_GCC >> gcc/config.gcc
 # CMS patch to include gcc/config/general-cms.h when building gcc
 tm_file="$tm_file general-cms.h"
 EOF_CONFIG_GCC
-
-  cat <<\EOF_CMS_H > gcc/config/general-cms.h
+cat <<\EOF_CMS_H > gcc/config/general-cms.h
 #undef CC1PLUS_SPEC
 #define CC1PLUS_SPEC "-fabi-version=0"
 EOF_CMS_H
-cd ..
-}
 
-if [ "$OS" = "Darwin"]; then
+if [ "$(uname -s)" == "Darwin"]; then
   export CC="clang"
   export CXX="clang++"
   export CPP="clang -E"
@@ -114,36 +94,30 @@ find "${INSTALLROOT}"/*/lib/ldscripts -type f -exec \
 export PATH="${INSTALLROOT}/tmp/sw/bin:${PATH}"
 
 CONF_GCC_ARCH_SPEC="--enable-frame-pointer"
-
-if [ "$ARCH" = "x86_64" ]; then
-    if [ $(grep -oE '[0-9]+' /etc/redhat-release 2>/dev/null | head -1 || echo 0) -gt 9 ]; then
+if [[ "$(uname -m)" == "x86_64" ]]; then
+    if [[ $(grep -oE '[0-9]+' /etc/redhat-release 2>/dev/null | head -1 || echo 0) -gt 9 ]]; then
         CONF_GCC_ARCH_SPEC="$CONF_GCC_ARCH_SPEC --with-arch=x86-64-v3"
     fi
 fi
-
-if [ "$ARCH" = "aarch64" ]; then
+if [[ "$(uname -m)" == "aarch64" ]]; then
     CONF_GCC_ARCH_SPEC="$CONF_GCC_ARCH_SPEC \
                         --enable-threads=posix --enable-initfini-array --disable-libmpx"
 fi
-
-if [ "$ARCH" = "ppc64le" ]; then
+if [[ "$(uname -m)" == "ppc64le" ]]; then
     CONF_GCC_ARCH_SPEC="$CONF_GCC_ARCH_SPEC \
                         --enable-threads=posix --enable-initfini-array \
                         --enable-targets=powerpcle-linux --enable-secureplt --with-long-double-128 \
                         --with-cpu=power8 --with-tune=power8 --disable-libmpx"
 fi
 
-ls -l
-
-cd gcc-*
-rm gcc/DEV-PHASE
-touch gcc/DEV-PHASE
-mkdir -p obj
-cd obj
+rm $BUILDDIR/gcc-*/DEV-PHASE
+touch $BUILDDIR/gcc-*/DEV-PHASE
+mkdir -p $BUILDDIR/gcc-*/obj
+cd $BUILDDIR/gcc-*/obj
 
 export LD_LIBRARY_PATH=$INSTALLROOT/lib64:$INSTALLROOT/lib:$LD_LIBRARY_PATH
 
-../configure --prefix=$INSTALLROOT --disable-multilib --disable-nls --disable-dssi \
+$BUILDDIR/configure --prefix=$INSTALLROOT --disable-multilib --disable-nls --disable-dssi \
              --enable-languages=c,c++,fortran$ADDITIONAL_LANGUAGES --enable-gnu-indirect-function \
              --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object \
              --enable-plugin --with-linker-hash-style=gnu --enable-linker-build-id \
@@ -156,8 +130,8 @@ export LD_LIBRARY_PATH=$INSTALLROOT/lib64:$INSTALLROOT/lib:$LD_LIBRARY_PATH
              CFLAGS="-I$INSTALLROOT/tmp/sw/include" CXXFLAGS="-I$INSTALLROOT/tmp/sw/include" LDFLAGS="-L$INSTALLROOT/tmp/sw/lib"
 
 make ${JOBS:+-j "$JOBS"} profiledbootstrap
+make install
 
-cd $BUILDDIR/gcc-*/obj && make install
 ln -s gcc $INSTALLROOT/bin/cc
 find $INSTALLROOT/lib $INSTALLROOT/lib64 -name '*.la' -exec rm -f {} \; || true
 rm -rf $INSTALLROOT/lib/pkg-config

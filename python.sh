@@ -1,6 +1,6 @@
 package: Python
-version: "%(tag_basename)s"
-tag: "v3.9.14"
+version: "3.9.14"
+tag: "v%(version)s"
 source: https://github.com/python/cpython
 requires:
  - expat

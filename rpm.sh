@@ -6,12 +6,11 @@ variables:
  github_user: cms-externals
  github_repo: rpm-upstream
 sources:
-    - git+https://github.com/%(github_user)s/%(github_repo)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
+    - git://github.com/%(github_user)s/%(github_repo)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
     - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_16_0_X/g14/rpm-set_runpath.file
 build_requires:
     - bootstrap-bundle
     - patchelf-bootstrap
-    - gcc
     - autotools
 env:
     RPM_CONFIGDIR: "%(root_dir)s/libx/rpm"

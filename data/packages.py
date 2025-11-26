@@ -24,6 +24,7 @@ def getPackages(virtual_packages, configDir, *args):
     virtual_packages[pkg_name]={
         "version": ver,
         "pkgdir" : configDir,
+        "url" : data_pkg + ".sh",
         "command": 'PYTHONPATH=%s %s/package.py "%s" "%s" "%s"' % (dirname(argv[0]), pkg_dir, data_pkg, ver, ptype)
       }
   return

@@ -9,6 +9,6 @@ tar xzf "$SOURCEDIR/${SOURCE0}" \
 
 ./configure CFLAGS='-fPIC -D_FILE_OFFSET_BITS=64 -Ofast' --prefix=$INSTALLROOT --disable-static
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 

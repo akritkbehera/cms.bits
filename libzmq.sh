@@ -22,5 +22,5 @@ tar -xzf "$SOURCEDIR/$SOURCE0" \
             --enable-libunwind=no \
             --disable-dependency-tracking
 
-make all ${JOBS+-j $JOBS}
+make all ${JOBS:+-j $JOBS}
 make install

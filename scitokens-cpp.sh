@@ -27,5 +27,5 @@ cmake $BUILDDIR \
 	-DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_PREFIX_PATH="${CURL_ROOT};${LIBUUID_ROOT};${SQLITE_ROOT}"
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

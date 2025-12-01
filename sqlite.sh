@@ -55,6 +55,6 @@ cd "$BUILDDIR"
   --disable-dependency-tracking \
   --disable-tcl
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 rm -rf $INSTALLROOT/lib/pkgconfig

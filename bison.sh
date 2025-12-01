@@ -20,5 +20,5 @@ CMS_BITS_MARCH=$(gcc -dumpmachine)
             --prefix=$INSTALLROOT --disable-nls --disable-rpath \
             --enable-dependency-tracking
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

@@ -3,4 +3,4 @@ requires:
 - py-joblib
 - py-threadpoolctl
 ---
-PipPreBuild='SKLEARN_BUILD_PARALLEL=${JOBS+-j $JOBS}; export CFLAGS="-Wno-error=incompatible-pointer-types"'
+PipPreBuild='SKLEARN_BUILD_PARALLEL=${JOBS:+-j $JOBS}; export CFLAGS="-Wno-error=incompatible-pointer-types"'

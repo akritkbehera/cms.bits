@@ -49,7 +49,7 @@ done
   CPPFLAGS="-I${XZ_BOOTSTRAP_ROOT}/include" \
   LDFLAGS="-L${XZ_BOOTSTRAP_ROOT}/lib"
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 
 find $INSTALLROOT/lib -type f -name '*.la' -delete

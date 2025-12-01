@@ -27,5 +27,5 @@ cmake $BUILDDIR -DCMAKE_BUILD_TYPE=$LLVM_BUILD_TYPE \
   -DFLATBUFFERS_BUILD_TESTS=OFF \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
 
-make -v ${JOBS+-j $JOBS} 
-make ${JOBS+-j $JOBS} install
+make -v ${JOBS:+-j $JOBS} 
+make ${JOBS:+-j $JOBS} install

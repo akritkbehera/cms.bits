@@ -18,7 +18,7 @@ cmake ../hepmc \
     -Dmomentum:STRING=GEV \
     -Dlength:STRING=MM 
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 
 rm -rf $INSTALLROOT/lib/*.so

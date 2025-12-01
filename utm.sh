@@ -14,9 +14,9 @@ export XERCES_C_BASE=${XERCES_C_ROOT}
 export BOOST_BASE=${BOOST_ROOT}
 ./configure
 
-make ${JOBS+-j $JOBS} all
+make ${JOBS:+-j $JOBS} all
 
-make ${JOBS+-j $JOBS} install
+make ${JOBS:+-j $JOBS} install
 cp -r lib $INSTALLROOT/lib
 cp -r include $INSTALLROOT/include
 cp -r xsd-type $INSTALLROOT/xsd-type

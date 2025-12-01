@@ -33,5 +33,5 @@ PYTHON=$(which python3) ./configure --prefix=$INSTALLROOT \
   CXXFLAGS="-Wno-deprecated" \
   LDFLAGS="-L${PYTHON_ROOT}/lib"
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

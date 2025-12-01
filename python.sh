@@ -53,7 +53,7 @@ LDFLAGS="$LDFLAGS" CPPFLAGS="$CPPFLAGS" ./configure \
     --without-ensurepip \
     --with-system-expat
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 
 

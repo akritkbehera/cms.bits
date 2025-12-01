@@ -7,7 +7,7 @@ tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
 
 cd $BUILDDIR/make-*
 ./configure --prefix=$INSTALLROOT
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 rm -rf $INSTALLROOT/{man,info}
 cd $INSTALLROOT/bin

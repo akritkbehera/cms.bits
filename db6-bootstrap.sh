@@ -15,5 +15,5 @@ tar xzf "$SOURCEDIR/${SOURCE0}" \
     --disable-tcl \
     --disable-static
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install    

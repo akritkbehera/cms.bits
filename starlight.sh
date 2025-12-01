@@ -29,7 +29,7 @@ cmake $BUILDDIR \
     -DCMAKE_INSTALL_LIBDIR=lib \
     -DENABLE_CLHEP=ON
 
-make ${JOBS+-j $JOBS} VERBOSE=1
+make ${JOBS:+-j $JOBS} VERBOSE=1
 make install VERBOSE=1
 
 rm -rf $INSTALLROOT/lib/archive

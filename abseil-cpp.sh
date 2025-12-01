@@ -16,5 +16,5 @@ cmake -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
       -DBUILD_SHARED_LIBS=ON \
       -DCMAKE_BUILD_TYPE=Release
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

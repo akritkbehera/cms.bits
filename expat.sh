@@ -39,7 +39,7 @@ done
 cd "$PKGNAME"
 ./buildconf.sh
 ./configure --prefix="$INSTALLROOT"
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 
 make install
 

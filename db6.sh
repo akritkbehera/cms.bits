@@ -19,5 +19,5 @@ cd $BUILDDIR/db-*
     --disable-tcl \
     --disable-static
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

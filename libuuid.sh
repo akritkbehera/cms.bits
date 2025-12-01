@@ -44,7 +44,7 @@ export CFLAGS="-Wno-error=implicit-function-declaration"
     --without-ncurses \
     --enable-libuuid
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 
 mkdir -p $INSTALLROOT/lib64
 cp -p $BUILDDIR/util-linux-*/.libs/libuuid.a* $INSTALLROOT/lib64

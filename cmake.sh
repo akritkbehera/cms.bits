@@ -45,5 +45,5 @@ export CMAKE_PREFIX_PATH=$CURL_ROOT:$ZLIB_ROOT:$EXPAT_ROOT:$BZ2LIB_ROOT
                      ${EXPAT_ROOT:+--no-system-expat} \
                      --init=build-flags.cmake \
                      ${JOBS:+--parallel=$JOBS}
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install/strip

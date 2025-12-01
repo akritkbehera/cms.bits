@@ -20,7 +20,7 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded \
     --disable-dependency-tracking \
     --disable-doc
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 
 if [ -x "$INSTALLROOT/bin/xz" ]; then

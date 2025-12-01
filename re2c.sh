@@ -9,5 +9,5 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCED
 cd $PKGNAME
 autoreconf -i -W all
 ./configure --prefix="$INSTALLROOT"
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

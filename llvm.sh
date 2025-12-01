@@ -65,9 +65,9 @@ if [ -n "$CUDA_ROOT" ]; then
 fi
 
 cmake "${cmake_args[@]}" "$BUILDDIR/$PKGNAME-$PKGVERSION/$PKGNAME"
-ninja -v ${JOBS+-j $JOBS}
-ninja -v ${JOBS+-j $JOBS} check-clang-tools
-ninja -v ${JOBS+-j $JOBS} install
+ninja -v ${JOBS:+-j $JOBS}
+ninja -v ${JOBS:+-j $JOBS} check-clang-tools
+ninja -v ${JOBS:+-j $JOBS} install
 
 BINDINGS_PATH=$INSTALLROOT/lib64/python%(python_major_minor)s/site-packages
 PKG_INFO_FILE=$BINDINGS_PATH/clang-$PKG_VERSION-py%(python_major_minor)s.egg-info/PKG-INFO

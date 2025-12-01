@@ -13,7 +13,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-make ${JOBS+-j $JOBS} \
+make ${JOBS:+-j $JOBS} \
 	CFLAGS="-I${XXHASH_ROOT}/include -O2" \
 	LDFLAGS="-L${XXHASH_ROOT}/lib"
 

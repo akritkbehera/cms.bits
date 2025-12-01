@@ -41,5 +41,5 @@ cmake -G Ninja \
       -DCMAKE_SHARED_LINKER_FLAGS="-L${ZLIB_ROOT}/lib" \
       -DCMAKE_PREFIX_PATH="${ZLIB_ROOT}"
 
-ninja -v ${JOBS+-j $JOBS} install
+ninja -v ${JOBS:+-j $JOBS} install
 rm -rf $INSTALLROOT/lib/pkgconfig

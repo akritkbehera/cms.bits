@@ -29,5 +29,5 @@ LDFLAGS="-L${OPENMPI_ROOT}/lib -lmpi" \
             --enable-parallel \
             --enable-threadsafe --enable-unsupported \
             --with-zlib=${ZLIB_ROOT}
-make  ${JOBS+-j $JOBS} V=1
+make  ${JOBS:+-j $JOBS} V=1
 make install V=1

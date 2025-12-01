@@ -44,7 +44,7 @@ echo "using python : ${PYTHONV} : ${PYTHON_ROOT}/bin/python3 : ${PYTHON_ROOT}/in
 b2 -q \
    -d2 \
    define=BOOST_FILESYSTEM_DISABLE_STATX \
-   ${JOBS+-j $JOBS} \
+   ${JOBS:+-j $JOBS} \
    --build-dir=build-boost \
    --disable-icu \
    --without-atomic \

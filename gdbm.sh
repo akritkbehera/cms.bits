@@ -48,5 +48,5 @@ cd $BUILDDIR/gdbm-*
   --disable-nls \
   --disable-rpath
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

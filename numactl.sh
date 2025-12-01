@@ -20,7 +20,7 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCED
   --with-pic \
   --with-gnu-ld
   
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 
 rm -rf $INSTALLROOT/lib/pkgconfig

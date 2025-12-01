@@ -92,6 +92,6 @@ sed -i "/_pow10 only defined for positive powers/d" include/Rivet/Tools/Particle
 
 perl -p -i -e "s|LIBS = $|LIBS = -lHepMC3|g" bin/Makefile
 
-make ${JOBS+-j $JOBS} all
+make ${JOBS:+-j $JOBS} all
 make install
 sed -i -e 's|^#!.*python.*|#!/usr/bin/env python3|' $INSTALLROOT/bin/*

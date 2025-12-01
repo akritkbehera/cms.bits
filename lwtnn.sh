@@ -30,6 +30,6 @@ cmake $BUILDDIR \
   -DCMAKE_CXX_STANDARD=$CXXSTD
 
 
-ninja -v ${JOBS+-j $JOBS}
-ninja -v ${JOBS+-j $JOBS} install
+ninja -v ${JOBS:+-j $JOBS}
+ninja -v ${JOBS:+-j $JOBS} install
 

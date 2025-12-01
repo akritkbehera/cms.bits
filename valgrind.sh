@@ -20,5 +20,5 @@ fi
 ./configure --prefix=$INSTALLROOT --without-mpicc --disable-static ${CONF_OPTS}
 
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

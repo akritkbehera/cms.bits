@@ -9,7 +9,7 @@ build_requires:
 - CMake 
 ---
 PipPreBuild='
-export NPY_NUM_BUILD_JOBS=${JOBS+-j $JOBS} ;\
+export NPY_NUM_BUILD_JOBS=${JOBS:+-j $JOBS} ;\
 export FFLAGS="${FFLAGS_OPT} -fallow-argument-mismatch -fPIC"
 '
 

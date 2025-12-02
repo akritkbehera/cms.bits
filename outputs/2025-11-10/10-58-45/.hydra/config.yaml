@@ -1,0 +1,7 @@
+pkg:
+  package: zlib
+  version: 1.2.14
+  tag: v%(version)s
+  source: https://github.com/madler/zlib
+  requires:
+  - gcc

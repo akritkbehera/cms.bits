@@ -24,5 +24,5 @@ CFLAGS="-O2 -Wno-error=implicit-function-declaration -Wno-error=int-conversion" 
 ./configure --disable-dependency-tracking --disable-nls \
             --build=$CMS_BITS_MARCH --host="$CMS_BITS_MARCH" --prefix=$INSTALLROOT
 
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

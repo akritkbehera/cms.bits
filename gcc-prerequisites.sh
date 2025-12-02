@@ -75,7 +75,7 @@ if [ "$ARCH" = "x86_64" ]; then
   CONF_FLAGS+=" -msse3"
 fi
 CFLAGS="$CONF_FLAGS" ./configure --static --prefix="${INSTALLROOT}/tmp/sw"
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 cd ..
 
@@ -157,26 +157,26 @@ cd ../gmp-*/
 ./configure --disable-static --prefix="${INSTALLROOT}" --enable-shared --disable-static --enable-cxx \
             --build="$CMS_BITS_MARCH" --host="$CMS_BITS_MARCH" \
             CC="${CC}" CXX="${CXX}" CPP="${CPP}" CXXCPP="${CXXCPP}"
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 
 cd ../mpfr-*/
 ./configure --disable-static --prefix="${INSTALLROOT}" --with-gmp="${INSTALLROOT}" \
             --build="$CMS_BITS_MARCH" --host="$CMS_BITS_MARCH" \
             CC="${CC}" CXX="${CXX}" CPP="${CPP}" CXXCPP="${CXXCPP}"
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 
 cd ../mpc-*/
 ./configure --disable-static --prefix="${INSTALLROOT}" --with-gmp="${INSTALLROOT}" --with-mpfr="${INSTALLROOT}" \
             --build="$CMS_BITS_MARCH" --host="$CMS_BITS_MARCH" \
             CC="${CC}" CXX="${CXX}" CPP="${CPP}" CXXCPP="${CXXCPP}"
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install
 
 cd ../isl-*/
 ./configure --disable-static --with-gmp-prefix="${INSTALLROOT}" --prefix="${INSTALLROOT}" \
             --build="$CMS_BITS_MARCH" --host="$CMS_BITS_MARCH" \
             CC="${CC}" CXX="${CXX}" CPP="${CPP}" CXXCPP="${CXXCPP}"
-make ${JOBS+-j $JOBS}
+make ${JOBS:+-j $JOBS}
 make install

@@ -1,7 +1,6 @@
 package: demo
-version: "v1"
+version: "v5.0.9"
 requires:
- - Python
+ - go
+ - zlib
 ---
-echo %(python_major_minor)s
-exit 1

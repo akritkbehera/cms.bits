@@ -59,7 +59,8 @@ cmake_args=(
   -DXercesC_INCLUDE_DIR=$XERCES_C_ROOT/include 
   -DXercesC_LIBRARY_RELEASE=$XERCES_C_ROOT/lib/libxerces-c.so
   -DXercesC_LIBRARY=$XERCES_C_ROOT/lib/libxerces-c.so 
-  -DXercesC_VERSION=$XERCES_C_VERSION 
+  -DXercesC_VERSION=$XERCES_C_VERSION
+  -DCMAKE_PREFIX_PATH=${GCC_ROOT}:${CLHEP_ROOT}:${EXPAT_ROOT}:${GEANT4_DATA_ROOT}:${XERCES_ROOT}:${ZLIB_ROOT}:${VECGEOM_ROOT}
 )
 
 if [[ "$USE_VECGEOM" -eq 1 ]]; then

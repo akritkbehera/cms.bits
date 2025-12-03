@@ -1,7 +1,7 @@
 package: CMake
-version: "%(tag_basename)s"
-tag: "v3.31.7"
-source: https://github.com/Kitware/CMake
+version: "3.31.7"
+sources:
+  - https://cmake.org/files/v3.31/cmake-%(version)s.tar.gz
 requires:
   - gcc
   - bz2lib
@@ -35,15 +35,13 @@ cat > build-flags.cmake <<- EOF
         SET(CMAKE_USE_SYSTEM_LIBRARY_EXPAT TRUE CACHE BOOL "" FORCE)
 EOF
 
-rsync -a --chmod=ugo=rwX --delete --exclude '**/.git' --delete-excluded $SOURCEDIR/ ./
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 export CMAKE_PREFIX_PATH=$CURL_ROOT:$ZLIB_ROOT:$EXPAT_ROOT:$BZ2LIB_ROOT
 
-./bootstrap --prefix=$INSTALLROOT \
-                     ${ZLIB_ROOT:+--no-system-zlib} \
-                     ${CURL_ROOT:+--no-system-curl} \
-                     ${EXPAT_ROOT:+--no-system-expat} \
-                     --init=build-flags.cmake \
-                     ${JOBS:+--parallel=$JOBS}
+./configure --prefix=$INSTALLROOT --init=build-flags.cmake --parallel=$JOBS
+
 make ${JOBS:+-j $JOBS}
 make install/strip

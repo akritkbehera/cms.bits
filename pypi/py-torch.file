@@ -1,0 +1,111 @@
+package: py-torch
+version: 2.6.0
+sources:
+ - https://github.com/pytorch/pytorch/releases/download/v%(version)s/pytorch-v%(version)s.tar.gz
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_16_0_X/g14/FindEigen3.cmake.file
+patches:
+ - pytorch-missing-braces.patch
+ - pytorch-system-fmt.patch
+build_requires:
+ - CMake
+ - ninja
+requires:
+ - gcc
+ - cuda-flags
+ - microarch-flag
+ - eigen
+ - fxdiv
+ - numactl
+ - openmpi
+ - protobuf
+ - psimd
+ - Python
+ - py-PyYAML
+ - OpenBLAS
+ - zlib
+ - fmt
+ - py-pybind11
+ - py-typing-extensions
+ - cuda
+ - cudnn
+---
+PipPatchSource='cp '"$SOURCEDIR/$SOURCE1"' '"$BUILDDIR/py$Pypi_name-v$PKGVERSION/cmake/Modules/"''
+
+PipPreBuild=$(cat <<'EOF'
+export cuda_arch_float=$(echo ${cuda_arch} | tr ' ' '\\n' | sed -E 's|([0-9])$|.\\1|' | tr '\\n' ' ' | sed -e's/ *$/+PTX/')
+if [ -n "$CUDA_ROOT" ]; then
+  export USE_CUDA=1
+  export CUDA_ARCH_LIST=${cuda_arch_float}
+  export nvtx3_dir=$CUDA_ROOT/include
+  export USE_CUDNN=1
+  export CUDNN_ROOT=$CUDNN_ROOT
+else
+  export USE_CUDA=OFF
+  export USE_CUDNN=OFF
+fi
+MEM_GB=$(/usr/bin/free -g | awk '/^Mem:/{print $2}')
+MAX_JOBS=$(( MEM_GB / 4 ))
+if [ $MAX_JOBS -gt $JOBS ] ; then MAX_JOBS=$JOBS; fi
+export PYTHONHOME=$PYTHON_ROOT
+export MAX_JOBS
+export GCC_ROOT=${GCC_ROOT}
+export LibLZMA_ROOT=${XZ_ROOT}
+export USE_SYSTEM_PSIMD=ON
+export PSIMD_SOURCE_DIR=${PSIMD_ROOT}
+export BUILD_CUSTOM_PROTOBUF=OFF
+export USE_SYSTEM_EIGEN_INSTALL=ON
+export USE_SYSTEM_FXDIV=ON
+export USE_SYSTEM_PYBIND11=ON
+export PYBIND11_SYSPATH=${PY_PYBIND11_ROOT}
+export USE_SYSTEM_BENCHMARK=ON
+export BUILD_TEST=OFF
+export BUILD_BINARY=OFF
+export BUILD_PYTHON=ON
+export USE_CUSPARSELT=OFF
+export USE_CUDSS=OFF
+export USE_NCCL=OFF
+export USE_XPU=OFF
+export USE_FBGEMM=OFF
+export USE_KINETO=OFF
+export USE_MAGMA=OFF
+export USE_MPS=OFF
+export USE_NNPACK=OFF
+export USE_QNNPACK=OFF
+export USE_PYTORCH_QNNPACK=OFF
+export USE_XNNPACK=OFF
+export USE_NUMA=ON
+export NUMA_ROOT_DIR=${NUMACTL_ROOT}
+export USE_NUMPY=OFF
+export USE_OPENMP=ON
+export USE_VALGRIND=OFF
+export USE_MKLDNN=OFF
+export USE_DISTRIBUTED=OFF
+export USE_MPI=ON
+export USE_GLOO=OFF
+export USE_TENSORPIPE=OFF
+export ONNX_ML=ON
+export BLAS=OpenBLAS
+export CMAKE_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64 -march=$default_microarch_name"
+export CMAKE_PREFIX_PATH="${EIGEN_ROOT}:${FXDIV_ROOT}:${NUMACTL_ROOT}:${OPENMPI_ROOT}:${PROTOBUF_ROOT}:${PSIMD_ROOT}:${PYTHON_ROOT}:${PY_PYYAML_ROOT}:${OPENBLAS_ROOT}:${ZLIB_ROOT}:${FMT_ROOT}:${PY_PYBIND11_ROOT}:${PY_TYPING_EXTENSIONS}:${CUDA_ROOT}:${CUDANN_ROOT}"
+export LIBLZMA_ROOT=${XZ_ROOT}
+export PYTHON_EXECUTABLE=${PYTHON_ROOT}/bin/python3
+export BUILD_LIBTORCH_WHL=ON
+export CMAKE_VERBOSE_MAKEFILE=ON
+EOF
+)
+
+PipPreBuildPy=$(cat<<'EOF'
+ unset CMAKE_ROOT
+EOF
+)
+
+PipPostInstall=$(cat <<'EOF'
+pushd $INSTALLROOT
+  ln -sf ${PYTHON3_LIB_SITE_PACKAGES}/torch/share share
+  ln -s ${PYTHON3_LIB_SITE_PACKAGES}/torch/include include
+  pushd lib
+    ln -sf python39/site-packages/torch/lib/*.so .
+  popd
+popd
+EOF
+) 

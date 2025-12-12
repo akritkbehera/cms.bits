@@ -21,8 +21,8 @@ requires:
 - compilation_flags_lto
 - compilation_flags_pgo
 ---
-eval "$setup_pgo"
-setup_pgo_flags "$BUILDDIR" "$PKGNAME/$PKGHASH"
+#eval "$setup_pgo"
+#setup_pgo_flags "$BUILDDIR" "$PKGNAME/$PKGHASH"
 export BUILD_FLAGS="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
 
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
@@ -60,7 +60,7 @@ cmake_args=(
   -DXercesC_LIBRARY_RELEASE=$XERCES_C_ROOT/lib/libxerces-c.so
   -DXercesC_LIBRARY=$XERCES_C_ROOT/lib/libxerces-c.so 
   -DXercesC_VERSION=$XERCES_C_VERSION
-  -DCMAKE_PREFIX_PATH=${GCC_ROOT}:${CLHEP_ROOT}:${EXPAT_ROOT}:${GEANT4_DATA_ROOT}:${XERCES_ROOT}:${ZLIB_ROOT}:${VECGEOM_ROOT}
+  -DCMAKE_PREFIX_PATH="${GCC_ROOT};${CLHEP_ROOT};${EXPAT_ROOT};${GEANT4_DATA_ROOT};${XERCES_ROOT};${ZLIB_ROOT};${VECGEOM_ROOT}"
 )
 
 if [[ "$USE_VECGEOM" -eq 1 ]]; then

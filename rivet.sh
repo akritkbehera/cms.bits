@@ -16,7 +16,7 @@ build_requires:
  - py-cython
  - autotools
 sources:
-- git+https://gitlab.com/hepcedar/rivet.git?obj=master/%(package)s-%(version)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
+ - https://gitlab.com/hepcedar/rivet/-/archive/rivet-%(version)s/rivet-rivet-%(version)s.tar.gz
 patches:
  - rivet-duplicate-libs.patch
  - rivet-pyextfjcontrib.patch
@@ -24,6 +24,7 @@ prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
 export PYTHONHOME=$PYTHON_ROOT
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"

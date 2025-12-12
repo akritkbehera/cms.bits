@@ -6,9 +6,11 @@ variables:
  branch: cms/v%(version)s
 sources:
 -  git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag_basename)s&export=%(package)s.%(version)s&output=/%(package)s.%(version)s-%(tag_basename)s.tgz
+requires:
+- gcc
 build_requires:
 - CMake 
-- gmake
+- ninja
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

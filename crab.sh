@@ -1,5 +1,5 @@
 package: crab
-version: 1.0
+version: "1.0"
 requires:
  - crab-prod
  - crab-pre

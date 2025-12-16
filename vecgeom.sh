@@ -20,8 +20,8 @@ requires:
 env:
   USE_VECGEOM: "1"
 ---
-eval "$setup_pgo"
-setup_pgo_flags "$BUILDDIR" "$PKGNAME/$PKGHASH"
+#eval "$setup_pgo"
+#setup_pgo_flags "$BUILDDIR" "$PKGNAME/$PKGHASH"
 export BUILD_FLAGS="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
 
 tar -xzf "$SOURCEDIR/$SOURCE0" \

@@ -31,8 +31,8 @@ $BUILDDIR/autogen.sh "${args[@]}"
 make ${JOBS:+-j$JOBS}
 make install
 
-mv $INSTALLROOT/lib/libjemalloc.so.2 $INSTALLROOT/lib/lib${PKGNAME}.so.2
-rm $INSTALLROOT/lib/libjemalloc.so
+#mv $INSTALLROOT/lib/libjemalloc.so.2 $INSTALLROOT/lib/lib${PKGNAME}.so.2
+#rm $INSTALLROOT/lib/libjemalloc.so
 ln -sf $INSTALLROOT/lib$PKGNAME.so.2 $INSTALLROOT/lib/lib$PKGNAME.so
 patchelf --set-soname lib$PKGNAME.so.2 $INSTALLROOT/lib/lib$PKGNAME.so.2
 # We make sure there are no other libs. 

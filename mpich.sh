@@ -10,6 +10,7 @@ requires:
  - Python
  - gcc
  - cuda-flags
+ - rocm-flags
  - libfabric
  - ucx
  - hwloc

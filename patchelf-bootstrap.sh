@@ -13,7 +13,7 @@ tar -xjf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-./bootstrap.sh
+autoreconf --verbose --install --force --warnings=all
 ./configure --prefix=$INSTALLROOT
 
 make ${JOBS:+-j$JOBS}

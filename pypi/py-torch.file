@@ -12,7 +12,6 @@ build_requires:
 requires:
  - gcc
  - cuda-flags
- - microarch-flag
  - eigen
  - fxdiv
  - numactl
@@ -85,7 +84,7 @@ export USE_GLOO=OFF
 export USE_TENSORPIPE=OFF
 export ONNX_ML=ON
 export BLAS=OpenBLAS
-export CMAKE_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64 -march=$default_microarch_name"
+export CMAKE_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64 $selected_microarch"
 export CMAKE_PREFIX_PATH="${EIGEN_ROOT}:${FXDIV_ROOT}:${NUMACTL_ROOT}:${OPENMPI_ROOT}:${PROTOBUF_ROOT}:${PSIMD_ROOT}:${PYTHON_ROOT}:${PY_PYYAML_ROOT}:${OPENBLAS_ROOT}:${ZLIB_ROOT}:${FMT_ROOT}:${PY_PYBIND11_ROOT}:${PY_TYPING_EXTENSIONS}:${CUDA_ROOT}:${CUDANN_ROOT}"
 export LIBLZMA_ROOT=${XZ_ROOT}
 export PYTHON_EXECUTABLE=${PYTHON_ROOT}/bin/python3

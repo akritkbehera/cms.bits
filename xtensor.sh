@@ -4,6 +4,7 @@ build_requires:
 - CMake
 requires:
 - xtl
+- gcc
 sources:
 - https://github.com/QuantStack/xtensor/archive/%(version)s.tar.gz
 ---

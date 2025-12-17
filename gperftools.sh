@@ -4,6 +4,8 @@ sources:
  - https://github.com/gperftools/gperftools/archive/refs/tags/gperftools-%(version)s.tar.gz
 build_requires:
  - autotools
+requires:
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

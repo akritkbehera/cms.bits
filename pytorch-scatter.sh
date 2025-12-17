@@ -9,10 +9,11 @@ sources:
 build_requires:
  - CMake
 requires:
- - pytorch
+ - py-torch
  - cuda
  - compilation_flags
  - cuda-flags
+ - gcc
 ---
 export build_flags="-Wall -Wextra -pedantic $arch_build_flags"
 export cuda_arch_float="$(echo "$cuda_arch" | tr ' ' '\n' | sed -E 's|([0-9])$|.\1|' | tr '\n' ' ')"

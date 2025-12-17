@@ -4,6 +4,7 @@ sources:
  - https://github.com/cms-externals/%(package)s/archive/%(version)s.tar.gz
 requires:
  - boost
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

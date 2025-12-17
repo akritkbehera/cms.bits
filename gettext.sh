@@ -3,6 +3,8 @@ version: "v%(tag_basename)s"
 tag: "0.22"
 sources:
 - https://mirror.ibcp.fr/pub/gnu/gettext/gettext-0.22.tar.gz
+requires:
+- gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

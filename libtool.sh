@@ -2,6 +2,8 @@ package: libtool
 version: "2.5.4"
 sources:
 - https://mirror.ibcp.fr/pub/gnu/libtool/libtool-%(version)s.tar.gz
+requires:
+- gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

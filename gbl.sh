@@ -10,6 +10,7 @@ requires:
  - scram-tools-flag
  - microarch-flag
  - eigen
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

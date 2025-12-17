@@ -5,6 +5,8 @@ source: https://github.com/google/re2/
 build_requires:
  - CMake
  - gmake
+requires:
+ - gcc
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 

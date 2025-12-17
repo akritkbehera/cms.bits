@@ -5,6 +5,7 @@ sources:
 - https://static.rust-lang.org/dist/rust-%(tag_basename)s-x86_64-unknown-linux-gnu.tar.gz
 requires:
 - zlib
+- gcc
 ---
 arch=$(uname -m)
 

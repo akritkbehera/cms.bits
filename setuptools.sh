@@ -4,6 +4,7 @@ sources:
  - https://pypi.io/packages/source/s/setuptools/setuptools-%(version)s.tar.gz
 requires:
  - Python
+ - gcc
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---

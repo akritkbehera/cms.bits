@@ -2,6 +2,8 @@ package: xerces-c
 version: "3.1.3"
 tag: xerces-3.1.3
 source: https://github.com/apache/xerces-c
+requires:
+ - gcc
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 

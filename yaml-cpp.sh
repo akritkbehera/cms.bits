@@ -4,6 +4,8 @@ tag: "0.8.0"
 build_requires:
 - CMake
 - ninja
+requires:
+- gcc
 sources:
 - https://github.com/jbeder/yaml-cpp/archive/refs/tags/%(tag_basename)s.tar.gz
 ---

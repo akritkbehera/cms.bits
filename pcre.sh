@@ -5,6 +5,8 @@ requires:
  - zlib
 sources:
 - https://sourceforge.net/projects/pcre/files/pcre/%(version)s/pcre-%(version)s.tar.gz/download
+requires:
+- gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

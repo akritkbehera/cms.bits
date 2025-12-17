@@ -13,6 +13,7 @@ requires:
  - yaml-cpp
  - llvm
  - zlib
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

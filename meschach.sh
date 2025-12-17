@@ -6,6 +6,8 @@ patches:
  - meschach-1.2-slc4.patch
  - meschach-1.2b-fPIC.patch
  - meschach-1.2b-parallel-build.patch
+requires:
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR" 

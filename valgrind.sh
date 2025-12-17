@@ -3,6 +3,8 @@ version: "3.24.0"
 build_requires:
 - autotools
 - gmake
+requires:
+- gcc
 sources:
 -  https://sourceware.org/pub/valgrind/valgrind-%(version)s.tar.bz2
 ---

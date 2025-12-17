@@ -5,6 +5,7 @@ build_requires:
 requires:
  - hls4mlemulatorextras
  - hls
+ - gcc
 sources:
 - https://github.com/cms-hls4ml/%(package)s/archive/refs/tags/%(version)s.tar.gz
 ---

@@ -16,6 +16,8 @@ sources:
  - https://pkgconfig.freedesktop.org/releases/pkg-config-%(pkg_config_version)s.tar.gz
 env:
  M4: "$M4_ROOT/bin/m4"
+requires:
+ - gcc
 ---
 for f in "$SOURCEDIR"/*; do
     case "$f" in    

@@ -8,6 +8,7 @@ sources:
  - git://sourceware.org/git/dwz.git?obj=%(dwz_branch)s/%(dwz_commit)s&export=dwz-%(dwz_commit)s&output=/dwz-%(dwz_commit)s.tgz
 requires:
  - xxhash
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

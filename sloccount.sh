@@ -4,6 +4,8 @@ sources:
  -  http://www.dwheeler.com/sloccount/sloccount-%(version)s.tar.gz
 build_requires:
  - flex
+requires:
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

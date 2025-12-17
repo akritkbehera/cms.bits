@@ -14,6 +14,7 @@ requires:
  - c-ares 
  - abseil-cpp
  - re2
+ - gcc
 patches:
  - grpc-mno-outline-atomics.patch
  - 28212.patch

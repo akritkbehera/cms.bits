@@ -12,6 +12,7 @@ requires:
  - highfive
  - microarch-flag
  - Python
+ - gcc
 build_requires:
  - py-cython
  - autotools

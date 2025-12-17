@@ -24,6 +24,7 @@ requires:
   - py-grpcio-tools
   - py-python-rapidjson
   - cuda
+  - gcc
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---

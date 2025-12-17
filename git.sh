@@ -8,6 +8,7 @@ requires:
  - zlib
  - pcre2
  - Python
+ - gcc
 sources:
  - https://github.com/git/git/archive/v%(version)s.tar.gz
  - https://raw.githubusercontent.com/curl/curl/eeed87f0563d3ca73ff53813418d1f9f03c81fe5/scripts/mk-ca-bundle.pl

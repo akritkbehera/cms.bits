@@ -2,6 +2,7 @@ package: cudnn
 version: "9.9.0.52"
 requires:
 - cuda
+- gcc
 variables:
   cudaversion: "12"
   aarch64_src: "linux-sbsa"

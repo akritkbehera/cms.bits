@@ -6,6 +6,7 @@ sources:
 requires:
  - Python
  - setuptools
+ - gcc
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---

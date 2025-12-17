@@ -19,7 +19,7 @@ requires:
  - classlib
  - clhep
  - conifer
- - coral
+# - coral
  - cppunit
  - cpu_features
  - curl
@@ -35,7 +35,7 @@ requires:
  - gcc
  - gdbm
  - geant4
-# - geant4data
+ - geant4-data
 # - g4hepem
  - glimpse
  - gmake
@@ -49,9 +49,9 @@ requires:
  - hydjet
  - hydjet2
  - ittnotify
-# - jemalloc
-# - jemalloc-debug
-# - jemalloc-prof
+ - jemalloc
+ - jemalloc-debug
+ - jemalloc-prof
  - json
  - ktjet
  - EMTF_NN

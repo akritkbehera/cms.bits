@@ -8,6 +8,7 @@ requires:
  - xz
  - expat
  - py-six
+ - gcc
 patches:
  - gdb-disable-makeinfo.patch
 ---

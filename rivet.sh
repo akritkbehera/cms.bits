@@ -1,8 +1,5 @@
 package: rivet
 version: 4.1.0
-variables:
-  override_microarch: ""
-  package_vectorization: ""
 requires:
  - hepmc3
  - fastjet
@@ -10,7 +7,6 @@ requires:
  - yoda
  - hdf5
  - highfive
- - microarch-flag
  - Python
  - gcc
 build_requires:
@@ -34,16 +30,12 @@ patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
 
 export ROOT_CXXMODULES="0"
-export PKG_VECTORIZATION='%(package_vectorization)s'
+export PKG_VECTORIZATION='$(package_vectorization)s'
 export CMSDISTDIR=$BITS_REPO_DIR
 export CMS_CXX_STANDARD=$CXXSTD
 export COMPILER_CXXFLAGS="$arch_build_flags"
 if [[ -z $arch_build_flags ]]; then
-  if [[ -n '%(override_microarch)s' ]]; then
-    export COMPILER_CXXFLAGS='%(override_microarch)s'
-  else
-    export COMPILER_CXXFLAGS="$default_microarch_name"
-  fi
+    export COMPILER_CXXFLAGS='$selected_microarch'
 fi
 export ORACLE_ENV_ROOT=""
 export CUDA_FLAGS="$nvcc_cuda_flags"

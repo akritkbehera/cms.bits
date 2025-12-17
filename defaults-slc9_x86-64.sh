@@ -1,0 +1,5 @@
+package: defaults-slc9_x86-64
+version: vCMS
+env:
+ CMS_EIGEN_CXX_FLAGS: -DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64
+---

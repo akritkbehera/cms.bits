@@ -2,6 +2,7 @@ package: openloops-sources
 version: 2.1.2
 requires:
  - Python
+ - gcc
 variables:
   branch: cms/v%%(version)s
   github_user: cms-externals

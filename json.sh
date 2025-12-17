@@ -16,7 +16,7 @@ rm -rf ../build && mkdir -p ../build && cd ../build
 
 cmake $BUILDDIR \
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT" \
-  -DCMAKE_BUILD_TYPE=$LLVM_BUILD_TYPE \
+  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
   -DJSON_BuildTests=OFF \
   -DJSON_MultipleHeaders=OFF
 

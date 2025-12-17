@@ -23,7 +23,7 @@ rm -rf ../build && mkdir -p ../build && cd ../build
 
 cmake $BUILDDIR/cpp \
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
-  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
   -DEIGEN3_INCLUDE_DIR=${EIGEN_ROOT}/include/eigen3 \
   -DSUPPORT_ROOT=False \

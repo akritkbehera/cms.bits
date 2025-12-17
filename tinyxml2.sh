@@ -15,6 +15,6 @@ rm -rf ../build; mkdir ../build ; cd ../build
 
 cmake ../$PKGNAME \
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE
 
 gmake ${JOBS:+-j$JOBS} install

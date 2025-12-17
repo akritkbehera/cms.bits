@@ -16,7 +16,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 rm -rf ../build; mkdir ../build ; cd ../build
 
 cmake ../$PKGNAME \
-  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
   -DCMAKE_PREFIX_PATH="${XROOTD_ROOT}" \
   -DCMAKE_VERBOSE=1 \

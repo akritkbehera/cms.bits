@@ -25,7 +25,7 @@ export CXXFLAGS="-Wno-error=deprecated-declarations -Wno-error=deprecated-copy -
 cmake $BUILDDIR \
     -DCMAKE_INSTALL_PREFIX:PATH=$INSTALLROOT \
     -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
-    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
     -DCMAKE_INSTALL_LIBDIR=lib \
     -DENABLE_CLHEP=ON
 

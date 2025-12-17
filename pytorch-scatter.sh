@@ -29,7 +29,7 @@ rm -rf ../build && mkdir ../build && cd ../build
 
 cmake_args=(
   "$BUILDDIR"
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
   -DCMAKE_INSTALL_LIBDIR=lib
   -DCMAKE_PREFIX_PATH="${GCC_ROOT};${PYTORCH_ROOT};${CUDA_ROOT}"

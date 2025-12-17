@@ -50,7 +50,7 @@ cmake_args=(
     "-DCMAKE_CXX_FLAGS=-fPIC $CMS_EIGEN_CXX_FLAGS ${arch_build_flags} -march=${default_microarch_name} ${lto_build_flags}"
     "-DCMAKE_AR=$GCC_ROOT/bin/gcc-ar"
     "-DCMAKE_RANLIB=$GCC_ROOT/bin/gcc-ranlib"
-    "-DCMAKE_BUILD_TYPE=Release"
+    "-DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE"
     "-DCMAKE_INSTALL_PREFIX=$INSTALLROOT"
     "-DCMAKE_SKIP_INSTALL_RPATH=ON"
     "-DBUILD_SHARED_LIBS=ON"

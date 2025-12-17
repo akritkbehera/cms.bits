@@ -24,7 +24,7 @@ cmake_args=(
   -G Ninja \
   -DCLHEP_BUILD_CXXSTD="-std=c++$CXXSTD" \
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT" \
-  -DCMAKE_BUILD_TYPE=$LLVM_BUILD_TYPE
+  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE
 )
 
 cmake "${cmake_args[@]}" ../$PKGNAME

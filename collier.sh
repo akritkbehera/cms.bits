@@ -18,7 +18,7 @@ rm -rf ../build && mkdir ../build && cd ../build
 
 cmake $BUILDDIR \
   -DCMAKE_INSTALL_PREFIX=$INSTALLPREFIX \
-  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
   -Dstatic=ON \
   -DCMAKE_Fortran_FLAGS=-fPIC
 

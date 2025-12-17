@@ -11,7 +11,6 @@ build_requires:
 requires:
  - py-torch
  - cuda
- - compilation_flags
  - cuda-flags
  - gcc
 ---

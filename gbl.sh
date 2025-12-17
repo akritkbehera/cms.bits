@@ -7,8 +7,6 @@ sources:
 build_requires:
  - CMake
 requires:
- - scram-tools-flag
- - microarch-flag
  - eigen
  - gcc
 ---

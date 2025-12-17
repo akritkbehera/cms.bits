@@ -21,10 +21,6 @@ requires:
   - rocm
   - hepmc3
   - TBB
-  - compilation_flags
-  - compilation_flags_lto
-  - compilation_flags_pgo
-  - microarch-flag
   - cuda-flags
   - rocm-flags
 ---
@@ -47,7 +43,7 @@ cmake_args=(
     "-DCMAKE_PREFIX_PATH=$GCC_ROOT;$BOOST_ROOT;$BZ2LIB_ROOT;$DD4HEP_ROOT;$EIGEN_ROOT;$EXPAT_ROOT;$GEANT4_ROOT;$JSON_ROOT;$PYTHON_ROOT;$ROOT_ROOT;$XERCES_C_ROOT;$ZLIB_ROOT;$CUDA_ROOT;$ROCM_ROOT;$HEPMC3_ROOT;$TBB_ROOT"
     "-DCMAKE_CXX_COMPILER=$GCC_ROOT/bin/g++"
     "-DCMAKE_CXX_STANDARD=$CXXSTD"
-    "-DCMAKE_CXX_FLAGS=-fPIC $CMS_EIGEN_CXX_FLAGS ${arch_build_flags} -march=${default_microarch_name} ${lto_build_flags}"
+    "-DCMAKE_CXX_FLAGS=-fPIC $CMS_EIGEN_CXX_FLAGS ${arch_build_flags} $selected_microarch ${lto_build_flags}"
     "-DCMAKE_AR=$GCC_ROOT/bin/gcc-ar"
     "-DCMAKE_RANLIB=$GCC_ROOT/bin/gcc-ranlib"
     "-DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE"

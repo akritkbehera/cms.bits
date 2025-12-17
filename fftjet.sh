@@ -5,7 +5,6 @@ sources:
 requires:
  - gcc
  - FFTW3
- - compilation_flags
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

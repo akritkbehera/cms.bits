@@ -17,8 +17,6 @@ build_requires:
  - git
 requires:
  - Python
- - compilation_flags
- - microarch-flag
  - py-numpy
  - py-mock
  - py-typing-extensions

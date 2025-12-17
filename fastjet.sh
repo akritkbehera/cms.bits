@@ -9,7 +9,6 @@ sources:
 patches:
   - fastjet-deprecated-warn.patch
 requires:
-  - compilation_flags
   - gcc
   - autotools
   - Python

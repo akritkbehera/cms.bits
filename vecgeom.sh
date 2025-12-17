@@ -13,10 +13,6 @@ build_requires:
 requires:
 - gcc
 - xerces-c
-- compilation_flags
-- compilation_flags_lto
-- compilation_flags_pgo
-- microarch-flag
 env:
   USE_VECGEOM: "1"
 ---

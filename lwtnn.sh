@@ -7,10 +7,8 @@ build_requires:
   - CMake
 requires:
   - gcc
-  - microarch-flag
   - eigen
   - boost
-  - scram-tools-flag
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

@@ -17,9 +17,6 @@ requires:
 - geant4-data
 - xerces-c
 - zlib
-- compilation_flags
-- compilation_flags_lto
-- compilation_flags_pgo
 ---
 #eval "$setup_pgo"
 #setup_pgo_flags "$BUILDDIR" "$PKGNAME/$PKGHASH"

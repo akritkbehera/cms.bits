@@ -7,8 +7,6 @@ patches:
 requires:
  - gcc
  - Python
- - compilation_flags
- - microarch-flag
  - eigen
  - py-tensorflow
  - abseil-cpp
@@ -23,7 +21,7 @@ if [ $(uname -m) == "aarch64" ]; then
 fi
 
 export CPATH="${CPATH}:${EIGEN_ROOT}/include/eigen3"
-CXXFLAGS="-fPIC -Wl,-z,defs ${arch_build_flags} ${CMS_EIGEN_CXX_FLAGS} -march=${default_microarch_name}"
+CXXFLAGS="-fPIC -Wl,-z,defs ${arch_build_flags} ${CMS_EIGEN_CXX_FLAGS} $selected_microarch"
 
 cd tensorflow/xla_aot_runtime_src
 find . -type f -path '*/service/cpu/runtime_fork_join.cc' | xargs rm -f

@@ -17,8 +17,6 @@ requires:
  - geant4
  - gcc
  - json
- - compilation_flags
- - compilation_flags_lto
 ---
 export build_flags="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
 
@@ -37,7 +35,7 @@ cmake_fixed_args=(
     "-DCMAKE_AR=$(which gcc-ar)"
     "-DCMAKE_RANLIB=$(which gcc-ranlib)"
     "-DCMAKE_CXX_STANDARD=$CXXSTD"
-    "-DCMAKE_BUILD_TYPE=Release"
+    "-DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE"
     "-DDD4HEP_USE_GEANT4_UNITS=ON"
     "-DXERCESC_ROOT_DIR=${XERCES_C_ROOT}"
     "-DCMAKE_PREFIX_PATH=$CLHEP_ROOT;$EXPAT_ROOT;$XERCES_C_ROOT;$VEGEOM_ROOT;$ZLIB_ROOT;$ROOT_ROOT;$BOOST_ROOT;$GEANT4_ROOT;$GCC_ROOT;$JSON_ROOT"

@@ -23,6 +23,8 @@ env:
   ORACLE_HOME: $ORACLE_ROOT
 prepend_path:
   SQLPATH: $ORACLE_ROOT/bin
+requires:
+ - gcc
 ---
 export client_dir=instantclient_$(echo "%(version)s" | cut -d. -f1,2 | tr '.' "_")
 

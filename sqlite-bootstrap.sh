@@ -2,6 +2,8 @@ package: sqlite-bootstrap
 version: "3.48.0"
 sources:
  - https://www.sqlite.org/2025/sqlite-autoconf-3480000.tar.gz
+requires:
+ - gcc
 ---
 CMS_BITS_MARCH=$(gcc -dumpmachine)
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

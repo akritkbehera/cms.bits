@@ -14,3 +14,15 @@ build_results.txt
 cms-log
 envflags.yaml
 scram-tools/
+*.swp
+*.swo
+*.pyc
+compilation_flags_lto.sh
+compilation_flags_pgo1.sh
+compilation_flags_pgo.sh
+compilation_flags.sh
+cuda-flags.sh
+microarch-flag.sh
+rocm-flags.sh
+scram-tools-flag.sh
+toolflags.sh

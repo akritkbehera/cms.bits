@@ -110,10 +110,10 @@ if [[ "$(uname -m)" == "ppc64le" ]]; then
                         --with-cpu=power8 --with-tune=power8 --disable-libmpx"
 fi
 
-rm $BUILDDIR/gcc-*/DEV-PHASE
-touch $BUILDDIR/gcc-*/DEV-PHASE
-mkdir -p $BUILDDIR/gcc-*/obj
-cd $BUILDDIR/gcc-*/obj
+rm $BUILDDIR/gcc/DEV-PHASE
+touch $BUILDDIR/gcc/DEV-PHASE
+mkdir -p $BUILDDIR/gcc/obj
+cd $BUILDDIR/gcc/obj
 
 export LD_LIBRARY_PATH=$INSTALLROOT/lib64:$INSTALLROOT/lib:$LD_LIBRARY_PATH
 

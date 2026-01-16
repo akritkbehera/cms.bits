@@ -15,7 +15,7 @@ sources:
  - https://mirror.ibcp.fr/pub/gnu/gettext/gettext-%(gettext_version)s.tar.gz
  - https://pkgconfig.freedesktop.org/releases/pkg-config-%(pkg_config_version)s.tar.gz
 env:
- M4: "$M4_ROOT/bin/m4"
+ M4: "$AUTOTOOLS_ROOT/bin/m4"
 requires:
  - gcc
 ---

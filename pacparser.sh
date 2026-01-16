@@ -6,6 +6,7 @@ patches:
  - pacparser-gcc14.patch
 requires:
  - Python
+ - gcc
 build_requires:
  - setuptools
 prepend_path:
@@ -24,6 +25,7 @@ make -C src all pymod \
 make -C src install install-pymod \
   PREFIX=$INSTALLROOT \
   PYTHON=$(which python3) \
-  EXTRA_ARGS="--prefix=$INSTALLROOT"
+  PYTHONUSERBASE=$INSTALLROOT \
+  EXTRA_ARGS="--user"
 
 find $INSTALLROOT/lib -type f | xargs chmod 0755

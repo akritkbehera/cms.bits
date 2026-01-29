@@ -13,7 +13,7 @@ build_requires:
  - CMake
  - gmake
 requires:
- - rpm
+# - rpm
  - numactl
  - zstd
  - fmt
@@ -52,7 +52,7 @@ sources:
 - https://%(repository)s/%(repoversion)s/main/rccl-2.22.3.60403-128.el%(distro_major_version)s.%(arch)s.rpm
 - https://%(repository)s/%(repoversion)s/main/rccl-devel-2.22.3.60403-128.el%(distro_major_version)s.%(arch)s.rpm
 - https://%(repository)s/%(repoversion)s/main/rocshmem-devel-2.0.1.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://github.com/ROCm/rocprofiler-register.git?obj=%(rocprofiler_register_branch)s/%(rocprofiler_register_tag)s&export=%(rocprofiler_register_pkg)s&submodules=1&output=/%(rocprofiler_register_pkg)s.tgz
+- git+https://github.com/ROCm/rocprofiler-register.git?obj=%(rocprofiler_register_branch)s/%(rocprofiler_register_tag)s&export=%(rocprofiler_register_pkg)s&submodules=1&output=/%(rocprofiler_register_pkg)s.tgz
 ---
 for i in $(seq 0 31); do
     srcvar="SOURCE$i"
@@ -83,7 +83,7 @@ cmake $BUILDDIR/src/%(rocprofiler_register_pkg)s -DCMAKE_BUILD_TYPE=Release -DCM
   -DCMAKE_VERBOSE_MAKEFILE=TRUE \
   -DROCPROFILER_REGISTER_BUILD_FMT=OFF \
   -DCMAKE_PREFIX_PATH="${FMT_ROOT}"
-  
+
 make all ${JOBS:+-j$JOBS}
 rm -rf $INSTALLROOT
 mv $BUILDDIR/opt/rocm-%(version)s/ $INSTALLROOT

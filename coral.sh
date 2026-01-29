@@ -1,34 +1,20 @@
 package: coral
 version: "CORAL_2_3_21"
 variables:
-  tag:             "4fc6c24175682aff2d4299765b47b603a7b218d2"
-  branch:          "cms/CORAL_2_3_21py3"
-  github_user:     "cms-externals"
+  tag: "4fc6c24175682aff2d4299765b47b603a7b218d2"
+  branch: "cms/CORAL_2_3_21py3"
+  github_user: "cms-externals"
   subpackageDebug: "yes"
-  srctree:         "src"
-  configtag:       "V09-08-10"
-  pgo_generate:    ""
-  enable_biglib:   ""
-  build_target:    ""
-  scram_compiler:  ""
-  buildarch:       ""
-  ucprojtype:      ""
-  configtype:      ""
-  toolconf:        ""
-  gitcommit:       ""
-  pgo_build_flags: ""
-  release_usercxxflags: ""
-  release_userldflags: ""
-  nolibscheck:   ""
-  prebuildtarget: ""
-  additionalBuildTarget: ""
-  postbuildtarget: ""
-  saveDeps:       ""
+  configtag: "V09-08-10"
+  buildtarget: "release-build"
+  scram_compiler: "gcc"
+  enable_biglib: "1"
+  srctree: "src"
+  bootstrapfile: "config/bootsrc.xml"
 sources:
  - git+https://github.com/cms-sw/cmssw-config.git?obj=master/%(configtag)s&export=config&output=/cmssw-config-%(configtag)s.tgz
- - git+https://github.com/%(github_user)s/%(package)s.git?protocol=https&obj=%(branch)s/%(tag)s&module=%(package)s&export=%(srctree)s&output=/src.tar.gz
+ - git+https://github.com/%(github_user)s/coral.git?protocol=https&obj=%(branch)s/%(tag)s&module=coral&export=%(srctree)s&output=/src.tar.gz
 patches:
- - coral-2_3_20-macosx.patch
  - coral-2_3_21-gcc8.patch
 build_requires:
  - SCRAMV1
@@ -47,264 +33,413 @@ requires:
  - bz2lib
  - xerces-c
 ---
-export ARCHITECTURE="$(echo "$ARCHITECTURE" | tr '-' '_' | sed 's/x86_64/amd64/')_gcc$(echo "$GCC_VERSION" | cut -d. -f1)"
-tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
-tar -xzf "$SOURCEDIR/${SOURCE1}" -C "$BUILDDIR"
+# scram-project-build.sh
+# Converted from scram-project-build.file (RPM spec)
+# This is a base/fragment meant to be used by CMSSW-like projects
 
-find src/ -type f -print0 | xargs -0 sed -i 's/python3/Python/g'
+# Export YAML variables
+export CONFIGTAG="${CONFIGTAG:-%(configtag)s}"
+export BUILDTARGET="${BUILDTARGET:-%(buildtarget)s}"
+export SCRAM_COMPILER="${SCRAM_COMPILER:-%(scram_compiler)s}"
+export ENABLE_BIGLIB="${ENABLE_BIGLIB:-%(enable_biglib)s}"
+export SRCTREE="${SRCTREE:-%(srctree)s}"
+export BOOTSTRAPFILE="${BOOTSTRAPFILE:-%(bootstrapfile)s}"
+export SUBPACKAGEDEBUG="${SUBPACKAGEDEBUG:-%(subpackageDebug)s}"
 
-if [[ $(uname -s) == "Darwin" ]]; then
-  # Apply macOS specific patches
-  # Disable building tests, since they bring dependency on cppunit
-  patch -p1 < "$SOURCEDIR/$PATCH0"
-  perl -p -i -e 's!(<classpath.*/tests\\+.*>)!!;' config/BuildFile.xml
-fi
-# Apply gcc8 compatibility patch
-patch -p1 < "$SOURCEDIR/$PATCH1"
-rm -rf $BUILDDIR/src/OracleAccess
+# Derived variables
+CMSSW_LIBS="biglib/$ARCHITECTURE lib/$ARCHITECTURE"
+SCRAM_HOME_SUFFIX=""  # V2_ check skipped for now
+SCRAM_SCRIPT_PREFIX=".py"  # modern SCRAM uses python
 
-export cmssw_libs="biglib/$ARCHITECTURE lib/$ARCHITECTURE"
-export scram_home_suffix=$(echo "$REQUIRES" | grep -q /SCRAMV1/V2_ && echo /src || true)
-export scram_home_prefix=$(echo "$REQUIRES" | grep -q /SCRAMV1/V2_ && echo .pl || echo .py)
-export pkgrel=$ARCHITECTURE/$PKGNAME/$PKGVERSION-$PKGREVISION
+# SCRAM command helper
+SCRAMCMD="$SCRAMV1_ROOT/bin/scram --arch $ARCHITECTURE"
 
-if [[ -n '$(enable_biglib)s' ]]; then 
-  export enable_biglib=1
+# Project type detection (derived from package name)
+UCPROJTYPE=$(echo "$PKGNAME" | sed -e "s|-patch||" | tr 'a-z' 'A-Z')
+LCPROJTYPE=$(echo "$UCPROJTYPE" | tr 'A-Z' 'a-z')
+TOOLCONF=$(echo "$PKGNAME" | sed "s|-|_|g" | tr 'a-z' 'A-Z')_TOOL_CONF_ROOT
+
+# extraOptions handling
+# TODO: subpackageDebug support - for now use simple path
+if [ -n "${USERCXXFLAGS:-}" ]; then
+  EXTRA_OPTIONS="USER_CXXFLAGS='$USERCXXFLAGS'"
 else
-  export enable_biglib='%(enable_biglib)s'
+  EXTRA_OPTIONS=""
 fi
 
-# Detect OS
-if [[ -n "%(subpackageDebug)s" ]]; then
-  if [[ "$(uname)" == "Linux" ]]; then
-    # On Linux, DWZ_ROOT must be defined
-    if [[ -z "${DWZ_ROOT:-}" ]]; then
-      echo "Error: DWZ_ROOT is required on Linux." >&2
-      exit 1
-    fi
-  else
-    # On non-Linux, remove subpackageDebug
-    unset subpackageDebug
+# buildarch - defaults to no-op
+BUILDARCH="${BUILDARCH:-:}"
+
+# =============================================================================
+# PREP SECTION - Extract sources and setup config
+# =============================================================================
+
+# Clean previous build artifacts
+rm -rf "$BUILDDIR/config" "$BUILDDIR/$SRCTREE" "$BUILDDIR/poison"
+
+# Extract Source0 (cmssw-config) into config/
+# In Bits, sources are in $SOURCEDIR - extract to $BUILDDIR
+if [ -f "$SOURCEDIR/cmssw-config-${CONFIGTAG}.tgz" ]; then
+  tar -xzf "$SOURCEDIR/cmssw-config-${CONFIGTAG}.tgz" -C "$BUILDDIR"
+elif [ -d "$SOURCEDIR/config" ]; then
+  cp -r "$SOURCEDIR/config" "$BUILDDIR/"
+fi
+# Extract Source1 (main source tree) into src/
+# This is typically the CMSSW/CORAL source
+# Try common names: src.tar.gz, source1.tgz, or SOURCE1 variable
+for src_candidate in "$SOURCEDIR/src.tar.gz" "$SOURCEDIR/${SOURCE1:-source1.tgz}"; do
+  if [ -f "$src_candidate" ]; then
+    tar -xzf "$src_candidate" -C "$BUILDDIR"
+    # Rename to srctree if extracted with different name
+    [ -d "$BUILDDIR/$SRCTREE" ] || mv "$BUILDDIR"/*/ "$BUILDDIR/$SRCTREE" 2>/dev/null || true
+    break
   fi
+done
+# Fallback: copy if source dir exists
+if [ ! -d "$BUILDDIR/$SRCTREE" ] && [ -d "$SOURCEDIR/$SRCTREE" ]; then
+  cp -r "$SOURCEDIR/$SRCTREE" "$BUILDDIR/"
 fi
 
-export scramcmd="$SCRAMV1_ROOT/bin/scram --arch $ARCHITECTURE"
-export srctree=src
-
-if [[ -z '%(build_target)s' ]]; then
-  export build_target="release_build"
-else
-  export build_target="%(build_target)s"
-fi
-
-if [[ -z '%(scram_compiler)s' ]]; then
-  export scram_compiler="gcc"
-else
-  export scram_compiler="%(scram_compiler)s"
-fi
-
-export bootstrapfile="config/bootsrc.xml"
-
-if [[ -z '%(configtag)s' ]]; then
-  export configtag='V09-08-10'
-else
-  export configtag='%(configtag)s'
-fi
-
-if [[ -z '%(buildarch)s' ]]; then
-  export buildarch=""
-fi
-
-if [[ -z "%(ucprojtype)s" ]]; then
-    export ucprojtype=$(echo "$PKG_NAME" | sed -e "s|-patch||" | tr 'a-z' 'A-Z')
-fi
-
-export lcprojtype=$(echo "$ucprojtype" | tr 'A-Z' 'a-z')
-
-if [[ -z "$toolconf" ]]; then
-  varname="$(echo "$PKGNAME" | sed 's|-|_|g' | tr 'a-z' 'A-Z')_TOOL_CONF_ROOT"
-  export toolconf="${!varname}"
-fi
+# Handle additional sources (additionalSrc0, additionalSrc1) if present
+for src in "$SOURCEDIR"/src*.tar.gz; do
+  [ -f "$src" ] && tar -xzf "$src" -C "$BUILDDIR/$SRCTREE"
+done
+sed -i '/<use[[:space:]]*name="boost_filesystem"/a <flags CXXFLAGS="-Wno-error=format-overflow"/>' "$BUILDDIR/src/CoralBase/BuildFile.xml"
 # Write config tag
-echo "$configtag" > "$BUILDDIR/config/config_tag"
+echo "$CONFIGTAG" > "$BUILDDIR/config/config_tag"
 
-# Base arguments
-args=(
-  --keys SCRAM_COMPILER="$scram_compiler"
-  --keys ENABLE_LTO="1"
+# Resolve toolconf variable (e.g., CMSSW_TOOL_CONF_ROOT -> actual path)
+TOOLCONF_VAR="${TOOLCONF}"
+TOOLCONF_PATH="${!TOOLCONF_VAR:-}"
+
+# Build updateConfig.py arguments
+UPDATE_CONFIG_ARGS=(
+  -p "$UCPROJTYPE"
+  -v "$PKGVERSION-$PKGREVISION"
+  -s "$SCRAMV1_VERSION"
+  -t "$TOOLCONF_PATH"
+  --keys SCRAM_COMPILER="$SCRAM_COMPILER"
+  --keys ENABLE_LTO="${ENABLE_LTO:-0}"
 )
 
-# Git commit logic
-if [[ -z "%(gitcommit)s" ]]; then
-  args+=( --keys PROJECT_GIT_HASH="%(version)s" )
+# Git commit hash for PROJECT_GIT_HASH
+if [ -n "${GITCOMMIT:-}" ]; then
+  UPDATE_CONFIG_ARGS+=(--keys PROJECT_GIT_HASH="$GITCOMMIT")
 else
-  args+=( --keys PROJECT_GIT_HASH="%(gitcommit)s" )
+  UPDATE_CONFIG_ARGS+=(--keys PROJECT_GIT_HASH="$PKGVERSION")
 fi
 
-# PGO flags logic
-if [[ -z "%(pgo_build_flags)s" ]]; then
-  args+=( --keys ENABLE_PGO=0 )
-else
-  args+=( --keys ENABLE_PGO=1 )
+# PGO support (placeholder - skipped for now)
+UPDATE_CONFIG_ARGS+=(--keys ENABLE_PGO=0)
+
+# Run updateConfig.py
+"$BUILDDIR/config/updateConfig.py" "${UPDATE_CONFIG_ARGS[@]}"
+
+# Clear SCRAM_TARGETS in Self.xml
+sed -i -e 's| SCRAM_TARGETS=.*"| SCRAM_TARGETS=""|' "$BUILDDIR/config/Self.xml"
+
+# Add SCRAM_DEFAULT_MICROARCH for non-coral projects
+if [ "$PKGNAME" != "coral" ]; then
+  if [ -n "${DEFAULT_MICROARCH_NAME:-}" ]; then
+    sed -i -e "s|</tool>| <runtime name=\"SCRAM_DEFAULT_MICROARCH\" value=\"$DEFAULT_MICROARCH_NAME\"/>\n</tool>|" "$BUILDDIR/config/Self.xml"
+  fi
+fi
+# Skip vectorization/package_vectorization logic (placeholder)
+# TODO: package_vectorization support
+
+# Add release user flags if specified
+if [ -n "${RELEASE_USERCXXFLAGS:-}" ]; then
+  echo "<flags CXXFLAGS=\"${RELEASE_USERCXXFLAGS}\"/>" >> "$BUILDDIR/config/BuildFile.xml"
+fi
+if [ -n "${RELEASE_USERLDFLAGS:-}" ]; then
+  echo "<flags LDFLAGS=\"${RELEASE_USERLDFLAGS}\"/>" >> "$BUILDDIR/config/BuildFile.xml"
 fi
 
-# Run the update config script
-"$BUILDDIR/config/updateConfig.py" \
-  -p $ucprojtype \
-  -v "$PKG_VERSION" \
-  -s "$SCRAMV1_VERSION" \
-  -t "$toolconf" \
-  "${args[@]}"
+# Apply patches if defined (patchsrc hook)
+# TODO: patchsrc hook support - caller can define patches
 
-sed -i -e 's| SCRAM_TARGETS=.*"| SCRAM_TARGETS=""|' $BUILDDIR/config/Self.xml
-if [[ $PKG_NAME == "CORAL" ]]; then
-sed -i -e "s|</tool>|<runtime name=\"SCRAM_DEFAULT_MICROARCH\" value=\"$default_microarch_name\"/>\\
-</tool>|" "$BUILDDIR/config/Self.xml"
-fi
-if [[ -n "%(release_usercxxflags)s" ]]; then
-release_usercxxflags='%(release_usercxxflags)s'
-echo "<flags CXXFLAGS=\"${release_usercxxflags}\"/>" >> "$BUILDDIR/config/BuildFile.xml"
-fi
-if [[ -n "%(release_userldflags)s" ]]; then
-release_userldflags='%(release_userldflags)s'
-echo "<flags LDFLAGS=\"${release_userldflags}\"/>" >> "$BUILDDIR/config/BuildFile.xml"
-fi
-$scramcmd project -d $INSTALLROOT -b $bootstrapfile
+# Run buildarch if defined
+eval "$BUILDARCH"
 
-# %if "%{?pgo_build_flags}"
-# sed -i -e 's|@LOCALTOP@|%{i}|' %i/config/toolbox/%{cmsplatf}/tools/selected/gcc-cxxcompiler.xml
-# %endif
+# Initialize SCRAM project
+$SCRAMCMD project -d "$(dirname "$INSTALLROOT")" -b "$BUILDDIR/$BOOTSTRAPFILE"
+# =============================================================================
+# BUILD SECTION - Compile the project
+# =============================================================================
 
-rm -rf `find $INSTALLROOT/$PKGNAME_$PKGVERSION/$srctree -type d -name cmt`
+# Remove cmt stuff that brings unwanted dependencies
+find "$INSTALLROOT/$SRCTREE" -type d -name cmt -exec rm -rf {} + 2>/dev/null || true
 
-$scramcmd arch
-cd $INSTALLROOT/$PKGNAME_$PKGVERSION/$srctree
-if [[ $enable_biglib == 0 ]]; then
-  $scramcmd build disable-biglib || true
+# Fix perl shebangs
+grep -r -l -e "^#!.*perl.*" "$INSTALLROOT/$SRCTREE" 2>/dev/null | \
+  xargs -r perl -p -i -e 's|^#!.*perl(.*)|#!/usr/bin/env perl$1|' || true
+
+# Show SCRAM architecture
+$SCRAMCMD arch
+
+cd "$INSTALLROOT/$SRCTREE"
+
+# Disable biglib if requested
+if [ "$ENABLE_BIGLIB" = "0" ]; then
+  $SCRAMCMD build disable-biglib || true
 fi
 
-if [[ -z $extra_tools ]]; then
-  for t in $extra_tools; do
-    $scramcmd tool remove $t; done
+# Setup extra tools if specified
+if [ -n "${EXTRA_TOOLS:-}" ]; then
+  for t in $EXTRA_TOOLS; do
+    $SCRAMCMD setup "$t"
+  done
 fi
 
-echo -e "<tool name=\"cmssw-config\" version=\"$configtag\" revision=\"1\">\n</tool>" > "$INSTALLROOT/$PKGNAME_$PKGVERSION/config/toolbox/$ARCHITECTURE/tools/selected/cmssw-config.xml"
-$scramcmd setup cmssw-config
-
-if [[ -z '%(buildarch)s' ]]; then
-  export buildarch='%(buildarch)s'
+# Remove tools if specified
+if [ -n "${REMOVE_TOOLS:-}" ]; then
+  for t in $REMOVE_TOOLS; do
+    $SCRAMCMD tool remove "$t"
+  done
 fi
 
+# Create and setup cmssw-config tool
+cat > "$INSTALLROOT/config/toolbox/$ARCHITECTURE/tools/selected/cmssw-config.xml" <<EOF
+<tool name="cmssw-config" version="$CONFIGTAG" revision="1">
+</tool>
+EOF
+$SCRAMCMD setup cmssw-config
+
+# Run buildarch if defined
+eval "$BUILDARCH"
+
+# Build environment settings
 export BUILD_LOG=yes
 export SCRAM_NOPLUGINREFRESH=yes
 
-$scramcmd b clean
+# Clean before building
+$SCRAMCMD b clean
 
-if [[ $(uname)==Darwin ]]; then
-  $scramcmd b echo_null
-  eval `$scramcmd runtime -sh`
-  export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
-fi
-
-if [[ -z '%(nolibscheck)s' ]]; then
+# Disable library checks if requested
+if [ -n "${NOLIBCHECKS:-}" ]; then
   export SCRAM_NOLOADCHECK=true
   export SCRAM_NOSYMCHECK=true
 fi
 
-if declare -F preBuildCommand >/dev/null 2>&1; then
-  echo ">>>Running preBuildCommand...<<<"
+# Run pre-build command if defined
+if declare -F preBuildCommand &>/dev/null; then
   preBuildCommand
 fi
-$scramcmd b -r echo_CXX </dev/null
 
-if grep 'name="SCRAM_TARGET"' "$INSTALLROOT/$PKGNAME_$PKGVERSION/config/Self.xml"; then
-  touch "$INSTALLROOT/$PKGNAME_$PKGVERSION/.SCRAM/$ARCHITECTURE/multi-targets"
+# Echo compiler info
+$SCRAMCMD b -r echo_CXX </dev/null
+
+# Run prebuild target if specified
+if [ -n "${PREBUILDTARGET:-}" ]; then
+  $SCRAMCMD b --verbose -f "$PREBUILDTARGET" </dev/null
 fi
-$scramcmd b --verbose -f ${compileOptions} ${extraOptions} ${JOBS:+-j$JOBS} "release-build" < /dev/null || {
-  touch ../build-errors
-  $scramcmd b -f outputlog
+
+# Check for multi-target support
+if grep -q 'name="SCRAM_TARGET"' "$INSTALLROOT/config/Self.xml"; then
+  touch "$INSTALLROOT/.SCRAM/$ARCHITECTURE/multi-targets"
+fi
+
+# Fix boost_python.xml to use "Python" instead of "python3"
+#sed -i 's#<use\([[:space:]]\+\)name="python3"\([[:space:]]*\)/>#<use\1name="python"\2/>#g' "$INSTALLROOT/config/toolbox/el9_amd64_gcc14/tools/selected/boost_python.xml"
+# Insert <use name="Python"/> into PyCoral/BuildFile.xml
+sed -i 's#<use\([[:space:]]\+\)name="python3"\([[:space:]]*\)/>#<use\1name="python"\2/>#g' "$INSTALLROOT/src/LCG/PyCoral/BuildFile.xml"
+sed -i '/<use[[:space:]]*name="boost_filesystem"/a <flags CXXFLAGS="-Wno-error=format-overflow"/>' "$INSTALLROOT/src/LCG/CoralBase/BuildFile.xml"
+# Main build command
+BUILD_FAILED=0
+$SCRAMCMD b --verbose -f ${COMPILE_OPTIONS:-} ${EXTRA_OPTIONS:-} ${JOBS:+-j $JOBS} "$BUILDTARGET" </dev/null || {
+  BUILD_FAILED=1
+  touch "$BUILDDIR/build-errors"
+  $SCRAMCMD b -f outputlog || true
+  if [ -z "${IGNORE_COMPILE_ERRORS:-}" ]; then
+    exit 1
+  fi
 }
 
-$scramcmd b -r echo_CXX </dev/null
-eval `$scramcmd run -sh`
-for cmd in edmPluginRefresh ; do
-  cmdpath=`which $cmd 2> /dev/null || echo ""`
-  if [ "X$cmdpath" != X ] ; then
-    for lib in ${cmssw_libs} ; do
-      if [ -d $INSTALLROOT/$PKGNAME_$PKGVERSION/$lib ] ; then
-        rm -f $INSTALLROOT/$PKGNAME_$PKGVERSION/$lib/.edmplugincache
-        $cmd $INSTALLROOT/$PKGNAME_$PKGVERSION/$lib
-  # if "%{package_vectorization}"
-  #       for arch in %{package_vectorization} ; do
-  #         arch_dir=$INSTALLROOT/$lib/scram_${arch}
-  #         [ -d ${arch_dir} ] || continue
-  #         rm -f ${arch_dir}/.edmplugincache
-  #         if [ -e $INSTALLROOT/$lib/.edmplugincache ] ; then
-  #           cp $INSTALLROOT/$lib/.edmplugincache ${arch_dir}/.edmplugincache
-  #         fi
-  #       done
-  # fi
+# Run additional build target if specified
+if [ -n "${ADDITIONALBUILDTARGET0:-}" ]; then
+  $SCRAMCMD b --verbose -f "$ADDITIONALBUILDTARGET0" </dev/null
+fi
+
+# Run post-build target if specified
+if [ -n "${POSTBUILDTARGET:-}" ]; then
+  $SCRAMCMD b --verbose -f "$POSTBUILDTARGET" </dev/null
+fi
+
+# Move debug logs to web directory
+LOG_WEB_DIR="$WORK_DIR/WEB/build-logs/$ARCHITECTURE/$PKGVERSION"
+rm -rf "$LOG_WEB_DIR"
+mkdir -p "$LOG_WEB_DIR/logs/src"
+if [ -d "$INSTALLROOT/tmp/$ARCHITECTURE/cache/log/src" ]; then
+  tar czf "$LOG_WEB_DIR/logs/src/src-logs.tgz" -C "$INSTALLROOT/tmp/$ARCHITECTURE/cache/log/src" ./
+fi
+
+# Save dependencies if requested
+if [ -n "${SAVEDEPS:-}" ]; then
+  mkdir -p "$INSTALLROOT/etc/dependencies"
+  SCRAM_TOOL_HOME="$SCRAMV1_ROOT$SCRAM_HOME_SUFFIX" \
+    "$INSTALLROOT/config/SCRAM/findDependencies${SCRAM_SCRIPT_PREFIX}" \
+    -rel "$INSTALLROOT" -arch "$ARCHITECTURE"
+  gzip -f "$INSTALLROOT/etc/dependencies/"*.out 2>/dev/null || true
+fi
+
+# Setup runtime environment and run edmPluginRefresh
+eval "$($SCRAMCMD run -sh)"
+for cmd in edmPluginRefresh; do
+  cmdpath=$(command -v "$cmd" 2>/dev/null || echo "")
+  if [ -n "$cmdpath" ]; then
+    for lib in $CMSSW_LIBS; do
+      if [ -d "$INSTALLROOT/$lib" ]; then
+        rm -f "$INSTALLROOT/$lib/.edmplugincache"
+        "$cmd" "$INSTALLROOT/$lib"
+        # TODO: package_vectorization support for arch-specific dirs
       fi
     done
   fi
 done
 
-###<<<<INSTALL>>>>>###
-export SCRAM_ARCH=$ARCHITECTURE
-cd $INSTALLROOT/$PKGNAME_$PKGVERSION
-$scramcmd install -f
-#rm -rf external/$ARCHITECTURE; SCRAM_TOOL_HOME=$SCRAMV1_ROOT${scram_home_prefix} ./config/SCRAM/linkexternal${scram_script_prefix} --arch $ARCHITECTURE
+# =============================================================================
+# INSTALL SECTION - Finalize installation
+# =============================================================================
 
+export SCRAM_ARCH="$ARCHITECTURE"
+cd "$INSTALLROOT"
 
-# %{?PartialReleasePackageList:%PartialReleasePackageList}
-# %{?PatchReleaseSourceSymlinks:%PatchReleaseSourceSymlinks}
+# Run buildarch if defined
+eval "$BUILDARCH"
 
+# SCRAM install
+$SCRAMCMD install -f
 
-tar czf ${srctree}.tar.gz ${srctree}
-rm -fR ${srctree} tmp
+# Re-link externals
+rm -rf "external/$ARCHITECTURE"
+SCRAM_TOOL_HOME="$SCRAMV1_ROOT$SCRAM_HOME_SUFFIX" \
+  ./config/SCRAM/linkexternal${SCRAM_SCRIPT_PREFIX} --arch "$ARCHITECTURE"
 
-if [[ -z '%(subpackageDebug)s' ]]; then
-  touch $INSTALLROOT/$PKGNAME_$PKGVERSION/.SCRAM/$ARCHITECTURE/subpackage-debug
-fi
-if [ $PKGNAME == "coral" ]; then
-  ELF_DIRS="$INSTALLROOT/$PKGNAME_$PKGVERSION/$ARCHITECTURE/lib $INSTALLROOT/$ARCHITECTURE/tests/bin"
-  DROP_SYMBOLS_DIRS=""
-else
-  ELF_DIRS="$INSTALLROOT/$PKGNAME_$PKGVERSION/$ARCHITECTURE/lib $INSTALLROOT/$PKGNAME_$PKGVERSION/$ARCHITECTURE/biglib $INSTALLROOT/$PKGNAME_$PKGVERSION/$ARCHITECTURE/bin $INSTALLROOT/$PKGNAME_$PKGVERSION/$ARCHITECTURE/test"
-  DROP_SYMBOLS_DIRS="$INSTALLROOT/$PKGNAME_$PKGVERSION/$ARCHITECTURE/objs"
-fi
+# TODO: PartialReleasePackageList hook
+# TODO: PatchReleaseSourceSymlinks hook
 
-# #optimise the debug symbols, compress them and split them into separate file
-# for DIR in $ELF_DIRS $DROP_SYMBOLS_DIRS; do
-#   pushd $DIR
-#   mkdir -p .debug
-#   # ELF binaries
-#   ELF_BINS=$(file * | grep ELF | cut -d':' -f1)
-#   if [ ! -z "$ELF_BINS" ]; then
-#     if [ $(echo $ELF_BINS | wc -w) -gt 1 ] ; then
-#       dwz -m .debug/common-symbols.debug -M common-symbols.debug $ELF_BINS || true
-#     fi
-#     #echo "$ELF_BINS" | xargs -t -n1 -P%{compiling_processes} -I% sh -c 'objcopy --compress-debug-sections --only-keep-debug % .debug/%.debug; objcopy --strip-debug --add-gnu-debuglink=.debug/%.debug %'
-#   fi
-#   popd
-# done
-
-# for DIR in $DROP_SYMBOLS_DIRS; do
-#   rm -rf $DIR/.debug
-# done
-
-# rm -f $BUILDDIR/files.debug $BUILDDIR/files
-# touch $BUILDDIR/files.debug $BUILDDIR/files
-# for DIR in $ELF_DIRS; do
-#   DIR=$(echo "$DIR" | sed "s|^$INSTALLROOT/$PKGNAME_$PKGVERSION/|/opt/cmssw/$ARCHITECTURE/$PKGNAME/$PKGVERSION-$PKGREVISION/|")
-#   echo "%exclude $DIR/.debug" >> "$BUILDDIR/files"
-#   echo "$DIR/.debug"          >> "$BUILDDIR/files.debug"
-# done
-
-cd $INSTALLROOT/$PKGNAME_$PKGVERSION/
-if [[ -e $srctree.tar.gz ]]; then
-   tar -xzf $srctree.tar.gz
-   rm $srctree.tar.gz
+# Run glimpse indexing if requested
+if [ -n "${RUNGLIMPSE:-}" ]; then
+  $SCRAMCMD b --verbose -f gindices </dev/null
 fi
 
-# scramver=`cat config/scram_version`
+# TODO: RelocatePatchReleaseSymlinks hook
+
+# Archive source tree and clean up
+tar czf "${SRCTREE}.tar.gz" "$SRCTREE"
+rm -rf "$SRCTREE" tmp
+
+# Debug symbols handling (subpackageDebug)
+if [ -n "${SUBPACKAGEDEBUG:-}" ]; then
+  touch "$INSTALLROOT/.SCRAM/$ARCHITECTURE/subpackage-debug"
+
+  if [ "$PKGNAME" = "coral" ]; then
+    ELF_DIRS="$INSTALLROOT/$ARCHITECTURE/lib $INSTALLROOT/$ARCHITECTURE/tests/bin"
+    DROP_SYMBOLS_DIRS=""
+  else
+    ELF_DIRS="$INSTALLROOT/lib/$ARCHITECTURE $INSTALLROOT/biglib/$ARCHITECTURE $INSTALLROOT/bin/$ARCHITECTURE $INSTALLROOT/test/$ARCHITECTURE"
+    DROP_SYMBOLS_DIRS="$INSTALLROOT/objs/$ARCHITECTURE"
+  fi
+
+  # Optimize debug symbols, compress them, and split into separate files
+  for DIR in $ELF_DIRS $DROP_SYMBOLS_DIRS; do
+    [ -d "$DIR" ] || continue
+    pushd "$DIR"
+    mkdir -p .debug
+
+    # Find ELF binaries
+    ELF_BINS=$(file * 2>/dev/null | grep ELF | cut -d':' -f1 || true)
+    if [ -n "$ELF_BINS" ]; then
+      # Use dwz to optimize debug info if multiple binaries
+      if [ $(echo $ELF_BINS | wc -w) -gt 1 ]; then
+        dwz -m .debug/common-symbols.debug -M common-symbols.debug $ELF_BINS || true
+      fi
+      # Split debug symbols
+      echo "$ELF_BINS" | xargs -t -n1 -P${JOBS:-1} -I%% sh -c \
+        'objcopy --compress-debug-sections --only-keep-debug %% .debug/%%.debug; objcopy --strip-debug --add-gnu-debuglink=.debug/%%.debug %%'
+    fi
+    popd
+  done
+
+  # Remove debug symbols from drop dirs
+  for DIR in $DROP_SYMBOLS_DIRS; do
+    rm -rf "$DIR/.debug"
+  done
+fi
+
+# Symlink relocation for externals
+# Convert absolute symlinks to relative ones
+for L in $(find "external/$ARCHITECTURE" -type l 2>/dev/null); do
+  lnk=$(readlink -n "$L" 2>&1 || true)
+  case "$lnk" in
+    "$WORK_DIR"/*)
+      # Calculate relative path
+      rl=$(echo "$L" | sed -e 's|[^/]*/|../|g' | xargs dirname)
+      al=$(echo "$lnk" | sed -e "s|^$WORK_DIR/|../../../../$rl/|")
+      rm -f "$L"
+      ln -sf "$al" "$L"
+      ;;
+  esac
+done
+
+# Debug: show external symlinks
+find "external/$ARCHITECTURE" -type l 2>/dev/null | xargs ls -l || true
+
+# TODO: PatchReleaseSymlinkRelocate hook
+
+# Save SCRAM base directory reference
+echo "$WORK_DIR" > "$INSTALLROOT/config/scram_basedir"
+
+# =============================================================================
+# POST-RELOCATE SCRIPT - SCRAM-specific relocation tasks
+# =============================================================================
+# This script handles SCRAM-specific tasks that can't be done generically:
+#   1. Extract archived src.tar.gz
+#   2. Run SCRAM's projectAreaRename script
+#   3. Update edmplugincache timestamps
+#   4. Create scramrc/*.map files
+#   5. Site-specific SCRAM configuration
+
+touch $INSTALLROOT/etc/profile.d/post-relocate.sh
+
+cat > "$INSTALLROOT/etc/profile.d/post-relocate.sh" <<'POSTRELOCATE_EOF'
+#!/bin/bash
+# SCRAM-specific post-relocate script
+
+cd "$(dirname "$0")/../.."  # Navigate to package root from etc/profile.d/
+
+# Extract source tree if archived (SCRAM archives src during install)
+if [ -e src.tar.gz ]; then
+  tar xzf src.tar.gz
+  rm -f src.tar.gz
+fi
+
+# Run SCRAM project area rename (handles SCRAM-internal path references)
+if [ -x "./config/SCRAM/projectAreaRename.py" ]; then
+  SCRAMVER=$(cat config/scram_version 2>/dev/null || echo "")
+  ./config/SCRAM/projectAreaRename.py /cms "$WORK_DIR" "${SCRAM_ARCH:-$ARCHITECTURE}"
+fi
+
+# Touch edmplugincache to update timestamps after relocation
+for lib in biglib/${SCRAM_ARCH:-$ARCHITECTURE} lib/${SCRAM_ARCH:-$ARCHITECTURE}; do
+  [ -f "$lib/.edmplugincache" ] && {
+    find "$lib" -name "*.edmplugin" -type f -exec touch {} \;
+    touch "$lib/.edmplugincache"
+  }
+done
+
+# Create SCRAM project map entry
+SCRAMRC_DIR="${WORK_DIR}/etc/scramrc"
+if [ -n "$PKGNAME" ] && [ ! -f "$SCRAMRC_DIR/${PKGNAME}.map" ]; then
+  mkdir -p "$SCRAMRC_DIR"
+  UCPROJ=$(echo "$PKGNAME" | sed 's|-patch||' | tr 'a-z' 'A-Z')
+  echo "${UCPROJ}=\$SCRAM_ARCH/cms/$PKGNAME/${UCPROJ}_*" > "$SCRAMRC_DIR/${PKGNAME}.map"
+fi
+POSTRELOCATE_EOF
+
+chmod +x "$INSTALLROOT/etc/profile.d/post-relocate.sh"
+
+# =============================================================================
+# BUILD COMPLETE
+# =============================================================================
+echo "SCRAM project build completed: $PKGNAME $PKGVERSION"

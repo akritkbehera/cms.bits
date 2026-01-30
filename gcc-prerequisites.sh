@@ -27,7 +27,7 @@ sources:
 patches:
  - gcc-flex-disable-doc.patch
  - gcc-flex-nonfull-path-m4.patch
-validate_deps: false
+hook: disable
 ---
 for f in "$SOURCEDIR"/*; do
     case "$f" in

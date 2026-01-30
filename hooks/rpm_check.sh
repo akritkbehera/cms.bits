@@ -61,6 +61,7 @@ rpm -qp --requires "$RPM_FILE" | jq -R -n '[inputs | sub("^\\s+";"") | sub("\\s+
 rpm -qp --provides "$RPM_FILE" | jq -R -n '[inputs | sub("^\\s+";"") | sub("\\s+$";"") | select(length > 0)]' > "$RPM_DB_DIR/provides.json"
 
 cat >> "$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EOF
+
 RPM_DB_DIR="\$WORK_DIR/\$PP/etc/rpm"
 PROVIDES_FILES=""
 

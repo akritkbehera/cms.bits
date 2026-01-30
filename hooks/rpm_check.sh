@@ -44,7 +44,7 @@ create_rpm() {
         --define "summary ${PKGNAME} ${PKGVERSION}-${PKGREVISION}" \
         --define "_topdir $WORK_DIR/rpmbuild" \
         --define "buildroot $WORK_DIR/rpmbuild/BUILDROOT/${PKGNAME}" \
-	--define "inst_root $INSTALLROOT" \
+		--define "inst_root $INSTALLROOT" \
         "$WORK_DIR/rpmbuild/SPECS/${PKGNAME}.spec" || exit 1
 
     RPM_FILE="$WORK_DIR/rpmbuild/RPMS/${PKGNAME}_${PKGHASH}-1-1.${ARCHITECTURE}.rpm"
@@ -60,7 +60,7 @@ touch $RPM_DB_DIR/provides.json
 rpm -qp --requires "$RPM_FILE" | jq -R -n '[inputs | sub("^\\s+";"") | sub("\\s+$";"") | select(length > 0)]' > "$RPM_DB_DIR/requires.json"
 rpm -qp --provides "$RPM_FILE" | jq -R -n '[inputs | sub("^\\s+";"") | sub("\\s+$";"") | select(length > 0)]' > "$RPM_DB_DIR/provides.json"
 
-cat > "$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EOF
+cat >> "$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EOF
 RPM_DB_DIR="\$WORK_DIR/\$PP/etc/rpm"
 PROVIDES_FILES=""
 

@@ -20,13 +20,13 @@ if [ -f \$WORK_DIR/cmsset_default.csh ] && [ -f \$WORK_DIR/etc/cms-common/revisi
   fi
 fi
 
-mkdir -p \$WORK_DIR/etc/cms-common  \$WORK_DIR/\$ARCHITECTURE/etc/profile.d
+mkdir -p \$WORK_DIR/etc/cms-common  \$WORK_DIR/$ARCHITECTURE/etc/profile.d
 
 mkdir -p \$WORK_DIR/share \$WORK_DIR/etc/scramrc
-  [ -d \$WORK_DIR/\$ARCHITECTURE/\$PKGNAME/\$PKGVERSION-\$PKGREVISION/share/etc/scramrc/SCRAM ] && rsync -a --delete \$WORK_DIR/\$ARCHITECTURE/\$PKGNAME/\$PKGVERSION-\$PKGREVISION/share/etc/scramrc/SCRAM/ \$WORK_DIR/etc/scramrc/SCRAM/
-  [ -d \$WORK_DIR/\$ARCHITECTURE/\$PKGNAME/\$PKGVERSION-\$PKGREVISION/share/share ] && rsync -a \$WORK_DIR/\$ARCHITECTURE/\$PKGNAME/\$PKGVERSION-\$PKGREVISION/share/ \$WORK_DIR/share/
+  [ -d \$WORK_DIR/\$PP/share/etc/scramrc/SCRAM ] && rsync -a --delete \$WORK_DIR/\$PP/share/etc/scramrc/SCRAM/ \$WORK_DIR/etc/scramrc/SCRAM/
+  [ -d \$WORK_DIR/\$PP/share/share ] && rsync -a \$WORK_DIR/\$PP/share/ \$WORK_DIR/share/
 
-pushd \$WORK_DIR/\$ARCHITECTURE/\$PKGNAME/\$PKGVERSION-\$PKGREVISION
+pushd \$WORK_DIR/\$PP
  for file in \$(find . -name '*' | grep -v ./etc/scramrc/SCRAM ); do
    if [ -d \$file ] ; then
      mkdir -p \$WORK_DIR/\$file

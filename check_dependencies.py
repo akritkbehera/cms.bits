@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 RPM Dependency Checker using rpm.labelCompare
 Validates that all requirements in requires.json are satisfied by provides.json

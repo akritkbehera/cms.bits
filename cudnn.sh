@@ -3,6 +3,7 @@ version: "9.9.0.52"
 requires:
 - cuda
 - gcc
+- zlib
 variables:
   cudaversion: "12"
   aarch64_src: "linux-sbsa"

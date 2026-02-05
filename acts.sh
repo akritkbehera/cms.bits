@@ -78,13 +78,13 @@ cmake_args=(
 )
 
 # Add CUDA args if enabled
-[ "$cuda_enabled" = "ON" ] && cmake_args+=(
+[ -n $CUDA_ROOT ] && cmake_args+=(
     "-DCMAKE_CUDA_ARCHITECTURES=$(echo ${cuda_arch} | sed 's/ \+/;/g')"
     "-DCMAKE_CUDA_FLAGS=-Wno-deprecated-gpu-targets --threads 0"
 )
 
 # Add ROCm args if enabled
-[ "$rocm_enabled" = "ON" ] && cmake_args+=(
+[ -n $ROCM_ROOT ] && cmake_args+=(
     "-DCMAKE_HIP_ARCHITECTURES=$(echo ${rocm_archs} | sed 's/ \+/;/g')"
     "-DAMDGPU_TARGETS=$(echo ${rocm_archs} | sed 's/ \+/;/g')"
 )

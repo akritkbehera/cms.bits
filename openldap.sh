@@ -5,6 +5,7 @@ sources:
 requires:
  - db6
  - gcc
+ - libuuid
 prepend_path:
   LD_LIBRARY_PATH: $OPENLDAP_ROOT/lib
 ---

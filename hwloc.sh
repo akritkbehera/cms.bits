@@ -8,6 +8,7 @@ requires:
  - gcc
  - rocm
  - cuda
+ - zlib
  - gcc
  - libpciaccess
  - libxml2

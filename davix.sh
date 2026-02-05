@@ -10,6 +10,7 @@ requires:
  - libuuid
  - curl
  - Python
+ - zlib
 ---
 cd $SOURCEDIR
 git submodule update --recursive --init

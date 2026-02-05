@@ -53,6 +53,8 @@ sources:
 - https://%(repository)s/%(repoversion)s/main/rccl-devel-2.22.3.60403-128.el%(distro_major_version)s.%(arch)s.rpm
 - https://%(repository)s/%(repoversion)s/main/rocshmem-devel-2.0.1.60403-128.el%(distro_major_version)s.%(arch)s.rpm
 - git+https://github.com/ROCm/rocprofiler-register.git?obj=%(rocprofiler_register_branch)s/%(rocprofiler_register_tag)s&export=%(rocprofiler_register_pkg)s&submodules=1&output=/%(rocprofiler_register_pkg)s.tgz
+hook_params:
+  AutoReq: '1'
 ---
 for i in $(seq 0 31); do
     srcvar="SOURCE$i"

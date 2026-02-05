@@ -12,7 +12,19 @@ Release: %{revision}
 Summary: %{summary}
 License: CMS
 
-%{rpm_requires}
+%if 0%{?disable_autoreqprov}
+AutoReqProv: no
+%endif
+
+%if 0%{?disable_autoreq}
+AutoReq: no
+%endif
+
+%if %{?rpm_requires:1}%{!?rpm_requires:0}
+%if "%{rpm_requires}" != "%{nil}"
+Requires: %{rpm_requires}
+%endif
+%endif
 
 %description
 CMS package for %{pkgname}
@@ -25,3 +37,4 @@ find %{buildroot} -type d -exec chmod u+w '{}' \;
 
 %files
 /*
+

@@ -5,7 +5,6 @@ sources:
 requires:
   - zlib
   - gcc
-  - autotools
 ---
 tar -xzf "$SOURCEDIR/$SOURCE0" \
   --strip-components=1 \
@@ -34,3 +33,4 @@ fi
 
 make ${JOBS:+-j$JOBS}
 make install
+rm -rf $INSTALLROOT/lib/pkgconfig

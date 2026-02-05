@@ -4,6 +4,7 @@ sources:
  - https://gitlab.cern.ch/hepmc/HepMC3/-/archive/%(version)s/HepMC3-%(version)s.tar.gz
 build_requires:
   - CMake
+requires:
   - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

@@ -1,11 +1,13 @@
 package: bz2lib
 version: "1.0.6"
-tag: bzip2-%(version)s
 requires:
  - gcc
-source: https://github.com/libarchive/bzip2
+sources:
+ - https://gitlab.com/bzip2/bzip2/-/archive/bzip2-%(version)s/bzip2-bzip2-%(version)s.tar.gz
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 if [[ ${ARCHITECTURE:0:3} == "osx" ]]; then
   sed -e 's/ -shared/ -dynamiclib/' \

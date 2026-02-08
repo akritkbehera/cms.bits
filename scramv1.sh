@@ -5,6 +5,7 @@ branch: SCRAMV3
 source: https://github.com/cms-sw/SCRAM
 force_architecture: share
 force_revision: ""
+package_family: lcg
 ---
 # Define SCRAM version patterns used for version tracking and policy checks.
 # SCRAM_ALL_VERSIONS matches any valid SCRAM version (e.g., V3_00_84).

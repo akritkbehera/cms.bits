@@ -1,3 +1,4 @@
 build_requires:
 - py-maturin
 ---
+PipPreBuild='export CARGO_HOME="$BUILDDIR/.cargo";'

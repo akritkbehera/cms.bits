@@ -32,6 +32,7 @@ requires:
 - zstd
 - dcap
 - cuda
+package_family: lcg
 ---
 case "$(uname)" in
 Darwin)

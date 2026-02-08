@@ -6,11 +6,10 @@ requires:
  - zlib
  - zstd
  - lz4
+ - gcc
 build_requires:
  - ninja
  - CMake
-requires:
- - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

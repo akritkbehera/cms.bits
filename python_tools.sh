@@ -186,4 +186,5 @@ requires:
   - py-histoprint
   - py-mplhep
   - py-correctionlib
+  - py-torch
   ---

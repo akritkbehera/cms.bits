@@ -19,6 +19,15 @@ requires:
  - py-jax
  - py-tensorflow-io-gcs-filesystem
  - llvm
+ - zlib
+ - libjpeg-turbo
+ - libpng
+ - giflib
+ - flatbuffers
+ - grpc
+ - protobuf
+ - curl
+ - sqlite
 sources:
  - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_16_0_X/master/none.file
 ---

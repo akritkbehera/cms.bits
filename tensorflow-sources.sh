@@ -50,6 +50,7 @@ requires:
  - flatbuffers
 ---
 export CXXSTD=17
+export USER="builder"
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"

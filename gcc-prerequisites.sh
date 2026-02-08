@@ -128,7 +128,7 @@ if [ "$OS" = "Linux" ]; then
   # elfutils: tools for ELF binary inspection and debug info handling
   # --program-prefix='eu-' avoids conflicts with binutils tools
   pushd "$BUILDDIR"/elfutils-%(elfutilsVersion)s
-    ./configure --disable-static --with-zlib --without-bzlib --without-lzma --without-libarchive \
+    ./configure --disable-static --with-zlib --without-bzlib --without-lzma \
                 --disable-libdebuginfod --enable-libdebuginfod=dummy --disable-debuginfod \
                 --build="$CMS_BITS_MARCH" --host="$CMS_BITS_MARCH" --program-prefix='eu-' \
                 --disable-silent-rules --prefix="${INSTALLROOT}" \

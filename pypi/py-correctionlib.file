@@ -10,5 +10,6 @@ requires:
 - py-pydantic
 - py-python-rapidjson
 - py-rich
+- zlib
 ---
 PipPreBuildPy="export CMAKE_BUILD_PARALLEL_LEVEL=${JOBS:-1}"

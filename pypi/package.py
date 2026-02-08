@@ -37,6 +37,10 @@ if "build_requires" in spec:
   spec["build_requires"].extend(build_requires)
 else:
   spec["build_requires"] = build_requires
+if "requires" in spec:
+    spec["requires"].extend(["gcc"])
+else:
+    spec["requires"] = ["gcc"]
 prepath = spec.get("prepend_path", {})
 if prepath:
   for k, v in prepath.items():

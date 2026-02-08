@@ -10,7 +10,6 @@ build_requires:
  - CMake
  - ninja
 requires:
- - gcc
  - cuda-flags
  - eigen
  - fxdiv

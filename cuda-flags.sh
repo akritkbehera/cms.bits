@@ -32,5 +32,4 @@ env:
   nvcc_flags_cudart: "--cudart shared"
   # collect all CUDA flags
   nvcc_cuda_flags: "$(echo $nvcc_flags_stdcxx $nvcc_flags_opt $nvcc_flags_debug $nvcc_flags_constexpr $nvcc_flags_lambda $nvcc_flags_cuda_archs $nvcc_flags_cuda_diag_suppress $nvcc_flags_cudage_diag $nvcc_flags_gnu_version $nvcc_flags_cudart)"
-hook: disable
 ---

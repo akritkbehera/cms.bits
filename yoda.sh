@@ -7,6 +7,8 @@ requires:
  - ROOT
  - hdf5
  - highfive
+ - zlib
+ - openmpi
 build_requires:
  - py-cython
  - autotools

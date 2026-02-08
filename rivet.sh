@@ -9,6 +9,8 @@ requires:
  - highfive
  - Python
  - gcc
+ - zlib
+ - openmpi
 build_requires:
  - py-cython
  - autotools

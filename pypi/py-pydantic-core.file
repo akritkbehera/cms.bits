@@ -3,3 +3,4 @@ build_requires:
 requires:
 - py-typing-extensions
 ---
+PipPreBuild='export CARGO_HOME="$BUILDDIR/.cargo";'

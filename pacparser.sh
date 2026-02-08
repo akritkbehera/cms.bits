@@ -7,6 +7,7 @@ patches:
 requires:
  - Python
  - gcc
+ - pip
 build_requires:
  - setuptools
 prepend_path:
@@ -17,14 +18,15 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"
 
 patch -p1 -s -i "$SOURCEDIR/$PATCH0"
+exit 1
 
 make -C src all pymod \
   PREFIX=$INSTALLROOT \
-  PYTHON=$(which python3)
+  PYTHON=$PYTHON_ROOT/bin/python3
 
 make -C src install install-pymod \
   PREFIX=$INSTALLROOT \
-  PYTHON=$(which python3) \
+  PYTHON=$PYTHON_ROOT/bin/python3 \
   PYTHONUSERBASE=$INSTALLROOT \
   EXTRA_ARGS="--user"
 

@@ -1,15 +1,15 @@
 package: TOPO
-version: 0.1.0
+version: 5.0.0
 variables:
   smp_flags: ""
-tag: 1e9a692ccfa92cee5a87bbc94eb902b9f560870b
+tag: a0e40c6a4dd9aa2184aaaf5edab6b8d2fb8ebd4d
 source: https://github.com/cms-hls4ml/TOPO.git
+build_requires:
+ - gmake
 requires:
  - gcc
- - gmake
  - hls4mlemulatorextras
  - hls
-
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 

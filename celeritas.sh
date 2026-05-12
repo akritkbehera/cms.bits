@@ -17,6 +17,7 @@ requires:
  - expat
  - xerces-c
  - zlib
+ - g4vg
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
@@ -24,8 +25,10 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 chmod +x "$SOURCEDIR/${SOURCE1}"
 ./$SOURCEDIR/${SOURCE1}
-exit 1
+
 make_args=(
+    -B "$BUILDDIR/build"
+    -S "$BUILDDIR"
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
     -DCMAKE_CXX_STANDARD:STRING="{$CXXSTD:-20}"
     -DCMAKE_AR="$(which gcc-ar)"

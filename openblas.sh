@@ -1,6 +1,6 @@
 package: OpenBLAS
-version: "%(tag_basename)s"
-tag: v0.3.27
+version: 0.3.27
+tag: v%(version)s
 source: https://github.com/OpenMathLib/OpenBLAS
 requires:
  - gcc
@@ -49,4 +49,4 @@ if [ "$ARCH" = "riscv64" ]; then
     make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 TARGET=RISCV64_GENERIC shared
 fi
 
-make PREFIX=$INSTALLROOT install
+make PREFIX=$INSTALLROOT install MAKE_NB_JOBS=$JOBS

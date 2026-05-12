@@ -1,40 +1,37 @@
 package: SCRAMV1
-version: V3_00_84
-tag: 7b4455f33cbf875bc8a618844a6e4fca84245104
+version: V3_00_92
+tag: d324a51fc7b7ee32cf230189cde3a376977fc2bd
 branch: SCRAMV3
 source: https://github.com/cms-sw/SCRAM
-force_architecture: share
+architecture: share
 force_revision: ""
-package_family: lcg
+env:
+  SCRAMV1_VERSION: "$PKGVERSION"
+requires:
+ - cms-common
 ---
-# Define SCRAM version patterns used for version tracking and policy checks.
-# SCRAM_ALL_VERSIONS matches any valid SCRAM version (e.g., V3_00_84).
-# SCRAM_REL_MINOR extracts the major.minor part (e.g., V3_00 from V3_00_84).
-# SCRAM_REL_MAJOR extracts just the major part (e.g., V3 from V3_00_84).
-export SCRAM_ALL_VERSIONS="V[0-9][0-9]*_[0-9][0-9]*_[0-9][0-9]*"
-SCRAM_REL_MINOR=$(echo "$PKGVERSION" | grep "$SCRAM_ALL_VERSIONS" | sed 's|^\(V[0-9][0-9]*_[0-9][0-9]*\)_.*|\1|')
-SCRAM_REL_MAJOR=$(echo "$PKGVERSION" | sed 's|^\(V[0-9][0-9]*\)_.*|\1|')
-
-# SCRAM version policy check: abort if version doesn't match V<major>_<minor>_<patch> format.
-if [ "X${SCRAM_REL_MINOR}" == "X" ]; then
+if ! [[ "$PKGVERSION" =~ ^(V([0-9]+)_([0-9]+))_([0-9]+) ]]; then
   echo "You are trying to build SCRAM version $PKGVERSION which does not follow the SCRAM version policy."
   echo "Valid SCRAM versions should be of the form V[0-9]+_[0-9]+_[0-9].*"
   exit 1
 fi
+
+SCRAM_REL_MINOR="${BASH_REMATCH[1]}"   # e.g. V3_12
+SCRAM_REL_MAJOR="V${BASH_REMATCH[2]}"  # e.g. V3
 
 # Copy source tree to build directory, excluding git metadata.
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 
 # Substitute CMS install path and SCRAM version in the Python module.
 # @CMS_PATH@ becomes the install root and @SCRAM_VERSION@ becomes the version string.
-sed -i -e "s|@CMS_PATH@|$WORK_DIR|g;s|@SCRAM_VERSION@|$PKGVERSION|g" SCRAM/__init__.py
+sed -i -e "s|@CMS_PATH@|$INSTALLROOT|g;s|@SCRAM_VERSION@|$PKGVERSION|g" SCRAM/__init__.py
 
 # Install binaries, Python module, and documentation into the package directory.
 mkdir $INSTALLROOT/bin $INSTALLROOT/docs
-mv SCRAM $INSTALLROOT/
-mv docs/man $INSTALLROOT/docs/
-cp cli/scram $INSTALLROOT/bin/
-cp cli/scram.py $INSTALLROOT/bin/
+mv $BUILDROOT/$PKGNAME/SCRAM $INSTALLROOT/
+mv $BUILDROOT/$PKGNAME/docs/man $INSTALLROOT/docs/
+cp $BUILDROOT/$PKGNAME/cli/scram $INSTALLROOT/bin/
+cp $BUILDROOT/$PKGNAME/cli/scram.py $INSTALLROOT/bin/
 
 # --- Post-relocate script ---
 # This runs after the package is installed at its final location. It handles
@@ -86,9 +83,6 @@ function SetLatestVersion() {
     | tail -1 \
     | sed 's|.*:||' \
     > "etc/$version_file"
-
-  # Remove empty version files (no matching versions found)
-  [ -s "etc/$version_file" ] || rm -f "etc/$version_file"
 }
 EoF
 
@@ -100,14 +94,8 @@ cat >>"$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EoF
 # Update BASEPATH in the SCRAM Python module to the actual install prefix.
 # At build time it is set to the build host path; this corrects it for the
 # target installation.
-sed -i -e "s|^BASEPATH = .*|BASEPATH = '\$WORK_DIR'|" \$WORK_DIR/share/$PKGNAME/$PKGVERSION/SCRAM/__init__.py
-
-# Write environment initialization scripts for this SCRAM version.
-# init.sh is sourced by bash/sh shells, init.csh by csh/tcsh shells.
-echo "SCRAMV1_ROOT='\$WORK_DIR/share/$PKGNAME/$PKGVERSION'" > \$WORK_DIR/share/$PKGNAME/$PKGVERSION/etc/profile.d/init.sh
-echo "SCRAMV1_VERSION='$PKGVERSION'" >> \$WORK_DIR/share/$PKGNAME/$PKGVERSION/etc/profile.d/init.sh
-echo "set SCRAMV1_ROOT='\$WORK_DIR/share/$PKGNAME/$PKGVERSION'" > \$WORK_DIR/share/$PKGNAME/$PKGVERSION/etc/profile.d/init.csh
-echo "set SCRAMV1_VERSION='$PKGVERSION'" >> \$WORK_DIR/share/$PKGNAME/$PKGVERSION/etc/profile.d/init.csh
+sed -i -e "s|^BASEPATH = .*|BASEPATH = '\$WORK_DIR'|" \$WORK_DIR/\$PP/SCRAM/__init__.py
+sed -i -e "s|^BASEPATH_RW = .*|BASEPATH_RW = '\$WORK_DIR'|" \$WORK_DIR/\$PP/SCRAM/__init__.py
 
 # Create the SCRAM project database directory and default project maps if they
 # don't already exist. These maps tell SCRAM where to find installed CMS
@@ -132,9 +120,9 @@ mkdir -p \$WORK_DIR/\$ARCHITECTURE/etc/default-scram \$WORK_DIR/share/etc/defaul
 # compatibility. Tools may look here to find the default SCRAM version.
 # Since the package lives in shared/ (force_architecture: shared), we point
 # the search at the shared directory.
-cd \$WORK_DIR/\$ARCHITECTURE
-SetLatestVersion "\$WORK_DIR/share/$PKGNAME" "$SCRAM_ALL_VERSIONS" "default-scramv1-version"
-SetLatestVersion "\$WORK_DIR/share/$PKGNAME" "${SCRAM_REL_MAJOR}_" "default-scram/${SCRAM_REL_MAJOR}"
+pushd \$WORK_DIR/\$ARCHITECTURE
+SetLatestVersion "\$WORK_DIR/share/lcg/$PKGNAME" "$PKG_VERSION" "default-scramv1-version"
+SetLatestVersion "\$WORK_DIR/share/lcg/$PKGNAME" "${SCRAM_REL_MAJOR}_" "default-scram/${SCRAM_REL_MAJOR}"
 
 # Backward compatibility version policy for the architecture area:
 # Ensure each minor-version file (e.g., V3_00) contains the same default as
@@ -156,13 +144,13 @@ done
 # --- Shared area version tracking ---
 # Update default version tracking in the shared area where the package lives.
 cd \$WORK_DIR/share
-SetLatestVersion "$PKGNAME" "$SCRAM_ALL_VERSIONS" "default-scramv1-version"
-SetLatestVersion "$PKGNAME" "${SCRAM_REL_MAJOR}_" "default-scram/${SCRAM_REL_MAJOR}"
+SetLatestVersion "\$WORK_DIR/share/lcg/$PKGNAME" "$PKG_VERSION" "default-scramv1-version"
+SetLatestVersion "\$WORK_DIR/share/lcg/$PKGNAME" "${SCRAM_REL_MAJOR}_" "default-scram/${SCRAM_REL_MAJOR}"
 
 # If this version is the latest overall default, install its man page to the
 # shared man directory so it is available system-wide.
-if [ -s \$WORK_DIR/share/etc/default-scramv1-version ] && [ \$(cat \$WORK_DIR/share/etc/default-scramv1-version) == '$PKGVERSION' ] ; then
+if [ \$(cat \$WORK_DIR/share/etc/default-scramv1-version) == '$PKGVERSION' ] ; then
   mkdir -p \$WORK_DIR/share/man/man1
-  cp -f \$WORK_DIR/share/$PKGNAME/$PKGVERSION/docs/man/man1/scram.1 \$WORK_DIR/share/man/man1/scram.1
+  cp -f \$WORK_DIR/\$PP/docs/man/man1/scram.1 \$WORK_DIR/share/man/man1/scram.1
 fi
 EoF

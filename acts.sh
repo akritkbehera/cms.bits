@@ -1,6 +1,6 @@
 package: acts
 version: v44.0.1
-tag: cc436985e
+tag: 30fb4ea
 source: https://github.com/cms-externals/acts
 build_requires:
   - CMake
@@ -104,7 +104,6 @@ cmake "${cmake_args[@]}" -L
 make ${JOBS:+-j "$JOBS"}
 make install VERBOSE=1
 
-if [ "$build_test" = "1" ]; then
-    mkdir -p "$INSTALLROOT/data"
-    ./_deps/traccc-src/data/traccc_data_get_files.sh -o "$INSTALLROOT/data"
-fi
+rm $INSTALLROOT/bin/this_acts.sh
+rm $INSTALLROOT/bin/this_acts_withdeps.sh
+rm $INSTALLROOT/python/setup.sh

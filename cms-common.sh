@@ -1,12 +1,8 @@
 package: cms-common
-tag: a9321840d2b6bdefae0376d0aa8236e650290b19
+version: "1259"
+tag: fec24d23bd6c04dcdbebfe035ff63a22b299ee4a
 source: https://github.com/cms-sw/cms-common
-variables:
- revision: "1256"
-version: "%(revision)s"
-force_architecture: share
 force_revision: ""
-hook: disable
 ---
 # Copy source tree to build directory, excluding git metadata.
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
@@ -16,7 +12,6 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 # @SCRAM_ARCH@ is replaced with the architecture string.
 find . -type f | xargs sed -i -e "s|@CMS_PREFIX@|$WORK_DIR|g;s|@SCRAM_ARCH@|$ARCHITECTURE|"
 
-# Install all built files into the package directory.
 rsync -a $BUILDDIR/ $INSTALLROOT/
 
 # --- Post-relocate script ---
@@ -24,25 +19,24 @@ rsync -a $BUILDDIR/ $INSTALLROOT/
 # This script copies package contents there, handling revision checks and
 # special directories (scramrc, share).
 cat >"$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EoF
+mkdir -p \$WORK_DIR/etc/$PKGNAME \$WORK_DIR/$ARCHITECTURE/etc/profile.d
 # Check if a newer revision is already installed.
 # Also force installation if older revision has deleted cmsset_default.csh.
 if [ -f \$WORK_DIR/cmsset_default.csh ] && [ -f \$WORK_DIR/etc/cms-common/revision ] ; then
   existing_rev=\$(cat \$WORK_DIR/etc/cms-common/revision)
-  if [ \$existing_rev -ge %(revision)s ] ; then
+  if [ \$existing_rev -ge $PKGVERSION ] ; then
     exit 0
   fi
 fi
 
-mkdir -p \$WORK_DIR/etc/cms-common \$WORK_DIR/share/etc/profile.d
-
 # Enter the installed package directory to use relative paths for file operations.
-cd \$WORK_DIR/share/$PKGNAME/$PKGVERSION
+cd \$WORK_DIR/\$PP
 
 mkdir -p \$WORK_DIR/share \$WORK_DIR/etc/scramrc
 # Sync SCRAM configuration database if present.
-[ -d ./etc/scramrc/SCRAM ] && rsync -a --delete ./etc/scramrc/SCRAM/ \$WORK_DIR/etc/scramrc/SCRAM/
+[ -d ./etc/scramrc/SCRAM ] && rsync -a --delete \$(pwd)/etc/scramrc/SCRAM/ \$WORK_DIR/etc/scramrc/SCRAM/
 # Sync shared data files if present.
-[ -d ./share ] && rsync -a ./share/ \$WORK_DIR/share/
+[ -d ./share ] && rsync -a \$(pwd)/share/ \$WORK_DIR/share/
 
 # Copy all remaining files to the install root, skipping the scramrc/SCRAM
 # directory (already handled above with --delete).
@@ -56,6 +50,5 @@ for file in \$(find . -name '*' | grep -v '^./etc/scramrc/SCRAM'); do
 done
 
 # Record the installed revision for future upgrade checks.
-echo %(revision)s > \$WORK_DIR/etc/cms-common/revision
+echo $PKGVERSION > \$WORK_DIR/etc/cms-common/revision
 EoF
-

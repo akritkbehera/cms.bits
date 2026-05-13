@@ -33,6 +33,7 @@ requires:
  - bz2lib
  - xerces-c
 ---
+source $WORK_DIR/cmsset_default.sh
 # scram-project-build.sh
 # Converted from scram-project-build.file (RPM spec)
 # This is a base/fragment meant to be used by CMSSW-like projects
@@ -105,6 +106,7 @@ for src in "$SOURCEDIR"/src*.tar.gz; do
   [ -f "$src" ] && tar -xzf "$src" -C "$BUILDDIR/$SRCTREE"
 done
 sed -i '/<use[[:space:]]*name="boost_filesystem"/a <flags CXXFLAGS="-Wno-error=format-overflow"/>' "$BUILDDIR/src/CoralBase/BuildFile.xml"
+#find "$BUILDROOT" -name "BuildFile.xml" -exec sed -i 's/name="python3"/name="Python"/g' {} +
 # Write config tag
 echo "$CONFIGTAG" > "$BUILDDIR/config/config_tag"
 

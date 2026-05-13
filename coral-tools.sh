@@ -1,6 +1,6 @@
 package: coral-tools
 version: "v1"
-tag: a388620e0a9c7d588074c3b1e44ffd9aee41f498
+tag: d5b6f4175772cd096417a8350c6b7ed61cc00b9c
 source: https://github.com/akritkbehera/scram-tools.file.git
 variables:
   skipreqtools: jcompiler                # Tools to move from selected -> available (not actively used)
@@ -60,9 +60,9 @@ requires:
 #   $INSTALLROOT/tools/*.tmpl     - Templates with embedded XML (for coral-tool-conf)
 # =============================================================================
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
-pushd $BUILDDIR/tools/
-  ./parse.sh
-popd
+python3 /home/akbehera/Desktop/bitsorg/scram/tools.py
+chmod +x $BUILDDIR/bin/get_tools 
+chmod +x $BUILDDIR/bin/fix_tool_variables
 
 # Convert package name to uppercase with underscores (e.g., coral-tools -> CORAL_TOOLS)
 # This naming convention is used for environment variables
@@ -97,6 +97,7 @@ for tool in $REQUIRES; do
     # Args: <tool_root> <tool_version> <output_dir> <tool_name>
     "$BUILDDIR/bin/get_tools" "$toolbase_ref" "$toolver_ref" "$INSTALLROOT" "${tool,,}"
 done
+
 
 # Generate system tools (compiler wrappers, system libraries, etc.)
 # These don't have a specific ROOT path, just use "system" as version

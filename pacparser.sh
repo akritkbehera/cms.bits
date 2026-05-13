@@ -18,7 +18,6 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"
 
 patch -p1 -s -i "$SOURCEDIR/$PATCH0"
-exit 1
 
 make -C src all pymod \
   PREFIX=$INSTALLROOT \

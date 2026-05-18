@@ -1,5 +1,5 @@
 package: Python
-version: "3.9.14"
+version: "3.12.4"
 tag: "v%(version)s"
 source: https://github.com/python/cpython
 requires:

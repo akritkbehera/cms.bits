@@ -1,5 +1,5 @@
 package: openmpi
-version: "5.0.8"
+version: "5.0.9"
 variables:
  branch: v5.0.x
  tag: v%(version)s
@@ -27,7 +27,6 @@ env:
 prepend_path:
   LD_LIBRARY_PATH: $OPENMPI_ROOT/lib
 ---
-export PYTHONHOME=$PYTHON_ROOT
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR" 

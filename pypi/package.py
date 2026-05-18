@@ -5,8 +5,8 @@ import sys
 
 dir=dirname(sys.argv[0])
 build_requires = ["Python", "setuptools", "pip"]
-if not sys.argv[1] in ["py-wheel", "py-flit-core"]:
-  build_requires.append("py-wheel")
+#if not sys.argv[1] in ["py-wheel", "py-flit-core"]:
+#  build_requires.append("py-wheel")
 prepend_path = {"PYTHON3PATH": ["%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"]}
 pypi_name=sys.argv[1][3:]
 variables = {

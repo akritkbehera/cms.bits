@@ -1,3 +1,4 @@
-build_requires:
+requires:
  - py-flit-core
+ - py-packaging
 ---

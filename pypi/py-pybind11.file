@@ -1,6 +1,6 @@
 package: py-pybind11
-patches:
-- pybind11-array-bound.patch
+build_requires:
+ - py-scikit-build-core
 ---
 PipPostInstall="  ln -s ${PYTHON3_LIB_SITE_PACKAGES}/pybind11/share $INSTALLROOT/share; \
   ln -s ${PYTHON3_LIB_SITE_PACKAGES}/pybind11/include $INSTALLROOT/include" 

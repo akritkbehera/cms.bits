@@ -2,7 +2,7 @@ package: py-torch
 version: 2.6.0
 sources:
  - https://github.com/pytorch/pytorch/releases/download/v%(version)s/pytorch-v%(version)s.tar.gz
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_16_0_X/g14/FindEigen3.cmake.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_17_0_X/g14/FindEigen3.cmake.file
 patches:
  - pytorch-missing-braces.patch
  - pytorch-system-fmt.patch
@@ -44,7 +44,6 @@ fi
 MEM_GB=$(/usr/bin/free -g | awk '/^Mem:/{print $2}')
 MAX_JOBS=$(( MEM_GB / 4 ))
 if [ $MAX_JOBS -gt $JOBS ] ; then MAX_JOBS=$JOBS; fi
-export PYTHONHOME=$PYTHON_ROOT
 export MAX_JOBS
 export GCC_ROOT=${GCC_ROOT}
 export LibLZMA_ROOT=${XZ_ROOT}

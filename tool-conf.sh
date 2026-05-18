@@ -1,0 +1,42 @@
+package: tool-conf
+version: v1
+tag: bd299a84cde9e2efed17b220969b6daf2ca3447e
+source: https://github.com/akritkbehera/scram-tools.file.git
+requires:
+  - gcc
+  - zlib
+  - bz2lib
+  - expat
+  - xz
+  - db6
+  - libuuid
+  - gdbm
+  - libffi
+  - sqlite
+  - Python
+  - curl
+  - numactl
+  - fmt
+  - zstd
+  - cuda
+  - rocm
+  - xpmem
+  - gdrcopy
+  - rdma-core
+  - libpciaccess
+  - libxml2
+  - hwloc
+  - libfabric
+  - ucx
+  - pacparser
+  - openmpi
+  - xerces-c
+  - cppunit
+  - pcre
+  - frontier_client
+  - boost
+  - oracle
+---
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$INSTALLROOT"/
+export SCRAM_TOOLS_BIN_DIR=$BUILDDIR/bin
+python3 /home/akbehera/Desktop/bitsorg/scram/tools.py

@@ -1,36 +1,32 @@
 package: clhep
-version: "2.4.7.1"
-tag: bfc29493e1b4928b1e6b0dff5f754565bcfd4795
+version: "2.4.7.2"
+tag: fa41009631cf8ec83eb4f2de65af461f5818a52f
 variables:
- github_user: cms-externals
- branch: cms/v%(version)s
+  github_user: cms-externals
+  branch: cms/v%(version)s
 sources:
--  git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag_basename)s&export=%(package)s.%(version)s&output=/%(package)s.%(version)s-%(tag_basename)s.tgz
+  - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag_basename)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag_basename)s.tgz
 requires:
-- gcc
+  - gcc
 build_requires:
-- CMake 
-- ninja
+  - CMake
+  - ninja
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
-    -C "$BUILDDIR" 
-
-rm -rf ../build
-mkdir ../build
-cd ../build
+    -C "$BUILDDIR"
 
 cmake_args=(
-  -G Ninja \
-  -DCLHEP_BUILD_CXXSTD="-std=c++$CXXSTD" \
-  -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT" \
-  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE
+    -G Ninja
+    -S "$BUILDDIR"
+    -B "$BUILDDIR/build"
+    -DCLHEP_BUILD_CXXSTD="-std=c++${CXXSTD}"
+    -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    -DCLHEP_BUILD_STATIC_LIBS=OFF
 )
+cmake "${cmake_args[@]}"
+ninja -C "$BUILDDIR/build" -v ${JOBS:+-j$JOBS}
+ninja -C "$BUILDDIR/build" -v ${JOBS:+-j$JOBS} install
 
-cmake "${cmake_args[@]}" ../$PKGNAME
-
-ninja -v ${JOBS:+-j$JOBS} 
-ninja install
-
-case $(uname) in Darwin ) so=dylib ;; * ) so=so ;; esac
-rm -f $INSTALLROOT/lib/libCLHEP-[A-Z]*-%(version)s.$so
+rm -f "$INSTALLROOT/lib/libCLHEP-[A-Z]*-%(version)s.so"

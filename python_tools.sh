@@ -8,7 +8,7 @@ requires:
   - Python
   - XRootD
   - llvm
-  - hdf5  
+  - hdf5
   - yoda
   - opencv
   - triton-inference-client
@@ -18,6 +18,7 @@ requires:
   - onnxruntime
   - openldap
   - pacparser
+  - mille
   - py-multidict
   - py-anyio
   - py-sniffio
@@ -29,6 +30,15 @@ requires:
   - py-cmsml
   - py-law
   - py-protobuf
+  - py-torch
+  - py-torch-cluster
+  - py-torch-scatter
+  - py-torch-sparse
+  - py-torch-cuda
+  - py-torch-cluster-cuda
+  - py-torch-scatter-cuda
+  - py-torch-sparse-cuda
+  - py-pyg-lib-cuda
   - py-tables
   - py-tabulate
   - py-numexpr
@@ -52,7 +62,6 @@ requires:
   - py-bleach
   - py-certifi
   - py-decorator
-  - py-html5lib
   - py-ipykernel
   - py-ipython
   - py-ipython_genutils
@@ -118,10 +127,11 @@ requires:
   - py-python-ldap
   - py-plac
   - py-matplotlib
+  - py-bokeh
   - py-numpy
   - py-sqlalchemy
   - py-pygithub
-  - dxr
+  - py-dxr
   - py-PyYAML
   - py-pylint
   - pip
@@ -186,5 +196,4 @@ requires:
   - py-histoprint
   - py-mplhep
   - py-correctionlib
-  - py-torch
-  ---
+---

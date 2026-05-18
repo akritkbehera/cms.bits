@@ -1,5 +1,7 @@
 package: bz2lib
-version: "1.0.6"
+version: "1.0.8"
+build_requires:
+ - gmake
 requires:
  - gcc
 sources:
@@ -9,55 +11,22 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-if [[ ${ARCHITECTURE:0:3} == "osx" ]]; then
-  sed -e 's/ -shared/ -dynamiclib/' \
-      -e 's/ -Wl,-soname -Wl,[^ ]*//' \
-      -e 's/libbz2\.so/libbz2.dylib/g' \
-      < Makefile-libbz2_so > Makefile-libbz2_dylib
-  MAKEFILE="Makefile-libbz2_dylib"
-  soname="dylib"
-else
-  MAKEFILE="Makefile-libbz2_so"
-  soname="so"
-fi
+# Build shared library
+make ${JOBS:+-j$JOBS} -C "$BUILDDIR" -f Makefile-libbz2_so
 
-make -j"${MAKEJOBS:-1}" -f "$MAKEFILE"
+# Install
+make ${JOBS:+-j$JOBS} -C "$BUILDDIR" install PREFIX="$INSTALLROOT"
 
-ls -l | grep libbz2 || :
+# Install shared library and versioned symlinks
+cp "$BUILDDIR/libbz2.so.$PKGVERSION" "$INSTALLROOT/lib/"
+cd "$INSTALLROOT/lib"
+ln -sf "libbz2.so.$PKGVERSION" "libbz2.so"
+ln -sf "libbz2.so.$PKGVERSION" "libbz2.so.$(echo $PKGVERSION | cut -d. -f1,2)"
+ln -sf "libbz2.so.$PKGVERSION" "libbz2.so.$(echo $PKGVERSION | cut -d. -f1)"
 
-version=$(echo $PKG_VERSION | cut -d'-' -f2)
-
-mkdir -p "$INSTALLROOT"/{bin,lib,include}
-
-if [[ -f "libbz2.${soname}.${version}" ]]; then
-    cp "libbz2.${soname}.${version}" "${INSTALLROOT}/lib/"
-else
-    ls -la libbz2.* || :
-    exit 1
-fi
-
-cd "${INSTALLROOT}/lib"
-ln -sf "libbz2.${soname}.${version}" "libbz2.${soname}"
-two_digit_version=$(echo "${version}" | cut -d. -f1,2)
-ln -sf "libbz2.${soname}.${version}" "libbz2.${soname}.${two_digit_version}"
-one_digit_version=$(echo "${version}" | cut -d. -f1)
-ln -sf "libbz2.${soname}.${version}" "libbz2.${soname}.${one_digit_version}"
-cd "$BUILDDIR"
-
-if [[ -f "bzlib.h" ]]; then
-    cp bzlib.h "${INSTALLROOT}/include/"
-else
-    exit 1
-fi
-
-for binary in bzip2 bunzip2 bzcat bzdiff bzgrep bzmore; do
-    if [[ -f "$binary" ]]; then
-        cp "$binary" "${INSTALLROOT}/bin/"
-    fi
-done
-cd "${INSTALLROOT}/bin"
-[[ -f "bzdiff" ]] && ln -sf bzdiff bzcmp
-[[ -f "bzgrep" ]] && ln -sf bzgrep bzegrep
-[[ -f "bzgrep" ]] && ln -sf bzgrep bzfgrep
-[[ -f "bzmore" ]] && ln -sf bzmore bzless
-cd "$BUILDDIR"
+# Convenience symlinks for bin tools
+cd "$INSTALLROOT/bin"
+ln -sf bzdiff bzcmp
+ln -sf bzgrep bzegrep
+ln -sf bzgrep bzfgrep
+ln -sf bzmore bzless

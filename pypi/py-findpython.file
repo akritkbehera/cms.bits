@@ -1,4 +1,5 @@
 requires:
 - py-pdm-backend
 - py-packaging
+- py-platformdirs
 ---

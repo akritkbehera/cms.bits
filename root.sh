@@ -32,7 +32,6 @@ requires:
 - zstd
 - dcap
 - cuda
-package_family: lcg
 ---
 case "$(uname)" in
 Darwin)
@@ -91,7 +90,7 @@ cmake_args=(
   -Dhdfs=OFF
   -Dqt=OFF
   -Dtmva=ON
-  -DPython3_EXECUTABLE="${PYTHON_ROOT}/bin/python3.9"
+  -DPython3_EXECUTABLE="${PYTHON_ROOT}/bin/python3.12"
   -Dqtgsi=OFF
   -Dpgsql=OFF
   -Dsqlite=OFF
@@ -122,7 +121,7 @@ cmake_args=(
   -DGSL_ROOT_DIR="${GSL_ROOT}"
   -DGSL_CBLAS_LIBRARY="${OPENBLAS_ROOT}/lib/libopenblas.${soext}"
   -DGSL_CBLAS_LIBRARY_DEBUG="${OPENBLAS_ROOT}/lib/libopenblas.${soext}"
-  -DCMAKE_CXX_STANDARD=20
+  -DCMAKE_CXX_STANDARD=$CXXSTD
   -Dssl=ON
   -Dpyroot=ON
   -Dxrootd=ON

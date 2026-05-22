@@ -6,4 +6,5 @@ requires:
 - py-platformdirs
 - py-typing-extensions
 - py-hatchling
+- py-siphash24
 ---

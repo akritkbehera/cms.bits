@@ -22,8 +22,6 @@ patches:
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
-export PYTHONHOME=$PYTHON_ROOT
-
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
@@ -80,8 +78,7 @@ if [[ "$(uname -m)" == "aarch64" ]]; then
 fi
 CXXFLAGS="-std=c++$CXXSTD $CMS_EIGEN_CXX_FLAGS $selected_microarch"
 sed -i "/_pow10 only defined for positive powers/d" include/Rivet/Tools/ParticleIdUtils.hh
-
-./configure --disable-silent-rules --prefix=$INSTALLROOT --with-hepmc=${HEPMC3_ROOT} \
+PYTHON=$(which python3) ./configure --disable-silent-rules --prefix=$INSTALLROOT --with-hepmc=${HEPMC3_ROOT} \
             --with-fastjet=${FASTJET_ROOT} --with-fjcontrib=${FASTJET_CONTRIB_ROOT} --with-yoda=${YODA_ROOT} \
             --disable-doxygen --with-pic --enable-h5 \
             CXX="mpicxx" CPPFLAGS="-I${BOOST_ROOT}/include" CXXFLAGS="${CXXFLAGS}"

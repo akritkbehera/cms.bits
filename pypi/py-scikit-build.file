@@ -7,4 +7,5 @@ requires:
 - py-hatch-fancy-pypi-readme
 - py-hatch-vcs
 - py-setuptools-scm
+- py-wheel
 ---

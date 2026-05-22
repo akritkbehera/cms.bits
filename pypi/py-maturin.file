@@ -4,5 +4,6 @@ build_requires:
 - py-setuptools-rust
 requires:
 - bz2lib
+- rust
 ---
 PipPreBuild='export CARGO_HOME="$(pwd)/.cargo"; export RUSTFLAGS="-L native=${BZ2LIB_ROOT}/lib"'

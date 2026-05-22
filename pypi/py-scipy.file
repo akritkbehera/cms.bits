@@ -7,16 +7,15 @@ requires:
 - OpenBLAS
 build_requires:
 - CMake 
+- ninja
 ---
-PipPreBuild='
-export NPY_NUM_BUILD_JOBS=${JOBS:+-j $JOBS} ;\
+PipPreBuild=$(cat <<'EOF'
+export NPY_NUM_BUILD_JOBS=${JOBS:+-j $JOBS}
 export FFLAGS="${FFLAGS_OPT} -fallow-argument-mismatch -fPIC"
-'
+EOF
+)
 
-if [[ "$(uname -m)" == "aarch64" ]]; then
-  echo "python${PYTHON_VERSION}dist(scipy) = ${PKGVERSION}" >> "$INSTALLROOT/.provides"
-  echo "python3dist(scipy) = ${PKGVERSION}" >> "$INSTALLROOT/.provides"
-  export __find_provides=true
-fi
-
-
+PipPostBuild=$(cat <<'EOF'
+find $INSTALLROOT -name 'libsf_error_state*.so*' -exec ls -l {} \;
+EOF
+)

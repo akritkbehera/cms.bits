@@ -30,14 +30,14 @@ requires:
   - py-cmsml
   - py-law
   - py-protobuf
-  - py-torch
-  - py-torch-cluster
-  - py-torch-scatter
-  - py-torch-sparse
-  - py-torch-cuda
-  - py-torch-cluster-cuda
-  - py-torch-scatter-cuda
-  - py-torch-sparse-cuda
+#  - py-torch
+#  - py-torch-cluster
+#  - py-torch-scatter
+#  - py-torch-sparse
+#  - py-torch-cuda
+#  - py-torch-cluster-cuda
+#  - py-torch-scatter-cuda
+#  - py-torch-sparse-cuda
   - py-pyg-lib-cuda
   - py-tables
   - py-tabulate

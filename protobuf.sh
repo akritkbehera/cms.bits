@@ -1,6 +1,6 @@
 package: protobuf
 version: "%(tag_basename)s"
-tag: v3.19.1
+tag: v3.21.9
 sources: 
 - https://github.com/protocolbuffers/protobuf/archive/refs/tags/%(tag_basename)s.tar.gz
 requires:

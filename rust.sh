@@ -1,6 +1,6 @@
 package: rust
 version: "v%(tag_basename)s"
-tag: 1.87.0
+tag: 1.93.1
 sources: 
 - https://static.rust-lang.org/dist/rust-%(tag_basename)s-x86_64-unknown-linux-gnu.tar.gz
 requires:

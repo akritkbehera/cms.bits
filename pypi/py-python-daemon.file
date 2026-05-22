@@ -1,5 +1,7 @@
 requires:
  - py-docutils
  - py-lockfile
+ - py-chug
+ - py-changelog-chug
+ - py-semver
 ---
-PipPatchSource="sed -i -e 's|setuptools.extern.packaging.version|packaging.version|' version.py test_version.py"

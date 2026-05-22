@@ -3,4 +3,5 @@ build_requires:
 requires:
 - py-python-dateutil
 - py-types-python-dateutil
+- py-tzdata
 ---

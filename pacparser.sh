@@ -21,12 +21,13 @@ patch -p1 -s -i "$SOURCEDIR/$PATCH0"
 
 make -C src all pymod \
   PREFIX=$INSTALLROOT \
-  PYTHON=$PYTHON_ROOT/bin/python3
+  PYTHON=$(which python3)
 
-make -C src install install-pymod \
-  PREFIX=$INSTALLROOT \
-  PYTHON=$PYTHON_ROOT/bin/python3 \
-  PYTHONUSERBASE=$INSTALLROOT \
-  EXTRA_ARGS="--user"
+make -C src install \
+  PREFIX=$INSTALLROOT
+
+$(which python3) -m pip install src/pymod/ \
+  --prefix=$INSTALLROOT \
+  --no-build-isolation
 
 find $INSTALLROOT/lib -type f | xargs chmod 0755

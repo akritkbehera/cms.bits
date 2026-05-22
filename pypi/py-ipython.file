@@ -12,4 +12,5 @@ requires:
 - py-simplegeneric
 - py-typing-extensions
 - py-exceptiongroup
+- py-ipython-pygments-lexers
 ---

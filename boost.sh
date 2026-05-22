@@ -83,9 +83,3 @@ find "$BUILDDIR/stage/lib" \( -name "*.so*" -o -name "*.cmake" \) \
     -exec cp -a {} "$INSTALLROOT/lib/" \;
 cp -r "$BUILDDIR/boost" "$INSTALLROOT/include/"
 
-# Fix paths inside CMake files
-find "$INSTALLROOT/lib/cmake" -name '*.cmake' -exec \
-    sed -i \
-    -e "s#$BUILDDIR/stage#$INSTALLROOT/#g" \
-    -e 's#_BOOST_INCLUDEDIR "${_BOOST_CMAKEDIR}/../../../"#_BOOST_INCLUDEDIR "${_BOOST_CMAKEDIR}/../../include/"#g' \
-    {} +

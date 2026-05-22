@@ -57,6 +57,7 @@ cachecontrol==0.14.4
 cachetools==7.0.1
 cachy==0.3.0
 calver==2025.10.20
+changelog-chug==0.0.3
 charset-normalizer==3.4.4
 chug==0.0.0
 cleo==2.1.0
@@ -365,6 +366,7 @@ semantic-version==2.10.0
 threadpoolctl==3.6.0
 safetensors==0.7.0
 seaborn==0.13.2
+semver==3.0.4
 Send2Trash==2.1.0
 setuptools-rust==1.12.0
 setuptools-scm==9.2.2

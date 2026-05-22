@@ -106,6 +106,8 @@ for src in "$SOURCEDIR"/src*.tar.gz; do
   [ -f "$src" ] && tar -xzf "$src" -C "$BUILDDIR/$SRCTREE"
 done
 sed -i '/<use[[:space:]]*name="boost_filesystem"/a <flags CXXFLAGS="-Wno-error=format-overflow"/>' "$BUILDDIR/src/CoralBase/BuildFile.xml"
+sed -i 's/<use   name="python3"\/>/<use   name="Python"\/>/' "$BUILDDIR/src/PyCoral/BuildFile.xml"
+sed -i 's/PyUnicode_GET_SIZE/PyUnicode_GET_LENGTH/g' $BUILDDIR/src/PyCoral/src/Attribute.cpp
 #find "$BUILDROOT" -name "BuildFile.xml" -exec sed -i 's/name="python3"/name="Python"/g' {} +
 # Write config tag
 echo "$CONFIGTAG" > "$BUILDDIR/config/config_tag"

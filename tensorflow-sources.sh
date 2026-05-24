@@ -1,7 +1,7 @@
 package: tensorflow-sources
-version: "2.12.0"
+version: "2.17.0"
 variables:
-  tag: 4a22f3b460370aa5b1c60579104cd103e8f0d6bb
+  tag: 4bc8eb2ebed6a8c02a3446f2541b6ed396a95cdf
   branch: cms/v%%(version)s
   github_user: cms-externals
   build_type: "opt"
@@ -18,6 +18,7 @@ build_requires:
 requires:
  - Python
  - py-numpy
+ - py-pybind11
  - py-mock
  - py-typing-extensions
  - py-keras-applications
@@ -49,7 +50,8 @@ requires:
  - grpc
  - flatbuffers
 ---
-export CXXSTD=17
+export PYTHON_MAJOR_MINOR_VERSION=3.12
+export CXXSTD=20
 export USER="builder"
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
@@ -76,6 +78,7 @@ BAZEL_OPTS="$BAZEL_OPTS build -s --verbose_failures --distinct_host_configuratio
 
 if [[ -n "$selected_microarch" ]]; then
   BAZEL_OPTS="$BAZEL_OPTS --copt=$selected_microarch"
+  BAZEL_OPTS="$BAZEL_OPTS --copt=-DEIGEN_USE_AVX512_GEMM_KERNELS=0"
 
   if [[ "$selected_microarch" != "$default_microarch" ]]; then
     BAZEL_OPTS="$BAZEL_OPTS --distinct_host_configuration=true"
@@ -92,6 +95,7 @@ BAZEL_OPTS+=" --config=$build_type \
   --jobs=${JOBS:-$(nproc)}"
 
 BAZEL_OPTS+=" --config=noaws --config=nogcp --config=nohdfs --config=nonccl"
+BAZEL_OPTS+=" --action_env=PYTHONPATH"
 
 if [[ "$enable_tf_mkldnn" == "0" ]]; then
   BAZEL_OPTS+=" --define=zendnn=true \
@@ -120,158 +124,67 @@ if [[ "%(enable_gpu)s" == "1" ]]; then
 fi
 
 export TF_NEED_CUDA="%(enable_gpu)s"
+export TF_NEED_CLANG=0
+export TF_DOWNLOAD_CLANG=0
 export TF_NEED_JEMALLOC=0
 export TF_NEED_HDFS=0
 export TF_NEED_GCP=0
 export TF_ENABLE_XLA=1
 export TF_NEED_OPENCL=0
-export TF_NEED_VERBS=0
 export TF_NEED_MKL=0
 export TF_NEED_MPI=0
 export TF_NEED_S3=0
-export TF_NEED_GDR=0
 export TF_NEED_OPENCL_SYCL=0
 export TF_SET_ANDROID_WORKSPACE=false
-export TF_NEED_KAFKA=false
 export TF_NEED_AWS=0
-export TF_DOWNLOAD_CLANG=0
-export TF_NEED_IGNITE=0
 export TF_NEED_ROCM=0
 export TF_NEED_TENSORRT=0
+export TF_PYTHON_VERSION=$PYTHON_MAJOR_MINOR_VERSION
 export TEST_TMPDIR=$BUILDDIR/build
 export TF_CMS_EXTERNALS="$BUILDDIR/cms_externals.txt"
 
 
-echo "png:${LIBPNG_ROOT}"                   >> ${TF_CMS_EXTERNALS}
+echo "png:${LIBPNG_ROOT}"                   >  ${TF_CMS_EXTERNALS}
 echo "libjpeg_turbo:${LIBJPEG_TURBO_ROOT}"  >> ${TF_CMS_EXTERNALS}
 echo "zlib:${ZLIB_ROOT}"                    >> ${TF_CMS_EXTERNALS}
 echo "eigen_archive:${EIGEN_ROOT}"          >> ${TF_CMS_EXTERNALS}
 echo "curl:${CURL_ROOT}"                    >> ${TF_CMS_EXTERNALS}
-echo "com_google_protobuf:${PROTOBUF_ROOT}" >> ${TF_CMS_EXTERNALS}
+#echo "com_google_protobuf:${PROTOBUF_ROOT}" >> ${TF_CMS_EXTERNALS}
 echo "com_github_grpc_grpc:${GRPC_ROOT}"    >> ${TF_CMS_EXTERNALS}
 echo "gif:${GIFLIB_ROOT}"                   >> ${TF_CMS_EXTERNALS}
 echo "org_sqlite:${SQLITE_ROOT}"            >> ${TF_CMS_EXTERNALS}
 echo "cython:"                              >> ${TF_CMS_EXTERNALS}
 echo "flatbuffers:${FLATBUFFERS_ROOT}"      >> ${TF_CMS_EXTERNALS}
-echo "pybind11:${PY_PYBIND11_ROOT}"         >> ${TF_CMS_EXTERNALS}
-echo "functools32_archive:"                 >> ${TF_CMS_EXTERNALS}
-echo "astor_archive:"                       >> ${TF_CMS_EXTERNALS}
-echo "six_archive:"                         >> ${TF_CMS_EXTERNALS}
-echo "absl_py:${PY_ABSL_PY_ROOT}"           >> ${TF_CMS_EXTERNALS}
-echo "termcolor_archive:"                   >> ${TF_CMS_EXTERNALS}
-echo "typing_extensions_archive:"           >> ${TF_CMS_EXTERNALS}
+echo "pybind11:${PY_PYBIND11_ROOT}"        >> ${TF_CMS_EXTERNALS}
+echo "absl_py:${PY_ABSL_PY_ROOT}"          >> ${TF_CMS_EXTERNALS}
 echo "pasta:"                               >> ${TF_CMS_EXTERNALS}
-echo "wrapt:"                               >> ${TF_CMS_EXTERNALS}
-echo "gast_archive:"                        >> ${TF_CMS_EXTERNALS}
-echo "org_python_pypi_backports_weakref:"   >> ${TF_CMS_EXTERNALS}
-echo "opt_einsum_archive:"                  >> ${TF_CMS_EXTERNALS}
 echo "boringssl:"                           >> ${TF_CMS_EXTERNALS}
 
 export TF_SYSTEM_LIBS=$(cat ${TF_CMS_EXTERNALS} | sed 's|:.*||' | tr "\n" "," | sed 's|,*$||')
+
+echo "pypi_numpy:${PY_NUMPY_ROOT}"         >> ${TF_CMS_EXTERNALS}
+
+# Patch workspace.bzl to register a local repo for each pypi package in the lock file
+tf_requirement=requirements_lock_${PYTHON_MAJOR_VERSION}_${PYTHON_MINOR_VERSION}.txt
+for name in $(grep '^[a-zA-Z].*==' ${tf_requirement} | sed 's| *==.*||;s|-|_|g'); do
+  bfile="pypi"
+  [ -f third_party/cms/${name}.BUILD ] && bfile="${name}"
+  sed -i -e "s|def repos():|def pypi_${name}():\n  cms_new_local_repository(name = \"pypi_${name}\",build_file = \"//third_party/cms:${bfile}.BUILD\")\n\ndef repos():\n    pypi_${name}()|" third_party/cms/workspace.bzl
+done
+rm -f ${tf_requirement}; touch ${tf_requirement}
 
 if [ -d ../build ] ; then
   chmod -R u+w  ../build
   rm -rf ../build
 fi
 
+export PYTHONPATH=$PYTHON3PATH
 ./configure
-rm -rf "$BUILDDIR/cms-pytool"
-mkdir -p "$BUILDDIR/cms-pytool"
-echo '#!/bin/bash'                            >  "$BUILDDIR/cms-pytool/python3"
-echo "export PYTHON3PATH=\"${PYTHON3PATH}\"" >> "$BUILDDIR/cms-pytool/python3"
-echo "$(which python3) \"\$@\""              >> "$BUILDDIR/cms-pytool/python3"
-chmod +x "$BUILDDIR/cms-pytool/python3"
-ln -s python3 "$BUILDDIR/cms-pytool/python"
-export PATH="$BUILDDIR/cms-pytool:$PATH"
 
-# Always build the pip package
-bazel $BAZEL_OPTS //tensorflow/tools/pip_package:build_pip_package
+# Build numpy first to fix the pypi_numpy repo
+bazel $BAZEL_OPTS //third_party/py/numpy
+build_dir=$(readlink bazel-out | sed 's|/execroot/org_tensorflow/bazel-out$||')
+ln -s ${PYTHON3_LIB_SITE_PACKAGES} ${build_dir}/external/pypi_numpy/site-packages
 
-if [[ "%(pythonOnly)s" == "no" ]]; then
-  bazel $BAZEL_OPTS //tensorflow:tensorflow
-  bazel $BAZEL_OPTS //tensorflow:tensorflow_cc
-  bazel $BAZEL_OPTS //tensorflow/tools/graph_transforms:transform_graph
-  bazel $BAZEL_OPTS //tensorflow/compiler/tf2xla:tf2xla
-  bazel $BAZEL_OPTS //tensorflow/compiler/xla:cpu_function_runtime
-  bazel $BAZEL_OPTS //tensorflow/compiler/xla:executable_run_options
-  bazel $BAZEL_OPTS //tensorflow/compiler/tf2xla:xla_compiled_cpu_function
-  # bazel $BAZEL_OPTS //tensorflow/compiler/aot:tfcompile   # left commented
-  bazel $BAZEL_OPTS //tensorflow/core/profiler
-  bazel $BAZEL_OPTS //tensorflow:install_headers
-  bazel $BAZEL_OPTS //tensorflow/compiler/tf2xla:tf2xla_supported_ops
-fi
-
-chmod -R a+rwX "$PWD/bazel-bin/tensorflow/include"
-for f in $(find tensorflow -name "*.proto"); do
-  protoc --cpp_out="$PWD/bazel-bin/tensorflow/include" "$f"
-done
-
-# Only install native libs if not Python-only
-if [[ "$pythonOnly" == "no" ]]; then
-  # Define and create empty target directories
-  outdir="$PWD/out"
-  bindir="$outdir/bin"
-  incdir="$outdir/include"
-  libdir="$outdir/lib"
-
-  rm -rf "$bindir" "$incdir" "$libdir"
-  mkdir -p "$bindir" "$incdir" "$libdir"
-
-  # Copy Bazel-built artifacts
-  srcdir="$PWD/bazel-bin/tensorflow"
-
-  cp -p "$srcdir"/libtensorflow*.so* "$libdir"/
-  cp -p "$srcdir"/compiler/tf2xla/lib*.so* "$libdir"/
-  cp -p "$srcdir"/compiler/xla/lib*.so* "$libdir"/
-
-  # Create proper SONAME symlinks
-  for l in tensorflow_cc tensorflow_framework tensorflow; do
-    # check if the actual lib exists
-    if [[ ! -f "$libdir/lib${l}.so.$PKG_VERSION" ]]; then
-      echo "Missing library: $libdir/lib${l}.so.$PKG_VERSION"
-      exit 1
-    fi
-
-    rm -f "$libdir/lib${l}.so.$MAJOR_VERSION"
-    ln -s "lib${l}.so.$PKG_VERSION" "$libdir/lib${l}.so.$MAJOR_VERSION"
-
-    rm -f "$libdir/lib${l}.so"
-    ln -s "lib${l}.so.$MAJOR_VERSION" "$libdir/lib${l}.so"
-  done
-
-  # Copy additional binaries and includes
-  cp -p "$srcdir"/compiler/tf2xla/tf2xla_supported_ops "$bindir"
-  for name in tensorflow absl re2 third_party; do
-    cp -r -p "$srcdir/include/$name" "$incdir"
-  done
-
-  # Copy headers from downloaded dependencies
-  copy_headers() {
-    for header_file in $(find "$1/$2" -name '*.h' | sed "s|$1/||"); do
-      header_dir="${incdir}/$(dirname "${header_file}")"
-      mkdir -p "${header_dir}"
-      cp -p "${header_file}" "${header_dir}/"
-    done
-  }
-  copy_headers "$PWD" tensorflow/compiler
-  copy_headers "$PWD" tensorflow/core/profiler/internal
-  copy_headers "$PWD" tensorflow/core/profiler/lib
-  copy_headers "$PWD" tensorflow/core/util/tensor_bundle
-
-  # Package the output into a tarball
-  pushd "$outdir" > /dev/null
-    tar cfz "$INSTALLROOT/libtensorflow_cc.tar.gz" .
-  popd > /dev/null
-fi
-
-optdir=$(ls -d $PWD/bazel-out/*-"$build_type")
-
-if [ -L ${optdir}/bin/external/farmhash_gpu_archive/_virtual_includes/farmhash_gpu/third_party/farmhash_gpu/src/farmhash_gpu.h ] ; then
-  if [ ! -e ${optdir}/bin/external/farmhash_gpu_archive/_virtual_includes/farmhash_gpu/third_party/farmhash_gpu/src/farmhash_gpu.h ] ; then
-    ln -sf ${optdir}/bin/tensorflow/tools/pip_package/build_pip_package.runfiles/org_tensorflow/external/farmhash_gpu_archive/src/farmhash_gpu.h \
-           ${optdir}/bin/external/farmhash_gpu_archive/_virtual_includes/farmhash_gpu/third_party/farmhash_gpu/src/farmhash_gpu.h
-  fi
-fi
-
-# create the wheel file that is installed in py2-tensorflow
-bazel-bin/tensorflow/tools/pip_package/build_pip_package $INSTALLROOT
+# Build the wheel
+bazel $BAZEL_OPTS //tensorflow/tools/pip_package:wheel

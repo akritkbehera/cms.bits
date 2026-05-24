@@ -5,5 +5,10 @@ requires:
  - FreeType
  - py-pybind11
 ---
-PipBuildOptions='--global-option="build_ext" -C xcb=disable'
-PipPreBuild='export MAX_CONCURRENCY=${JOBS:-1}; export LDFLAGS="-L${LIBJPEG_TURBO_ROOT}/lib64 -L${ZLIB_ROOT}/lib -L${LIBTIFF_ROOT}/lib -L${FREETYPE_ROOT}/lib"; export CFLAGS="-I${LIBJPEG_TURBO_ROOT}/include -I${ZLIB_ROOT}/include -I${LIBTIFF_ROOT}/include -I${FREETYPE_ROOT}/include"'
+PipBuildOptions='-C xcb=disable'
+PipPreBuild=$(cat <<'EOF'
+export MAX_CONCURRENCY=$JOBS
+export LDFLAGS="-L${LIBJPEG_TURBO_ROOT}/lib64 -L${ZLIB_ROOT}/lib -L${LIBTIFF_ROOT}/lib -L${FREETYPE_ROOT}/lib"
+export CFLAGS="-I${LIBJPEG_TURBO_ROOT}/include -I${ZLIB_ROOT}/include -I${LIBTIFF_ROOT}/include -I${FREETYPE_ROOT}/include"
+EOF
+)

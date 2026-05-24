@@ -9,4 +9,5 @@ requires:
 - py-ndindex
 - py-py-cpuinfo
 - py-rich
+- py-numexpr
 ---

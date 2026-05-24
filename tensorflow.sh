@@ -1,5 +1,5 @@
 package: tensorflow
-version: 2.12.0
+version: 2.17.0
 requires:
  - tensorflow-sources
 ---

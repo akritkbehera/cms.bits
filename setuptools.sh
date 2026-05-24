@@ -1,5 +1,5 @@
 package: setuptools
-version: "80.9.0"
+version: "82.0.0"
 sources:
  - https://pypi.io/packages/source/s/setuptools/setuptools-%(version)s.tar.gz
 requires:

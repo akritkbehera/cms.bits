@@ -1,16 +1,24 @@
 package: eigen
-version: "%(tag_basename)s"
-tag: cms/master/3bb6a48d8c171cf20b5f8e48bfb4e424fbd4f79e
-source: https://github.com/cms-externals/eigen-git-mirror
+version: c1d637433e3b3f9012b226c2c9125c494b470ae6
+variables:
+  tag: b25e86af3379e35cd267d337693684dcdbdfd5d1
+  branch: cms/master/%(version)s
+  github_user: cms-externals
+sources:
+ - git+https://github.com/%(github_user)s/eigen-git-mirror.git?obj=%(branch)s/%(tag)s&export=eigen-%(version)s&output=/eigen-%(version)s.tgz
 build_requires:
-- CMake
-- gcc
+ - CMake
+ - gcc
 prepend_path:
   PKG_CONFIG_PATH: $EIGEN_ROOT/share/pkgconfig
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$PKGNAME-$PKGVERSION"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
-cmake $PKGNAME-$PKGVERSION \
+mkdir build
+cd build
+cmake ../ \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
   -DBUILD_TESTING=OFF \
   -DCMAKE_CXX_STANDARD=$CXXSTD

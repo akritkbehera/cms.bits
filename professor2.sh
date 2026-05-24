@@ -11,9 +11,8 @@ requires:
   - eigen
   - py-iminuit
   - py-cython
+  - setuptools
   - gcc
-build_requires:
-  - py-cython
   - pip
 env:
   PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages"
@@ -44,7 +43,7 @@ do
    sed -i -e 's|/usr/bin/env python|/usr/bin/env python3|' "bin/${i}"
 done
 
-export build_flags="CPPFLAGS=-I${EIGEN_ROOT}/include/eigen3 PYTHON=$(which python3) PROF_VERSION=$PKG_VERSION PYTHONPATH=./${PYTHON3_LIB_SITE_PACKAGES}:./pyext/professor2"
+export build_flags="CPPFLAGS=-I${EIGEN_ROOT}/include/eigen3 PYTHON=$(which python3) PROF_VERSION=$PKG_VERSION PYTHONPATH=./${PYTHON3_LIB_SITE_PACKAGES}:./pyext/professor2:${PYTHON3PATH}"
 
 make PREFIX="$INSTALLROOT" $build_flags
 make install PREFIX="$INSTALLROOT" $build_flags

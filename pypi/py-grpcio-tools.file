@@ -1,4 +1,6 @@
 requires:
 - py-protobuf
 - py-grpcio
+patches:
+- grpcio-tools-pkg_resources.patch
 ---

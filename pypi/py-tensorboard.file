@@ -13,5 +13,6 @@ requires:
  - py-six 
  - py-bleach
  - py-tensorboard-data-server
+ - py-pillow
 ---
 PipPostBuild="mv $INSTALLROOT/bin/tensorboard $INSTALLROOT/bin/tensorboard3"

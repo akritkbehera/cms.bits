@@ -1,6 +1,7 @@
+build_requires:
+- py-packaging
 requires:
 - py-six
-- py-packaging
 - py-webencodings
 - py-pyparsing
 - py-appdirs

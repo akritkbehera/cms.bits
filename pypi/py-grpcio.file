@@ -1,0 +1,25 @@
+requires: 
+ - py-six 
+ - re2 
+ - zlib 
+ - abseil-cpp
+patches:
+ - grpcio-absl-path.patch
+---
+PipPostPrep=$(cat <<'EOF'
+grep 'std=c++14' $BUILDDIR/grpcio-$PKGVERSION/setup.py && sed -i -e 's|std=c++14|std=c++20|g' $BUILDDIR/grpcio-$PKGVERSION/setup.py
+EOF
+)
+
+PipPreBuild=$(cat <<'EOF'
+export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS=$JOBS
+export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=True
+export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=True
+export GRPC_PYTHON_BUILD_SYSTEM_RE2=True
+export GRPC_PYTHON_BUILD_SYSTEM_ABSL=True
+export ABSEIL_CPP_ROOT
+export LDFLAGS="-L${RE2_ROOT}/lib -L${ZLIB_ROOT}/lib -L${ABSEIL_CPP_ROOT}/lib -L${PYTHON3_ROOT}/lib"
+export CXXFLAGS="-I${RE2_ROOT}/include -I${ZLIB_ROOT}/include -I${ABSEIL_CPP_ROOT}/include -I${PYTHON3_ROOT}/include/python3.12"
+export CFLAGS="-I${RE2_ROOT}/include -I${ZLIB_ROOT}/include -I${ABSEIL_CPP_ROOT}/include -I${PYTHON3_ROOT}/include/python3.12"
+EOF
+)

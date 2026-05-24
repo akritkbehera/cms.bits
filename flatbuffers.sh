@@ -1,10 +1,7 @@
 package: flatbuffers
-version: "2.0.6"
+version: "24.3.25"
 sources:
  - https://github.com/google/flatbuffers/archive/refs/tags/v%(version)s.tar.gz
- - https://patch-diff.githubusercontent.com/raw/google/flatbuffers/pull/7227.diff
-patches: 
- - flatbuffers-7422.patch
 build_requires:
  - CMake
  - gmake
@@ -14,9 +11,6 @@ requires:
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
-
-patch -p1 -i $SOURCEDIR/$PATCH0
-patch -p1 -i $SOURCEDIR/$SOURCE1
 
 mkdir ../build
 cd ../build

@@ -1,6 +1,6 @@
 package: geant4
-version: "11.2.2"
-tag: e1c646ceca4bd407f6d10c0728e11b69dcffdcc0
+version: "11.4.1"
+tag: 425b0689d08917d8908d69fb7873e79db001d2ba
 variables:
  github_user: cms-externals
  branch: cms/v%(version)s

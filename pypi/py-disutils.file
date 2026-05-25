@@ -1,0 +1,4 @@
+requires:
+ - py-aiohttp 
+---
+PipDepsPost='grep -v "^py-asyncio$" | xargs --no-run-if-empty echo'

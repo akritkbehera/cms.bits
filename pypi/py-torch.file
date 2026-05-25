@@ -9,9 +9,10 @@ patches:
 build_requires:
  - CMake
  - ninja
+ - py-packaging
 requires:
- - cuda-flags
  - eigen
+ - FFTW3
  - fxdiv
  - numactl
  - openmpi
@@ -24,23 +25,18 @@ requires:
  - fmt
  - py-pybind11
  - py-typing-extensions
- - cuda
- - cudnn
+ - py-filelock
+ - py-fsspec
+ - py-Jinja2
+ - py-networkx
+ - py-sympy
 ---
-PipPatchSource='cp '"$SOURCEDIR/$SOURCE1"' '"$BUILDDIR/py$Pypi_name-v$PKGVERSION/cmake/Modules/"''
+PipPatchSource='cp '"$SOURCEDIR/$SOURCE1"' '"$BUILDDIR/py$Pypi_name-v$PKGVERSION/cmake/Modules/FindEigen3.cmake"''
 
 PipPreBuild=$(cat <<'EOF'
-export cuda_arch_float=$(echo ${cuda_arch} | tr ' ' '\\n' | sed -E 's|([0-9])$|.\\1|' | tr '\\n' ' ' | sed -e's/ *$/+PTX/')
-if [ -n "$CUDA_ROOT" ]; then
-  export USE_CUDA=1
-  export CUDA_ARCH_LIST=${cuda_arch_float}
-  export nvtx3_dir=$CUDA_ROOT/include
-  export USE_CUDNN=1
-  export CUDNN_ROOT=$CUDNN_ROOT
-else
-  export USE_CUDA=OFF
-  export USE_CUDNN=OFF
-fi
+export USE_CUDA=OFF
+export USE_CUDNN=OFF
+export USE_ROCM=OFF
 MEM_GB=$(/usr/bin/free -g | awk '/^Mem:/{print $2}')
 MAX_JOBS=$(( MEM_GB / 4 ))
 if [ $MAX_JOBS -gt $JOBS ] ; then MAX_JOBS=$JOBS; fi
@@ -55,6 +51,9 @@ export USE_SYSTEM_FXDIV=ON
 export USE_SYSTEM_PYBIND11=ON
 export PYBIND11_SYSPATH=${PY_PYBIND11_ROOT}
 export USE_SYSTEM_BENCHMARK=ON
+export PYTORCH_BUILD_VERSION=$PKGVERSION
+export PYTORCH_BUILD_NUMBER=0
+export LIBTORCH_PACKAGE_NAME=torch
 export BUILD_TEST=OFF
 export BUILD_BINARY=OFF
 export BUILD_PYTHON=ON
@@ -83,10 +82,10 @@ export USE_TENSORPIPE=OFF
 export ONNX_ML=ON
 export BLAS=OpenBLAS
 export CMAKE_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64 $selected_microarch"
-export CMAKE_PREFIX_PATH="${EIGEN_ROOT}:${FXDIV_ROOT}:${NUMACTL_ROOT}:${OPENMPI_ROOT}:${PROTOBUF_ROOT}:${PSIMD_ROOT}:${PYTHON_ROOT}:${PY_PYYAML_ROOT}:${OPENBLAS_ROOT}:${ZLIB_ROOT}:${FMT_ROOT}:${PY_PYBIND11_ROOT}:${PY_TYPING_EXTENSIONS}:${CUDA_ROOT}:${CUDANN_ROOT}"
+export CMAKE_PREFIX_PATH="${EIGEN_ROOT}:${FXDIV_ROOT}:${NUMACTL_ROOT}:${OPENMPI_ROOT}:${PROTOBUF_ROOT}:${PSIMD_ROOT}:${PYTHON_ROOT}:${PY_PYYAML_ROOT}:${OPENBLAS_ROOT}:${ZLIB_ROOT}:${FMT_ROOT}:${PY_PYBIND11_ROOT}:${PY_TYPING_EXTENSIONS_ROOT}"
 export LIBLZMA_ROOT=${XZ_ROOT}
-export PYTHON_EXECUTABLE=${PYTHON_ROOT}/bin/python3.9
-export BUILD_LIBTORCH_WHL=ON
+export PYTHON_EXECUTABLE=${PYTHON_ROOT}/bin/python3.12
+export BUILD_LIBTORCH_WHL=OFF
 export CMAKE_VERBOSE_MAKEFILE=ON
 EOF
 )
@@ -101,8 +100,8 @@ pushd $INSTALLROOT
   ln -sf ${PYTHON3_LIB_SITE_PACKAGES}/torch/share share
   ln -s ${PYTHON3_LIB_SITE_PACKAGES}/torch/include include
   pushd lib
-    ln -sf python39/site-packages/torch/lib/*.so .
+    ln -sf python3.12/site-packages/torch/lib/*.so .
   popd
 popd
 EOF
-) 
+)

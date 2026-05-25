@@ -7,8 +7,8 @@ variables:
 sources:
   - git+https://github.com/%(github_user)s/clang-uml.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
 patches:
-  - clang-uml-clang21
-  - clang-uml-yamlcpp
+  - clang-uml-clang21.patch
+  - clang-uml-yamlcpp.patch
 build_requires:
   - CMake
   - ninja
@@ -34,6 +34,7 @@ cmake_args=(
     -DCMAKE_BUILD_TYPE=Release
     -DGIT_VERSION="%(version)s"
     -DCMAKE_PREFIX_PATH="${YAML_CPP_ROOT};${ZLIB_ROOT}"
+    -DBUILD_TESTING=OFF
 )
 if [ "$(uname -m)" = "aarch64" ]; then
     cmake_args+=(-DCMAKE_CXX_FLAGS="-Wno-sign-compare")

@@ -10,9 +10,10 @@ requires:
   - yoda
   - eigen
   - py-iminuit
-  - py-cython
   - setuptools
   - gcc
+build_requires:
+  - py-cython
   - pip
 env:
   PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages"
@@ -35,7 +36,7 @@ grep -q 'std=c[+][+]11' pyext/setup.py
 sed -i -e "s|-std=c[+][+]11|-std=c++$CXXSTD|" pyext/setup.py
 grep -q 'CXXSTD := c[+][+]11' Makefile
 sed -i -e "s|CXXSTD := c[+][+]11|CXXSTD := c++$CXXSTD|" Makefile
-sed -i -e "s|pip install -vv|pip install --target ../${PYTHON3_LIB_SITE_PACKAGES} -vv|" Makefile
+sed -i -e "s|pip install -vv|pip install --no-build-isolation --target ../${PYTHON3_LIB_SITE_PACKAGES} -vv|" Makefile
 
 for i in `ls bin`
 do

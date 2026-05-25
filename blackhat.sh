@@ -6,10 +6,13 @@ variables:
   tag: 3e8ac1f06ef3612088505de448c8e127157076a7
 sources: 
  - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
+patches:
+ - blackhat.patch
 requires:
  - qd
  - Python
  - gcc
+ - py-disutils
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

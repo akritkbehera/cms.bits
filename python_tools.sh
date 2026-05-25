@@ -12,10 +12,10 @@ requires:
   - yoda
   - opencv
   - triton-inference-client
- # - professor2
+  - professor2
   - rivet
   - frontier_client
-  #- onnxruntime
+  - onnxruntime
   - openldap
   - pacparser
   - mille
@@ -30,7 +30,7 @@ requires:
   - py-cmsml
   - py-law
   - py-protobuf
-#  - py-torch
+  - py-torch
 #  - py-torch-cluster
 #  - py-torch-scatter
 #  - py-torch-sparse

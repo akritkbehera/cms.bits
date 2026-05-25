@@ -2,9 +2,8 @@ package: cmssw-wm-tools
 version: "250417"
 tag: cd271d3796bfd8d0eff6500f801a4367bfd1b5dc
 source: https://github.com/cms-sw/cmssw-wm-tools
-force_architecture: share
+architecture: share
 force_revision: ""
-hook: disable
 ---
 # Copy source tree to build directory, excluding git metadata.
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
@@ -26,7 +25,7 @@ fi
 mkdir -p \$WORK_DIR/share/overrides \$WORK_DIR/etc/$PKGNAME
 
 # Enter the installed package directory to use relative paths.
-cd \$WORK_DIR/share/$PKGNAME/$PKGVERSION
+cd \$WORK_DIR/share/$PKGFAMILY/$PKGNAME/$PKGVERSION
 
 # Sync bin/ and python/ directories to the shared overrides area.
 for d in bin python ; do

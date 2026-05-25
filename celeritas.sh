@@ -2,7 +2,7 @@ package: celeritas
 version: 0.6.3
 sources:
  - https://github.com/celeritas-project/celeritas/releases/download/v%(version)s/celeritas-%(version)s.tar.gz
- - file://compilation-flags.file
+ #- file://compilation-flags.file
 variables:
  package_build_flags: "-Wall -Wextra -pedantic"
 build_requires:

@@ -5,7 +5,7 @@ variables:
   github_user: cms-externals
   branch: cms/v%(version)s
 sources:
-  - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag_basename)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag_basename)s.tgz
+  - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
 requires:
   - gcc
 build_requires:
@@ -13,12 +13,11 @@ build_requires:
   - ninja
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
-    --strip-components=1 \
     -C "$BUILDDIR"
 
 cmake_args=(
     -G Ninja
-    -S "$BUILDDIR"
+    -S "$BUILDDIR/$PKGNAME-$PKGVERSION"
     -B "$BUILDDIR/build"
     -DCLHEP_BUILD_CXXSTD="-std=c++${CXXSTD}"
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
@@ -30,3 +29,4 @@ ninja -C "$BUILDDIR/build" -v ${JOBS:+-j$JOBS}
 ninja -C "$BUILDDIR/build" -v ${JOBS:+-j$JOBS} install
 
 rm -f "$INSTALLROOT/lib/libCLHEP-[A-Z]*-%(version)s.so"
+

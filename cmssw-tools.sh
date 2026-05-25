@@ -161,7 +161,7 @@ requires:
  - libunwind
  - igprof
 #  - heaptrack
- - openloops
+# - openloops
  - mozsearch
 #  - tkonlinesw
  - oracle

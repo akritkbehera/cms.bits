@@ -1,10 +1,10 @@
 package: vecgeom
-version: "1.2.11"
+version: "2.0.0"
 variables:
  vecgeom_backend: Scalar
  tag: 47dd602df7074fcc78036e93cd639ae6270207fd
 sources: 
-- git+https://gitlab.cern.ch/vecgeom/vecgeom.git?obj=master/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
+- git+https://gitlab.cern.ch/vecgeom/vecgeom.git?obj=master/%(tag)s&export=%(package)s-v%(version)s&output=/%(package)s-%(version)s.tgz
 patches:
 - vecgeom-fix-vector.patch
 build_requires:

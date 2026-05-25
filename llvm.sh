@@ -1,10 +1,10 @@
 package: llvm
-version: 18.1.6
+version: 21.1.4
 variables:
- llvmCommit: 02c7568fc9f555b2c72fc169c8c68e2116d97382
- llvmBranch: cms/release/18.x/1118c2e
- iwyuCommit: 377eaef70cdda47368939f4d9beabfabe3f628f0
- iwyuBranch: clang_18
+ llvmCommit: 3063d23cfa249166b2e0c33a02c7300c20ffb2d
+ llvmBranch: cms/llvmorg-21.1.4
+ iwyuCommit: 791e69ea4662cb3e74e8128fd5fd69bd7f4ea6b3
+ iwyuBranch: clang_21
 sources:
  - git+https://github.com/cms-externals/llvm-project.git?obj=%(llvmBranch)s/%(llvmCommit)s&export=llvm-%(version)s-%(llvmCommit)s&module=llvm-%(version)s-%(llvmCommit)s&output=/llvm-%(version)s-%(llvmCommit)s.tgz
  - git+https://github.com/include-what-you-use/include-what-you-use.git?obj=%(iwyuBranch)s/%(iwyuCommit)s&export=iwyu-%(version)s-%(iwyuCommit)s&module=iwyu-%(version)s-%(iwyuCommit)s&output=/iwyu-%(version)s-%(iwyuCommit)s.tgz
@@ -38,8 +38,8 @@ host_triple=$(gcc -dumpmachine)
 
 cmake_args=(
   -G Ninja
-  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;lld;openmp"
-  -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind"
+  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;mlir;lld"
+  -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind;compiler-rt;openmp"
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"
   -DCMAKE_BUILD_TYPE:STRING=Release
   -DLLVM_LIBDIR_SUFFIX:STRING=64
@@ -92,3 +92,4 @@ if [ -z "${use_system_gcc}" ]; then
         ln -s clang++.cfg clang.cfg
     popd
 fi
+

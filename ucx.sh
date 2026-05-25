@@ -1,6 +1,6 @@
 package: ucx
-version: "1.18.1"
-tag: v1.18.1
+version: "1.19.0"
+tag: v1.19.0
 source: https://github.com/openucx/ucx
 build_requires:
  - autotools

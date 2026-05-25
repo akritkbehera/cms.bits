@@ -2,9 +2,6 @@ package: celeritas
 version: 0.6.3
 sources:
  - https://github.com/celeritas-project/celeritas/releases/download/v%(version)s/celeritas-%(version)s.tar.gz
- #- file://compilation-flags.file
-variables:
- package_build_flags: "-Wall -Wextra -pedantic"
 build_requires:
  - gmake
  - CMake
@@ -23,17 +20,16 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-chmod +x "$SOURCEDIR/${SOURCE1}"
-./$SOURCEDIR/${SOURCE1}
+build_flags="-Wall -Wextra -pedantic -fPIC"
 
 make_args=(
     -B "$BUILDDIR/build"
     -S "$BUILDDIR"
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
-    -DCMAKE_CXX_STANDARD:STRING="{$CXXSTD:-20}"
+    -DCMAKE_CXX_STANDARD:STRING="${CXXSTD:-20}"
     -DCMAKE_AR="$(which gcc-ar)"
     -DCMAKE_RANLIB="$(which gcc-ranlib)"
-    -DCMAKE_BUILD_TYPE="$cmake_build_type"
+    -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_CXX_FLAGS="$build_flags"
     -DCMAKE_C_FLAGS="$build_flags"
     -DCMAKE_STATIC_LIBRARY_CXX_FLAGS="$build_flags"

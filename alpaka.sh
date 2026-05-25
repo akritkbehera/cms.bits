@@ -1,7 +1,7 @@
 package: alpaka
-version: 1.2.0
+version: 2.1.1
 sources:
- - https://github.com/cms-externals/%(package)s/archive/%(version)s.tar.gz
+ - https://github.com/alpaka-group/%(package)s/archive/%(version)s.tar.gz
 requires:
  - boost
  - gcc

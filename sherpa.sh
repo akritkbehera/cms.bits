@@ -1,10 +1,11 @@
 package: sherpa
-version: "2.2.15"
+version: "2.2.16"
 sources:
- - http://www.hepforge.org/archive/sherpa/SHERPA-MC-%(version)s.tar.gz
+ - git+https://gitlab.com/sherpa-team/sherpa.git?obj=master/v%(version)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
 patches:
- - sherpa-2.2.10-hepmcshort.patch
- - sherpa-cpp20.patch
+ - sherpa-2.2.16-hepmcshort.patch
+ - sherpa-setenv.patch
+ - sherpa-disable-manual.patch
 build_requires:
  - mcfm
  - swig
@@ -12,6 +13,7 @@ build_requires:
 requires:
  - gcc
  - hepmc
+ - hepmc3
  - lhapdf
  - blackhat
  - sqlite
@@ -31,23 +33,21 @@ if [[ $(uname -m) =~ ^x86_64.*$ ]]; then
 	ARCH_CMSPLATF="-m64"
 fi
 
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  perl -p -i -e 's|-rdynamic||g' \
-    "configure" "AddOns/Analysis/Scripts/Makefile.in"
-fi
-
 patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
+patch -p1 < "$SOURCEDIR/$PATCH2"
 
 export PYTHONHOME=$PYTHON_ROOT
 
 ./configure --prefix=$INSTALLROOT --enable-analysis --disable-silent-rules \
             --enable-fastjet=$FASTJET_ROOT \
             --enable-hepmc2=$HEPMC_ROOT \
+            --enable-hepmc3=$HEPMC3_ROOT \
             --enable-lhapdf=$LHAPDF_ROOT \
             --enable-blackhat=$BLACKHAT_ROOT \
             --enable-pyext \
             --enable-ufo \
+            ${OPENLOOPS_ROOT+--enable-openloops=$OPENLOOPS_ROOT} \
             --enable-mpi \
             --with-sqlite3=$SQLITE_ROOT \
             --enable-analysis \

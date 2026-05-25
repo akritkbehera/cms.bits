@@ -1,9 +1,9 @@
 package: rocm
-version: 6.4.3
+version: 7.1.0
 variables:
-  repoversion:                   "%(version)s"
+  repoversion:                   "7.1"
   distro_major_version:          "9"
-  rocm_branch:                   "6.4"
+  rocm_branch:                   "7.1"
   rocprofiler_register_branch:   release/rocm-rel-%(rocm_branch)s
   rocprofiler_register_tag:      rocm-%(version)s
   rocprofiler_register_pkg:      rocprofiler-register-%(rocprofiler_register_tag)s
@@ -20,43 +20,46 @@ requires:
  - Python
  - gcc
 sources:
-- https://%(repository)s/%(repoversion)s/main/amd-smi-lib-25.5.1.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/comgr-3.0.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/hip-devel-6.4.43484.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/hip-runtime-amd-6.4.43484.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/hipcc-1.1.1.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/hsa-rocr-1.15.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/hsa-rocr-devel-1.15.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/openmp-extras-devel-18.63.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/openmp-extras-runtime-18.63.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocm-core-6.4.3.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocm-dbgapi-0.77.2.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocm-device-libs-1.0.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocm-llvm-19.0.0.25224.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocm-smi-lib-7.7.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocminfo-1.0.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocprim-devel-3.4.1.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocprofiler-2.0.60403.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocprofiler-compute-3.1.1.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocprofiler-devel-2.0.60403.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocprofiler-docs-2.0.60403.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocprofiler-plugins-2.0.60403.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocprofiler-register-0.4.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocprofiler-systems-1.0.2.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/hipcub-devel-3.4.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocthrust-devel-3.3.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/hiprand-2.12.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/hiprand-devel-2.12.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocrand-3.3.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocrand-devel-3.3.0.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rccl-2.22.3.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rccl-devel-2.22.3.60403-128.el%(distro_major_version)s.%(arch)s.rpm
-- https://%(repository)s/%(repoversion)s/main/rocshmem-devel-2.0.1.60403-128.el%(distro_major_version)s.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/amd-smi-lib-26.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/comgr-3.0.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/hip-devel-7.1.25424.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/hip-runtime-amd-7.1.25424.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/hipcc-1.1.1.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/hsa-rocr-1.18.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/hsa-rocr-devel-1.18.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/openmp-extras-devel-20.70.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/openmp-extras-runtime-20.70.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocm-core-7.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocm-dbgapi-0.77.4.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocm-device-libs-1.0.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocm-llvm-20.0.0.25425.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocm-smi-lib-7.8.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocminfo-1.0.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprim-devel-4.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-2.0.70100.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-compute-3.3.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-devel-2.0.70100.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-docs-2.0.70100.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-plugins-2.0.70100.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-register-0.6.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-systems-1.2.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/hipcub-devel-4.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocthrust-devel-4.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/hiprand-3.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/hiprand-devel-3.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocrand-4.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocrand-devel-4.1.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rccl-2.27.7.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rccl-devel-2.27.7.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocshmem-devel-3.0.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-sdk7.1.0-1.0.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-sdk-rocpd7.1.0-1.0.0.70100-20.el8.%(arch)s.rpm
+- https://%(repository)s/%(repoversion)s/main/rocprofiler-sdk-roctx7.1.0-1.0.0.70100-20.el8.%(arch)s.rpm
 - git+https://github.com/ROCm/rocprofiler-register.git?obj=%(rocprofiler_register_branch)s/%(rocprofiler_register_tag)s&export=%(rocprofiler_register_pkg)s&submodules=1&output=/%(rocprofiler_register_pkg)s.tgz
 hook_params:
   AutoReq: '1'
 ---
-for i in $(seq 0 31); do
+for i in $(seq 0 34); do
     srcvar="SOURCE$i"
     srcfile=$(eval echo \$$srcvar)
     if [ -f "$SOURCEDIR/$srcfile" ]; then
@@ -67,10 +70,10 @@ done
 
 mkdir src
 
-tar -xzf "$SOURCEDIR/${SOURCE32}" \
+tar -xzf "$SOURCEDIR/${SOURCE35}" \
     -C "$BUILDDIR/src"
 
-sed -i -e 's|add_subdirectory(external)|find_package(fmt REQUIRED)\nadd_subdirectory(external)|' src/%(rocprofiler_register_pkg)s/CMakeLists.txt
+sed -i -e 's|add_subdirectory(external)|find_package(fmt REQUIRED)\nadd_subdirectory(external)|' "src/%(rocprofiler_register_pkg)s/CMakeLists.txt"
 if [ "$CXXSTD" != "17" ]; then
   grep -q 'CMAKE_CXX_STANDARD  *17' "src/%(rocprofiler_register_pkg)s/cmake/rocprofiler_register_options.cmake"
   sed -i -e "s|CMAKE_CXX_STANDARD  *17|CMAKE_CXX_STANDARD $CXXSTD|" \
@@ -88,7 +91,7 @@ cmake $BUILDDIR/src/%(rocprofiler_register_pkg)s -DCMAKE_BUILD_TYPE=Release -DCM
 
 make all ${JOBS:+-j$JOBS}
 rm -rf $INSTALLROOT
-mv $BUILDDIR/opt/rocm-%(version)s/ $INSTALLROOT
+mv $BUILDDIR/opt/rocm-7.1.0/ $INSTALLROOT
 rm -rf opt
 rm -rf usr
 rm -r -f $INSTALLROOT/hip/

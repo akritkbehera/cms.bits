@@ -1,6 +1,6 @@
 package: libjpeg-turbo
 version: "%(tag_basename)s"
-tag: 2.0.2
+tag: 3.0.4
 source: https://github.com/libjpeg-turbo/libjpeg-turbo
 requires:
  - gcc

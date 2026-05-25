@@ -1,5 +1,5 @@
 package: rivet
-version: 4.1.0
+version: 4.1.2
 requires:
  - hepmc3
  - fastjet
@@ -7,6 +7,7 @@ requires:
  - yoda
  - hdf5
  - highfive
+ - onnxruntime
  - Python
  - gcc
  - zlib
@@ -18,7 +19,7 @@ sources:
  - https://gitlab.com/hepcedar/rivet/-/archive/rivet-%(version)s/rivet-rivet-%(version)s.tar.gz
 patches:
  - rivet-duplicate-libs.patch
- - rivet-pyextfjcontrib.patch
+ - rivet-postrelease.patch
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
@@ -80,7 +81,7 @@ CXXFLAGS="-std=c++$CXXSTD $CMS_EIGEN_CXX_FLAGS $selected_microarch"
 sed -i "/_pow10 only defined for positive powers/d" include/Rivet/Tools/ParticleIdUtils.hh
 PYTHON=$(which python3) ./configure --disable-silent-rules --prefix=$INSTALLROOT --with-hepmc=${HEPMC3_ROOT} \
             --with-fastjet=${FASTJET_ROOT} --with-fjcontrib=${FASTJET_CONTRIB_ROOT} --with-yoda=${YODA_ROOT} \
-            --disable-doxygen --with-pic --enable-h5 \
+            --disable-doxygen --with-pic --enable-h5 --enable-onnxrt=${ONNXRUNTIME_ROOT} \
             CXX="mpicxx" CPPFLAGS="-I${BOOST_ROOT}/include" CXXFLAGS="${CXXFLAGS}"
 
 perl -p -i -e "s|LIBS = $|LIBS = -lHepMC3|g" bin/Makefile

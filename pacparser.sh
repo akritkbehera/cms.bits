@@ -1,13 +1,12 @@
 package: pacparser
-version: 1.4.5
+version: 1.5.0
 sources:
  - https://github.com/manugarg/pacparser/archive/refs/tags/v%(version)s.tar.gz
 patches:
- - pacparser-gcc14.patch
+ - pacparser-pymod-install.patch
 requires:
  - Python
  - gcc
- - pip
 build_requires:
  - setuptools
 prepend_path:
@@ -19,15 +18,13 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 -s -i "$SOURCEDIR/$PATCH0"
 
-make -C src all pymod \
+CFLAGS='-pthread' make -C src all pymod \
   PREFIX=$INSTALLROOT \
   PYTHON=$(which python3)
 
-make -C src install \
-  PREFIX=$INSTALLROOT
-
-$(which python3) -m pip install src/pymod/ \
-  --prefix=$INSTALLROOT \
-  --no-build-isolation
+make -C src install install-pymod \
+  PREFIX=$INSTALLROOT \
+  PYTHON=$(which python3) \
+  EXTRA_ARGS="--prefix=$INSTALLROOT"
 
 find $INSTALLROOT/lib -type f | xargs chmod 0755

@@ -1,5 +1,5 @@
 package: gnuplot
-version: 5.2.8
+version: 5.4.8
 sources:
  - http://downloads.sourceforge.net/project/gnuplot/gnuplot/%(version)s/gnuplot-%(version)s.tar.gz
 requires:

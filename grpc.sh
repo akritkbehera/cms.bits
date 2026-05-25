@@ -1,8 +1,8 @@
 package: grpc
 version: "%(tag_basename)s"
-tag: v1.35.0
+tag: v1.48.4
 sources:
- - https://github.com/grpc/grpc/archive/refs/tags/%(tag_basename)s.tar.gz
+ - git+https://github.com/grpc/grpc.git?obj=master/%(tag_basename)s&export=%(package)s-%(tag_basename)s&submodules=1&output=/%(package)s-%(tag_basename)s.tgz
 build_requires:
  - CMake
  - ninja
@@ -11,22 +11,26 @@ requires:
  - protobuf
  - zlib
  - pcre
- - c-ares 
+ - c-ares
  - abseil-cpp
  - re2
  - gcc
 patches:
  - grpc-mno-outline-atomics.patch
- - 28212.patch
+ - grpc-openssl-no-engine.patch
+ - grpc-fix-aligned_storage.patch
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-patch -p1 -i $SOURCEDIR/$PATCH1
+patch -p1 -i "$SOURCEDIR/$PATCH0"
+patch -p1 -i "$SOURCEDIR/$PATCH1"
+patch -p1 -i "$SOURCEDIR/$PATCH2"
+
 mkdir build
 cd build
-cmake -S .. -B . build -G Ninja \
+cmake -S .. -B . -G Ninja \
   -DgRPC_INSTALL:BOOL=ON \
   -DCMAKE_BUILD_TYPE:STRING="${LLVM_RELEASE_TYPE}" \
   -DCMAKE_CXX_STANDARD:STRING="${CXXSTD}" \

@@ -1,5 +1,5 @@
 package: zlib
-version: "1.2.13"
+version: "1.3.2"
 tag: v%(version)s
 source: https://github.com/madler/zlib
 requires:

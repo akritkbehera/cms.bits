@@ -1,4 +1,5 @@
+package: py-disutils
 requires:
- - py-aiohttp 
+ - py-aiohttp
 ---
 PipDepsPost='grep -v "^py-asyncio$" | xargs --no-run-if-empty echo'

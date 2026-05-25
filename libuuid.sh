@@ -1,13 +1,16 @@
 package: libuuid
 version: "%(tag_basename)s"
-tag: "2.34"
-sources: 
-- http://www.kernel.org/pub/linux/utils/util-linux/v%(tag_basename)s/util-linux-%(tag_basename)s.tar.gz 
+tag: "2.40"
+sources:
+- http://www.kernel.org/pub/linux/utils/util-linux/v%(tag_basename)s/util-linux-%(tag_basename)s.tar.gz
+patches:
+  - libuuid-2.40-disable-get_uuid_via_daemon.patch
 requires:
   - gcc
 ---
 tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
 cd $BUILDDIR/util-linux-*
+patch -p1 < "$SOURCEDIR/$PATCH0"
 export CFLAGS="-Wno-error=implicit-function-declaration"
 
 ./configure \

@@ -1,6 +1,6 @@
 package: ROOT
-version: 6.36.05
-tag: 7947cea45c6fdee76ce1afc0f8a652df351b71bd
+version: 6.36.11
+tag: fd0da82cb47abe082dafec8b7e46c4339d206b95
 source: https://github.com/cms-sw/root
 env:
  ROOTSYS: $ROOT_ROOT
@@ -116,7 +116,7 @@ cmake_args=(
   -Dbuiltin_ftgl=ON
   -Dbuiltin_gl2ps=ON
   -Dbuiltin_xxhash=ON
-  -Dbuiltin_nlohmannjson=ON
+  -Dbuiltin_nlohmannjson=OFF
   -Darrow=OFF
   -DGSL_ROOT_DIR="${GSL_ROOT}"
   -DGSL_CBLAS_LIBRARY="${OPENBLAS_ROOT}/lib/libopenblas.${soext}"

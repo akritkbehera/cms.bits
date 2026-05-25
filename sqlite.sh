@@ -1,6 +1,6 @@
 package: sqlite
-version: 3.36.0
-tag: version-3.36.0
+version: 3.48.0
+tag: version-3.48.0
 source: https://github.com/sqlite/sqlite
 requires:
  - zlib

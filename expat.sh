@@ -1,6 +1,6 @@
 package: expat
 version: "%(tag_basename)s"
-tag: R_2_4_8
+tag: R_2_7_1
 requires:
  - gcc
 source: https://github.com/libexpat/libexpat

@@ -1,2 +1,5 @@
-echo "hello"
-exit 1
+package: demo2
+version: abc
+variables:
+ jack: john
+---

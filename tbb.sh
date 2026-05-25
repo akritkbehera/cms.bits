@@ -1,6 +1,6 @@
 package: TBB
 version: "%(tag_basename)s"
-tag: v2022.0.0
+tag: v2022.3.0
 source: https://github.com/uxlfoundation/oneTBB
 requires:
   - gcc

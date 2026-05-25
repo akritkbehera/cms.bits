@@ -1,22 +1,33 @@
 package: FreeType
-version: v2.10.0
-tag: VER-2-10-0
-source: https://github.com/freetype/freetype
+version: 2-14-3
+sources:
+  - https://github.com/freetype/freetype/archive/refs/tags/VER-%(version)s.tar.gz
+build_requires:
+  - CMake
+  - gmake
 requires:
   - gcc
   - bz2lib
   - zlib
   - libpng
 ---
-rsync -a --chmod=ug=rwX --exclude='**/.git' --delete --delete-excluded "$SOURCEDIR/" ./
-type libtoolize && export LIBTOOLIZE=libtoolize
-type glibtoolize && export LIBTOOLIZE=glibtoolize
-sh autogen.sh
-./configure --prefix="$INSTALLROOT"              \
-            ${BZ2LIB_ROOT:+--with-bzip2="$BZ2ZLIB_ROOT"} \
-            ${ZLIB_ROOT:+--with-zlib="$ZLIB_ROOT"} \
-            ${LIBPNG_ROOT:+--with-png="$LIBPNG_ROOT"} \
-            --with-harfbuzz=no
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
-make ${JOBS:+-j$JOBS}
+mkdir -p "$BUILDDIR/build"
+cd "$BUILDDIR/build"
+
+cmake "$BUILDDIR" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DFT_DISABLE_HARFBUZZ=TRUE \
+  -DFT_REQUIRE_ZLIB=TRUE \
+  -DFT_REQUIRE_BZIP2=TRUE \
+  -DFT_REQUIRE_PNG=TRUE \
+  -DCMAKE_PREFIX_PATH="${BZ2LIB_ROOT};${ZLIB_ROOT};${LIBPNG_ROOT}" \
+  -DBUILD_SHARED_LIBS=ON \
+  -DCMAKE_INSTALL_LIBDIR=lib \
+  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
+
+make ${JOBS:+-j$JOBS} VERBOSE=1
 make install

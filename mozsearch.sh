@@ -4,7 +4,7 @@ variables:
  tag: 1c886cc95c4e811709e97f711d7691ff8b87bda9
  branch: master
  github_user: mozsearch
-sources: 
+sources:
  - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
 patches:
  - mozsearch-gcc-toolchain.patch

@@ -1,6 +1,6 @@
 package: yoda
-version: "2.1.0"
-tag: "yoda-2.1.0"
+version: "2.1.2"
+tag: "yoda-2.1.2"
 requires:
  - Python
  - gcc

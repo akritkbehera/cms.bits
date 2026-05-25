@@ -4,7 +4,7 @@ variables:
   projectname: trackerDAQ
   releasename: trackerDAQ-4.2-tkonline
 sources:
-  - http://cmsrep.cern.ch/cmssw/download/trackerDAQ-4.2.0-1_gcc7.tgz
+  - http://cms-trackerdaq-service.web.cern.ch/cms-trackerdaq-service/download/sources/%(projectname)s-%(version)s.tgz
 patches:
   - tkonlinesw-4.0-clang-hash_map.patch
   - tkonlinesw-bring-pvf.patch
@@ -13,7 +13,7 @@ requires:
   - oracle
   - xerces-c
   - gmake
-  - ROOT
+  - root
   - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
@@ -26,7 +26,6 @@ patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
 patch -p1 < "$SOURCEDIR/$PATCH2"
 
-rm -rf TrackerOnline/Fed9U/Fed9USoftware/Fed9UUtils/2.4/slc3_ia32_gcc323
 perl -p -i -e "s|-Werror||" FecSoftwareV3_0/generic/Makefile
 
 export ENV_TRACKER_DAQ="$BUILDDIR/%(releasename)s/opt/trackerDAQ"
@@ -69,4 +68,3 @@ make cmsswinstall
 
 tar -c -C "$BUILDDIR/%(releasename)s/opt/%(projectname)s" include lib | tar -x -C "$INSTALLROOT"
 rm -rf "$INSTALLROOT/dummy"
-

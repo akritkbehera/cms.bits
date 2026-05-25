@@ -1,21 +1,22 @@
 package: gbl
-version: V03-01-01
+version: V04-00-00
 variables:
- tag: 59c2d99ea96bc739321fd251096504c91467be24
+ tag: 6e60cdf1f1a296ce0a4e08833ebbfa58e9ad2787
 sources:
- - git+https://gitlab.desy.de/claus.kleinwort/general-broken-lines.git?obj=main/%(tag)s&export=%(version)s-%(version)s&output=/%(package)s-%(version)s.tgz
+ - git+https://gitlab.desy.de/millepede/general-broken-lines.git?obj=main/%(tag)s&export=%(version)s-%(version)s&output=/%(package)s-%(version)s.tgz
 build_requires:
  - CMake
 requires:
  - eigen
+ - mille
  - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-grep -q 'CMAKE_CXX_STANDARD  *11' cpp/CMakeLists.txt
-sed -i -e "s|CMAKE_CXX_STANDARD  *11|CMAKE_CXX_STANDARD $CXXSTD|" cpp/CMakeLists.txt
+grep -q 'CMAKE_CXX_STANDARD  *17' cpp/CMakeLists.txt
+sed -i -e "s|CMAKE_CXX_STANDARD  *17|CMAKE_CXX_STANDARD $CXXSTD|" cpp/CMakeLists.txt
 
 rm -rf ../build && mkdir -p ../build && cd ../build
 

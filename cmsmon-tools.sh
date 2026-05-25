@@ -19,6 +19,8 @@ sources:
   - https://github.com/vkuznet/k8s_info/releases/download/%(k8s_info_ver)s/k8s_info-tools.tar.gz
   - https://github.com/aquasecurity/trivy/releases/download/v%(trivyver)s/trivy_%(trivyver)s_Linux-64bit.tar.gz
   - https://github.com/vkuznet/gocurl/releases/download/%(gocurlver)s/gocurl-tools.tar.gz
+hook_params:
+  AutoReq: '0'
 ---
 mkdir -p "$INSTALLROOT"
 
@@ -80,24 +82,16 @@ chmod +x "$INSTALLROOT/gocurl"
 # Create wrapper script
 cat << 'WRAPPER' > "$INSTALLROOT/.cmsmon-tools"
 #!/bin/bash -e
-#CMSDIST_FILE_REVISION=2
 eval $(scram unsetenv -sh)
 THISDIR=$(dirname $0)
-SHARED_ARCH=$(cmsos)
 CMD=$(basename $0)
-LATEST_VERSION=$(ls -d ${THISDIR}/../${SHARED_ARCH}_*/cms/cmsmon-tools/*/$CMD 2>/dev/null | sed -e 's|.*/cms/cmsmon-tools/||;s|/.*||' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
-[ -z $LATEST_VERSION ] && >&2 echo "ERROR: Unable to find command '$CMD' for '$SHARED_ARCH' architecture." && exit 1
-TOOL=$(ls -d ${THISDIR}/../${SHARED_ARCH}_*/cms/cmsmon-tools/${LATEST_VERSION}/$CMD 2>/dev/null | sort | tail -1)
-$TOOL "$@"
+exec "$THISDIR/$CMD" "$@"
 WRAPPER
 chmod +x "$INSTALLROOT/.cmsmon-tools"
 
-mkdir -p "$INSTALLROOT/etc/profile.d"
-cat >"$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EoF
-mkdir -p \$WORK_DIR/cmsmon
-cp "\$WORK_DIR/\$PP/.cmsmon-tools" "\$WORK_DIR/cmsmon/.cmsmon-tools"
+# Create cmsmon directory with symlinks
+mkdir -p "$INSTALLROOT/cmsmon"
+cp "$INSTALLROOT/.cmsmon-tools" "$INSTALLROOT/cmsmon/.cmsmon-tools"
 for cmd in monit alert annotationManager nats-sub nats-pub dbs_vm promtool amtool prometheus hey stern trivy k8s_info gocurl; do
-    ln -sf .cmsmon-tools \$WORK_DIR/cmsmon/\$cmd
+    ln -sf .cmsmon-tools "$INSTALLROOT/cmsmon/$cmd"
 done
-rm -f \$WORK_DIR/cmsmon/*_commands 2>/dev/null
-EoF

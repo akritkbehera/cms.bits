@@ -1,5 +1,5 @@
 package: openmpi
-version: "5.0.9"
+version: "5.0.10"
 variables:
  branch: v5.0.x
  tag: v%(version)s

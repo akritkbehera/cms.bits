@@ -1,6 +1,6 @@
 package: libtiff
 version: "%(tag_basename)s"
-tag: v4.0.10
+tag: v4.6.0
 source: https://github.com/libsdl-org/libtiff
 requires:
  - libjpeg-turbo

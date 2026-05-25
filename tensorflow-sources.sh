@@ -1,6 +1,8 @@
 package: tensorflow-sources
 version: "2.17.0"
+version: "2.17.0"
 variables:
+  tag: 4bc8eb2ebed6a8c02a3446f2541b6ed396a95cdf
   tag: 4bc8eb2ebed6a8c02a3446f2541b6ed396a95cdf
   branch: cms/v%%(version)s
   github_user: cms-externals
@@ -52,7 +54,7 @@ requires:
 export PYTHON_MAJOR_MINOR_VERSION="3.12"
 export CXXSTD=20
 export USER="builder"
-
+export PYTHON_MAJOR_MINOR_VERSION="${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}"
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
@@ -145,6 +147,7 @@ export TF_NEED_IGNITE=0
 export TF_NEED_ROCM=0
 export TF_NEED_TENSORRT=0
 export TF_PYTHON_VERSION=$PYTHON_MAJOR_MINOR_VERSION
+export TF_PYTHON_VERSION=$PYTHON_MAJOR_MINOR_VERSION
 export TEST_TMPDIR=$BUILDDIR/build
 export TF_CMS_EXTERNALS="$BUILDDIR/cms_externals.txt"
 
@@ -154,19 +157,20 @@ echo "zlib:${ZLIB_ROOT}"                    >> ${TF_CMS_EXTERNALS}
 echo "eigen_archive:${EIGEN_ROOT}"          >> ${TF_CMS_EXTERNALS}
 echo "curl:${CURL_ROOT}"                    >> ${TF_CMS_EXTERNALS}
 #echo "com_google_protobuf:${PROTOBUF_ROOT}" >> ${TF_CMS_EXTERNALS}
+#echo "com_google_protobuf:${PROTOBUF_ROOT}" >> ${TF_CMS_EXTERNALS}
 echo "com_github_grpc_grpc:${GRPC_ROOT}"    >> ${TF_CMS_EXTERNALS}
 echo "gif:${GIFLIB_ROOT}"                   >> ${TF_CMS_EXTERNALS}
 echo "org_sqlite:${SQLITE_ROOT}"            >> ${TF_CMS_EXTERNALS}
 echo "cython:"                              >> ${TF_CMS_EXTERNALS}
-echo "flatbuffers:${FLATBUFFERS_ROOT}"      >> ${TF_CMS_EXTERNALS}
-echo "pybind11:${PY_PYBIND11_ROOT}"          >> ${TF_CMS_EXTERNALS}
-echo "absl_py:${PY_ABSL_PY_ROOT}"          >> ${TF_CMS_EXTERNALS}
+#echo "flatbuffers:${FLATBUFFERS_ROOT}"      >> ${TF_CMS_EXTERNALS}
+#echo "pybind11:${PY3_PYBIND11_ROOT}"        >> ${TF_CMS_EXTERNALS}
+echo "absl_py:${PY3_ABSL_PY_ROOT}"          >> ${TF_CMS_EXTERNALS}
 echo "pasta:"                               >> ${TF_CMS_EXTERNALS}
 echo "boringssl:"                           >> ${TF_CMS_EXTERNALS}
 
 export TF_SYSTEM_LIBS=$(cat ${TF_CMS_EXTERNALS} | sed 's|:.*||' | tr "\n" "," | sed 's|,*$||')
 
-echo "pypi_numpy:${PY_NUMPY_ROOT}"         >> ${TF_CMS_EXTERNALS}
+echo "pypi_numpy:${PY3_NUMPY_ROOT}"         >> ${TF_CMS_EXTERNALS}
 
 # Create local repos for pypi_* packages required by TF
 tf_requirement=requirements_lock_${PYTHON_MAJOR_VERSION}_${PYTHON_MINOR_VERSION}.txt
@@ -183,7 +187,7 @@ if [ -d ../build ] ; then
 fi
 
 export PYTHONPATH=$PYTHON3PATH
-export TF_PYTHON_VERSION=$PYTHON_MAJOR_MINOR_VERSION
+export PYTHONPATH=$PYTHON3PATH
 ./configure
 
 rm -rf "$BUILDDIR/cms-pytool"
@@ -203,17 +207,3 @@ ln -s ${PYTHON3_LIB_SITE_PACKAGES} ${build_dir}/external/pypi_numpy/site-package
 # Build the wheel
 bazel $BAZEL_OPTS //tensorflow/tools/pip_package:wheel
 
-# Install wheel and XLA runtime artifacts
-case "$(uname -m)" in
-  x86_64) bazel_dir="k8-${build_type}" ;;
-  *)      bazel_dir="$(uname -m)-${build_type}" ;;
-esac
-
-mkdir -p "$INSTALLROOT/lib-xla-runtime"
-find "bazel-out/${bazel_dir}/bin" -path '*/pip_package/wheel_house/tensorflow-%(version)s*.whl' | xargs --no-run-if-empty -i cp '{}' $INSTALLROOT/
-find "bazel-out/${bazel_dir}/bin" -path '*/external/ducc/libfft*.pic.a'             | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
-find "bazel-out/${bazel_dir}/bin" -path '*/external/local_tsl/tsl/*/libmutex.pic.a' | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
-find "bazel-out/${bazel_dir}/bin" -path '*/external/nsync/libnsync_cpp.pic.a'       | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
-for lib in libfft.pic.a libfft_wrapper.pic.a libmutex.pic.a libnsync_cpp.pic.a; do
-  test -e "$INSTALLROOT/lib-xla-runtime/${lib}"
-done

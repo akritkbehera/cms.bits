@@ -1,5 +1,5 @@
 package: git-lfs
-version: 3.6.0
+version: 3.7.1
 tag: v%(version)s
 source: https://github.com/git-lfs/git-lfs
 build_requires:

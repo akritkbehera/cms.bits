@@ -1,6 +1,6 @@
 package: clue
-version: 1.0.0
-tag: V_1_0_0
+version: 1.1.1
+tag: V_1_1_1
 source: https://gitlab.cern.ch/kalos/clue.git
 requires:
  - alpaka

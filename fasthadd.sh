@@ -8,7 +8,7 @@ sources:
   - https://raw.githubusercontent.com/%(user)s/cmssw/%(commit)s/DQMServices/Core/src/ROOTFilePB.proto
 requires:
   - protobuf
-  - ROOT
+  - root
   - gcc
 ---
 mkdir -p "$INSTALLROOT/bin"

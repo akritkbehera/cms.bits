@@ -1,6 +1,6 @@
 package: libpng
 version: "%(tag_basename)s"
-tag: cms/v1.6.37
+tag: cms/v1.6.44
 requires:
   - gcc
   - zlib

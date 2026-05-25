@@ -12,10 +12,10 @@ requires:
   - yoda
   - opencv
   - triton-inference-client
-  - professor2
+ # - professor2
   - rivet
   - frontier_client
-  - onnxruntime
+  #- onnxruntime
   - openldap
   - pacparser
   - mille
@@ -197,3 +197,4 @@ requires:
   - py-mplhep
   - py-correctionlib
 ---
+

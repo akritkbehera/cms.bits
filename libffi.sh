@@ -1,6 +1,6 @@
 package: libffi
 version: "%(tag_basename)s"
-tag: v3.4.2
+tag: v3.5.2
 requires:
  - gcc
 source: https://github.com/libffi/libffi

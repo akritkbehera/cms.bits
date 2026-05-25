@@ -1,5 +1,5 @@
 package: gdbm
-version: "1.10"
+version: "1.26"
 build_requires:
  - gmake 
 requires:

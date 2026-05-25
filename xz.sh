@@ -1,5 +1,5 @@
 package: xz
-version: 5.2.5
+version: 5.6.4
 tag: v%(version)s
 requires:
  - gcc

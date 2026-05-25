@@ -1,5 +1,5 @@
 package: clang-uml
-version: 0.6.2
+version: 0.6.2x
 variables:
   tag: 5e2993e75ebc88af6cb239f2ffae88da7431cb0d
   branch: master

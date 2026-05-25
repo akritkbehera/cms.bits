@@ -24,6 +24,9 @@ jobs:
           source .venv/bin/activate
           pip install -e .
       - name: Build go
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           cd bits
           source .venv/bin/activate
@@ -36,6 +39,7 @@ jobs:
             --docker \
             --docker-image cmssw/el9:x86_64 \
             --sandbox off \
+            --remote-store b3://bits::rw \
             --debug \
             go
 

@@ -24,7 +24,10 @@ jobs:
           python -m venv .venv
           source .venv/bin/activate
           pip install -e .
-
+      - name: Install podman
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y podman
       - name: Build go
         run: |
           cd bits

@@ -1,6 +1,6 @@
 package: coral-tools
 version: "v1"
-tag: d5b6f4175772cd096417a8350c6b7ed61cc00b9c
+tag: 95c34a89349f361c7172a9884f48068fa089ebf1
 source: https://github.com/akritkbehera/scram-tools.file.git
 variables:
   skipreqtools: jcompiler                # Tools to move from selected -> available (not actively used)
@@ -60,10 +60,8 @@ requires:
 #   $INSTALLROOT/tools/*.tmpl     - Templates with embedded XML (for coral-tool-conf)
 # =============================================================================
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
-python3 /home/akbehera/Desktop/bitsorg/scram/tools.py
 chmod +x $BUILDDIR/bin/get_tools 
 chmod +x $BUILDDIR/bin/fix_tool_variables
-
 # Convert package name to uppercase with underscores (e.g., coral-tools -> CORAL_TOOLS)
 # This naming convention is used for environment variables
 export UCTOOL=$(echo "$PKG_NAME" | tr 'a-z-' 'A-Z_')
@@ -278,6 +276,7 @@ for type in selected available; do
         {
             echo "cat << 'EOF_TOOLFILE' >> \$PKGINSTROOT/tools/${type}/${tool}"
             cat "$xml"
+	    echo
             echo "EOF_TOOLFILE"
             echo
         } >> "$tmpl_file"
@@ -287,3 +286,5 @@ for type in selected available; do
     # coral-tool-conf will regenerate the XMLs from templates
     rm -rf "$type_dir"
 done
+python3 $BUILDDIR/bin/resolve_meta.py $INSTALLROOT/tools/selected.tmpl | cpp -P -x assembler-with-cpp > /tmp/selected.tmpl && mv /tmp/selected.tmpl $INSTALLROOT/tools/selected.tmpl
+python3 $BUILDDIR/bin/resolve_meta.py $INSTALLROOT/tools/available.tmpl

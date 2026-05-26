@@ -45,7 +45,7 @@ requires:
  - hepmc
  - hepmc3
  - heppdt
- - herwig7
+# - herwig7
  - hydjet
  - hydjet2
  - ittnotify
@@ -162,7 +162,7 @@ requires:
  - igprof
 #  - heaptrack
 # - openloops
- - mozsearch
+# - mozsearch
 #  - tkonlinesw
  - oracle
 #  - icc
@@ -177,6 +177,6 @@ requires:
  - xtensor
  - xtl
  - xgboost
- - pytorch
- - pytorch-custom-ops
+# - pytorch
+# - pytorch-custom-ops
 ---

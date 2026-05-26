@@ -43,22 +43,22 @@ requires:
  - curl
  - giflib
  - sqlite
- - py-pybind11
  - py-wheel
  - cuda
  - cudnn
  - grpc
  - flatbuffers
 ---
-export PYTHON_MAJOR_MINOR_VERSION=3.12
+export PYTHON_MAJOR_MINOR_VERSION="3.12"
 export CXXSTD=20
 export USER="builder"
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-
 sed -i -e "s|lib/python[^/]*/site-packages/|lib/python$PYTHON_MAJOR_MINOR_VERSION/site-packages/|" third_party/systemlibs/pybind11.BUILD
+sed -i -e "s|site-packages/pybind11\"|site-packages/pybind11/include\"|g" third_party/systemlibs/pybind11.BUILD
 
 export pythonOnly="${pythonOnly:-no}"
 export build_type="${build_type:-opt}"
@@ -96,6 +96,7 @@ BAZEL_OPTS+=" --config=$build_type \
 
 BAZEL_OPTS+=" --config=noaws --config=nogcp --config=nohdfs --config=nonccl"
 BAZEL_OPTS+=" --action_env=PYTHONPATH"
+BAZEL_OPTS+=" --action_env=TF_PYTHON_VERSION=3.12"
 
 if [[ "$enable_tf_mkldnn" == "0" ]]; then
   BAZEL_OPTS+=" --define=zendnn=true \
@@ -131,18 +132,21 @@ export TF_NEED_HDFS=0
 export TF_NEED_GCP=0
 export TF_ENABLE_XLA=1
 export TF_NEED_OPENCL=0
+export TF_NEED_VERBS=0
 export TF_NEED_MKL=0
 export TF_NEED_MPI=0
 export TF_NEED_S3=0
+export TF_NEED_GDR=0
 export TF_NEED_OPENCL_SYCL=0
 export TF_SET_ANDROID_WORKSPACE=false
+export TF_NEED_KAFKA=false
 export TF_NEED_AWS=0
+export TF_NEED_IGNITE=0
 export TF_NEED_ROCM=0
 export TF_NEED_TENSORRT=0
 export TF_PYTHON_VERSION=$PYTHON_MAJOR_MINOR_VERSION
 export TEST_TMPDIR=$BUILDDIR/build
 export TF_CMS_EXTERNALS="$BUILDDIR/cms_externals.txt"
-
 
 echo "png:${LIBPNG_ROOT}"                   >  ${TF_CMS_EXTERNALS}
 echo "libjpeg_turbo:${LIBJPEG_TURBO_ROOT}"  >> ${TF_CMS_EXTERNALS}
@@ -155,7 +159,7 @@ echo "gif:${GIFLIB_ROOT}"                   >> ${TF_CMS_EXTERNALS}
 echo "org_sqlite:${SQLITE_ROOT}"            >> ${TF_CMS_EXTERNALS}
 echo "cython:"                              >> ${TF_CMS_EXTERNALS}
 echo "flatbuffers:${FLATBUFFERS_ROOT}"      >> ${TF_CMS_EXTERNALS}
-echo "pybind11:${PY_PYBIND11_ROOT}"        >> ${TF_CMS_EXTERNALS}
+echo "pybind11:${PY_PYBIND11_ROOT}"          >> ${TF_CMS_EXTERNALS}
 echo "absl_py:${PY_ABSL_PY_ROOT}"          >> ${TF_CMS_EXTERNALS}
 echo "pasta:"                               >> ${TF_CMS_EXTERNALS}
 echo "boringssl:"                           >> ${TF_CMS_EXTERNALS}
@@ -164,7 +168,7 @@ export TF_SYSTEM_LIBS=$(cat ${TF_CMS_EXTERNALS} | sed 's|:.*||' | tr "\n" "," | 
 
 echo "pypi_numpy:${PY_NUMPY_ROOT}"         >> ${TF_CMS_EXTERNALS}
 
-# Patch workspace.bzl to register a local repo for each pypi package in the lock file
+# Create local repos for pypi_* packages required by TF
 tf_requirement=requirements_lock_${PYTHON_MAJOR_VERSION}_${PYTHON_MINOR_VERSION}.txt
 for name in $(grep '^[a-zA-Z].*==' ${tf_requirement} | sed 's| *==.*||;s|-|_|g'); do
   bfile="pypi"
@@ -179,7 +183,17 @@ if [ -d ../build ] ; then
 fi
 
 export PYTHONPATH=$PYTHON3PATH
+export TF_PYTHON_VERSION=$PYTHON_MAJOR_MINOR_VERSION
 ./configure
+
+rm -rf "$BUILDDIR/cms-pytool"
+mkdir -p "$BUILDDIR/cms-pytool"
+echo '#!/bin/bash'                            >  "$BUILDDIR/cms-pytool/python3"
+echo "export PYTHON3PATH=\"${PYTHON3PATH}\"" >> "$BUILDDIR/cms-pytool/python3"
+echo "$(which python3) \"\$@\""              >> "$BUILDDIR/cms-pytool/python3"
+chmod +x "$BUILDDIR/cms-pytool/python3"
+ln -s python3 "$BUILDDIR/cms-pytool/python"
+export PATH="$BUILDDIR/cms-pytool:$PATH"
 
 # Build numpy first to fix the pypi_numpy repo
 bazel $BAZEL_OPTS //third_party/py/numpy
@@ -188,3 +202,18 @@ ln -s ${PYTHON3_LIB_SITE_PACKAGES} ${build_dir}/external/pypi_numpy/site-package
 
 # Build the wheel
 bazel $BAZEL_OPTS //tensorflow/tools/pip_package:wheel
+
+# Install wheel and XLA runtime artifacts
+case "$(uname -m)" in
+  x86_64) bazel_dir="k8-${build_type}" ;;
+  *)      bazel_dir="$(uname -m)-${build_type}" ;;
+esac
+
+mkdir -p "$INSTALLROOT/lib-xla-runtime"
+find "bazel-out/${bazel_dir}/bin" -path '*/pip_package/wheel_house/tensorflow-%(version)s*.whl' | xargs --no-run-if-empty -i cp '{}' $INSTALLROOT/
+find "bazel-out/${bazel_dir}/bin" -path '*/external/ducc/libfft*.pic.a'             | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
+find "bazel-out/${bazel_dir}/bin" -path '*/external/local_tsl/tsl/*/libmutex.pic.a' | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
+find "bazel-out/${bazel_dir}/bin" -path '*/external/nsync/libnsync_cpp.pic.a'       | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
+for lib in libfft.pic.a libfft_wrapper.pic.a libmutex.pic.a libnsync_cpp.pic.a; do
+  test -e "$INSTALLROOT/lib-xla-runtime/${lib}"
+done

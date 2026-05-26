@@ -1,5 +1,5 @@
 package: mpich
-version: 4.3.1
+version: 4.3.2
 sources: 
  - https://github.com/pmodels/mpich/releases/download/v%(version)s/mpich-%(version)s.tar.gz
 build_requires:

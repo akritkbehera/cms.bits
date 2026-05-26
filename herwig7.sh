@@ -23,7 +23,7 @@ requires:
  - madgraph5amcatnlo
  - Python
 ---
-tar -xzf "$SOURCEDIR/${SOURCE0}" \
+tar -xjf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
@@ -55,7 +55,7 @@ PYTHON=python3 ./configure --prefix=$INSTALLROOT \
             --with-gosam=$GOSAM_ROOT \
             --with-gosam-contrib=$GOSAMCONTRIB_ROOT \
             --with-hepmc=$HEPMC_ROOT \
-            #${OPENLOOPS_ROOT+--with-openloops=$OPENLOOPS_ROOT} \
+            ${OPENLOOPS_ROOT+--with-openloops=$OPENLOOPS_ROOT} \
             $PLATF_CONF_OPTS \
             CXX="$CXX" CC="$CC" LDFLAGS="-L${OPENBLAS_ROOT}/lib" \
             FCFLAGS="$FCFLAGS"

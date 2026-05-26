@@ -10,6 +10,7 @@ sources:
   - git://github.com/dmwm/CRABServer.git?obj=master/%(crabserver_version)s&export=CRABServer&output=/CRABServer-%(crabserver_version)s.tar.gz
 architecture: shared
 ---
+
 if [ -n "%(crabserver_packages)s" ]; then
   export crabserver_packages=%(crabserver_packages)s
 else

@@ -6,12 +6,12 @@ requires:
  - CICADA
  - OpenBLAS
  - celeritas
-# - crab
+ - crab
  - cmssw-wm-tools
  - google-benchmark
  - catch2
  - starlight
-# - alpgen
+ - alpgen
  - boost
  - bz2lib
  - cepgen
@@ -36,7 +36,7 @@ requires:
  - gdbm
  - geant4
  - geant4-data
-# - g4hepem
+ - g4hepem
  - glimpse
  - gmake
  - GSL
@@ -91,7 +91,7 @@ requires:
  - frontier_client
  - XRootD
  - xrdcl-record
-#  - dd4hep
+ - dd4hep
  - valgrind
 #  - cmsswdata
  - zstd
@@ -130,7 +130,7 @@ requires:
  - qd
  - blackhat
  - sherpa
-#  - fasthadd
+ - fasthadd
  - eigen
  - gdb
  - libxslt
@@ -157,13 +157,13 @@ requires:
  - cudnn
  - alpaka
  - clue
-#  - CLUEstering
+ - cluestering
  - libunwind
  - igprof
-#  - heaptrack
+ - heaptrack
 # - openloops
 # - mozsearch
-#  - tkonlinesw
+# - tkonlinesw
  - oracle
 #  - icc
 #  - icx
@@ -171,7 +171,7 @@ requires:
  - ruff
  - rocm
 #  - cmsmon-tools
-#  - dip
+ - dip
 #  - tkonlinesw-fake
 #  - oracle-fake
  - xtensor

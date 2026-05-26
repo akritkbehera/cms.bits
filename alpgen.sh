@@ -1,19 +1,17 @@
 package: alpgen
 version: "214"
 sources:
- - http://mlm.home.cern.ch/mlm/alpgen/V2.1/v%(version)s.tgz
- - file://config.sub-amd64
+ - https://alpgen.web.cern.ch/V2.1/v%(version)s.tgz
+ - file://config.sub-amd64.file
 patches:
- - alpgen-214
- - alpgen-214-Darwin-x86_84-gfortran
+ - alpgen-214.patch
+ - alpgen-214-Darwin-x86_84-gfortran.patch
 build_requires:
  - gmake
 requires:
  - gcc
 ---
-tar -xzf "$SOURCEDIR/${SOURCE0}" \
-    --strip-components=1 \
-    -C "$BUILDDIR"
+tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
 cp "$SOURCEDIR/${SOURCE1}" "$BUILDDIR/config.sub"
 patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"

@@ -8,7 +8,6 @@ requires:
 - py-cachecontrol
 - py-cachy
 - py-cleo
-- py-html5lib
 - py-keyring
 - py-pexpect
 - py-pkginfo

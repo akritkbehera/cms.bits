@@ -38,7 +38,7 @@ requires:
 #  - py-torch-cluster-cuda
 #  - py-torch-scatter-cuda
 #  - py-torch-sparse-cuda
-  - py-pyg-lib-cuda
+#  - py-pyg-lib-cuda
   - py-tables
   - py-tabulate
   - py-numexpr

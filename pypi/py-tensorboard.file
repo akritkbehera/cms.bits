@@ -9,7 +9,6 @@ requires:
  - py-Markdown 
  - py-Werkzeug 
  - py-protobuf 
- - py-html5lib 
  - py-six 
  - py-bleach
  - py-tensorboard-data-server

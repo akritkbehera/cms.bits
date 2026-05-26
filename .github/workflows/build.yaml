@@ -1,73 +1,73 @@
 name: Build Packages
 
 on:
-    push:
-      branches:
-        - IB/CMSSW_17_0_X/G14
-    pull_request:
-      branches:
-        - IB/CMSSW_17_0_X/G14
+  push:
+    branches:
+      - IB/CMSSW_17_0_X/G14
+  pull_request:
+    branches:
+      - IB/CMSSW_17_0_X/G14
 
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-        - name: Clone and install bits build tool
-          run: |
-            git clone -b latest https://github.com/akritkbehera/bits-org.git
-            cd bits-org
-            export PATH=$PWD:$PATH
-            python -m venv .venv
-            source .venv/bin/activate
-            pip install -e .
+      - name: Clone and install bits build tool
+        run: |
+          git clone -b latest https://github.com/akritkbehera/bits-org.git
+          cd bits-org
+          export PATH=$PWD:$PATH
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -e .
 
-        - name: Determine packages to build
-          id: packages
-          run: |
-            if [ "${{ github.event_name }}" == "pull_request" ]; then
-              pkgs=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-                     | grep '\.sh$' \
-                     | while read f; do
-                         grep '^package:' "$f" | head -1 | sed 's/^package:[[:space:]]*//' | tr -d '"'
-                       done \
-                     | tr '\n' ' ' \
-                     | xargs)
-              echo "list=$pkgs" >> $GITHUB_OUTPUT
-              echo "Changed packages: $pkgs"
-            else
-              echo "list=cmssw-tools" >> $GITHUB_OUTPUT
-            fi
+      - name: Determine packages to build
+        id: packages
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            pkgs=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+                   | grep '\.sh$' \
+                   | while read f; do
+                       grep '^package:' "$f" | head -1 | sed 's/^package:[[:space:]]*//' | tr -d '"'
+                     done \
+                   | tr '\n' ' ' \
+                   | xargs)
+            echo "list=$pkgs" >> $GITHUB_OUTPUT
+            echo "Changed packages: $pkgs"
+          else
+            echo "list=cmssw-tools" >> $GITHUB_OUTPUT
+          fi
 
-        - name: Build packages
-          if: steps.packages.outputs.list != ''
-          env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          run: |
-            cd bits-org
-            source .venv/bin/activate
-            bitsBuild build \
-              --architecture el9_amd64_gcc14 \
-              --force-unknown-architecture \
-              --jobs 16 \
-              --work-dir sw \
-              -c ${{ github.workspace }} \
-              --docker \
-              --docker-image cmssw/el9:x86_64 \
-              --sandbox off \
-              --remote-store b3://bits::rw \
-              --debug \
-              ${{ steps.packages.outputs.list }}
+      - name: Build packages
+        if: steps.packages.outputs.list != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          cd bits-org
+          source .venv/bin/activate
+          bitsBuild build \
+            --architecture el9_amd64_gcc14 \
+            --force-unknown-architecture \
+            --jobs $(nproc) \
+            --work-dir sw \
+            -c ${{ github.workspace }} \
+            --docker \
+            --docker-image cmssw/el9:x86_64 \
+            --sandbox off \
+            --remote-store b3://bits::rw \
+            --debug \
+            ${{ steps.packages.outputs.list }}
 
-        - name: Upload build logs
-          if: always() && steps.packages.outputs.list != ''
-          uses: actions/upload-artifact@v4
-          with:
-            name: build-logs-${{ github.run_id }}
-            path: bits-org/sw/BUILD/*/latest/logs
-            retention-days: 7
+      - name: Upload build logs
+        if: always() && steps.packages.outputs.list != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-${{ github.run_id }}
+          path: bits-org/sw/BUILD/*/latest/logs
+          retention-days: 7

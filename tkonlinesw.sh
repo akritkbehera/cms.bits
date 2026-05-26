@@ -4,7 +4,7 @@ variables:
   projectname: trackerDAQ
   releasename: trackerDAQ-4.2-tkonline
 sources:
-  - http://cms-trackerdaq-service.web.cern.ch/cms-trackerdaq-service/download/sources/%(projectname)s-%(version)s.tgz
+  - http://cmsrep.cern.ch/cmssw/download/trackerDAQ-4.2.0-1_gcc7.tgz
 patches:
   - tkonlinesw-4.0-clang-hash_map.patch
   - tkonlinesw-bring-pvf.patch

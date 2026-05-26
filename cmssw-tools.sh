@@ -23,7 +23,7 @@ requires:
  - cppunit
  - cpu_features
  - curl
-# - das_client
+ - das_client
  - db6
  - davix
  - evtgen
@@ -45,7 +45,7 @@ requires:
  - hepmc
  - hepmc3
  - heppdt
-# - herwig7
+ - herwig7
  - hydjet
  - hydjet2
  - ittnotify
@@ -125,8 +125,8 @@ requires:
  - git-lfs
  - fastjet
  - fastjet-contrib
-#  - opencl
-#  - opencl-cpp
+ - opencl
+ - opencl-cpp
  - qd
  - blackhat
  - sherpa
@@ -145,14 +145,14 @@ requires:
  - gosam
  - madgraph5amcatnlo
  - python_tools
-#  - dasgoclient
+ - dasgoclient
  - dablooms
  - rivet
  - zlib
  - openldap
  - gperftools
  - cuda
-#  - cuda-compatible-runtime
+ - cuda-compatible-runtime
  - gdrcopy
  - cudnn
  - alpaka
@@ -161,19 +161,19 @@ requires:
  - libunwind
  - igprof
  - heaptrack
-# - openloops
-# - mozsearch
-# - tkonlinesw
+ - openloops
+ - mozsearch
+ - tkonlinesw
  - oracle
-#  - icc
-#  - icx
-#  - intel-vtune
+ - icc
+ - icx
+ - intel-vtune
  - ruff
  - rocm
-#  - cmsmon-tools
+ - cmsmon-tools
  - dip
-#  - tkonlinesw-fake
-#  - oracle-fake
+ - tkonlinesw-fake
+ - oracle-fake
  - xtensor
  - xtl
  - xgboost

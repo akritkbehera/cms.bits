@@ -22,6 +22,7 @@ requires:
  - gosam
  - madgraph5amcatnlo
  - Python
+ - openloops
 ---
 tar -xjf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
@@ -62,6 +63,7 @@ PYTHON=python3 ./configure --prefix=$INSTALLROOT \
 
 
 make ${JOBS:+-j$JOBS} all V=1
+export LHAPDF_DATA_PATH="$LHAPDF_ROOT/share/LHAPDF:$BUILDROOT/pdfsets"
 make ${JOBS:+-j$JOBS} install LHAPDF_DATA_PATH=$LHAPDF_ROOT/share/LHAPDF
 
 mv $INSTALLROOT/bin/Herwig  $INSTALLROOT/bin/Herwig-cms

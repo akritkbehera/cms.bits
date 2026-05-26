@@ -7,8 +7,8 @@ variables:
   process_src: process_src.tgz
 patches:
  - openloops-py3.patch
-build_requires:
- - Python
+requires:
+ - py-scons
  - openloops-sources
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$OPENLOOPS_SOURCES_ROOT/openloops_source/"/ "$BUILDDIR"/

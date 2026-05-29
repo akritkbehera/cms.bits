@@ -1,15 +1,13 @@
 package: tensorflow-xla-runtime
 version: 2.17.0
-build_requires:
- - CMake
 patches:
  - tensorflow-xla-runtime-absl.patch
+build_requires:
+ - CMake
 requires:
- - gcc
- - Python
  - eigen
- - tensorflow
  - abseil-cpp
+ - tensorflow
 ---
 case "$TENSORFLOW_VERSION" in
   $PKG_VERSION|${PKG_VERSION}-*) ;;

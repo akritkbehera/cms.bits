@@ -1,5 +1,7 @@
 package: defaults-release
 version: v1
+variables:
+  override-microarch: version78
 env:
   CXXSTD: '20'
   DCMAKE_BUILD_TYPE: 'Release'

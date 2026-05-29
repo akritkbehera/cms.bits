@@ -1,6 +1,6 @@
 package: cmssw-tools
 version: "v1"
-tag: afed73c88d5901aa3ced7d49aba5cc9196a7051f
+tag: 95c34a89349f361c7172a9884f48068fa089ebf1
 source: https://github.com/akritkbehera/scram-tools.file.git
 variables:
   skipreqtools: jcompiler
@@ -69,6 +69,7 @@ requires:
  - libxml2
  - lwtnn
  - meschach
+ - pcre
  - pcre2
  - photospp
  - pyquen
@@ -93,6 +94,7 @@ requires:
  - xerces-c
  - dcap
  - frontier_client
+ - isal
  - XRootD
  - xrdcl-record
  - dd4hep
@@ -101,10 +103,14 @@ requires:
  - zstd
  - hls
  - opencv
+ - abseil-cpp
+ - c-ares
+ - re2
  - grpc
  - onnxruntime
  - tensorflow
  - tensorflow-xla-runtime
+ - py-tensorflow
  - TOoLLiP
  - triton-inference-client
  - hdf5
@@ -123,6 +129,7 @@ requires:
  - vdt
  - gnuplot
  - sloccount
+ - mille
  - millepede
  - pacparser
  - git
@@ -175,20 +182,13 @@ requires:
  - ruff
  - rocm
  - cmsmon-tools
+ - log4cplus
  - dip
  - tkonlinesw-fake
  - oracle-fake
  - xtensor
  - xtl
  - xgboost
- - mille
- - pcre
- - abseil-cpp
- - c-ares
- - re2
- - isal
- - log4cplus
- - py-tensorflow
 # - pytorch
 # - pytorch-custom-ops
 ---
@@ -235,13 +235,16 @@ for tool in $REQUIRES; do
 
     # Call get_tools to generate the XML tool file
     # Args: <tool_root> <tool_version> <output_dir> <tool_name>
-    "$BUILDDIR/bin/get_tools" "$toolbase_ref" "$toolver_ref" "$INSTALLROOT" "${tool,,}"
+    "$BUILDDIR/bin/get_tools" "$toolbase_ref" "$toolver_ref" "$INSTALLROOT" "$tool"
 done
 
 
 # Generate system tools (compiler wrappers, system libraries, etc.)
 # These don't have a specific ROOT path, just use "system" as version
 $BUILDDIR/bin/get_tools "" "system" $INSTALLROOT "systemtools"
+
+# Generate python3 tool using the same Python installation (different SCRAM tool name)
+"$BUILDDIR/bin/get_tools" "$PYTHON_ROOT" "$PYTHON_VERSION" "$INSTALLROOT" "python3"
 
 # -----------------------------------------------------------------------------
 # STEP 3: Move skipped tools from selected -> available
@@ -429,4 +432,4 @@ for type in selected available; do
     rm -rf "$type_dir"
 done
 python3 $WORK_DIR/wrapper-scripts/resolve_meta.py $INSTALLROOT/tools/selected.tmpl | cpp -P -x assembler-with-cpp > /tmp/selected.tmpl && mv /tmp/selected.tmpl $INSTALLROOT/tools/selected.tmpl
-#python3 $WORK_DIR/wrapper-scripts/resolve_meta.py $INSTALLROOT/tools/available.tmpl | cpp -P -x assembler-with-cpp > /tmp/available.tmpl && mv /tmp/available.tmpl $INSTALLROOT/tools/available.tmpl
+python3 $WORK_DIR/wrapper-scripts/resolve_meta.py $INSTALLROOT/tools/available.tmpl | cpp -P -x assembler-with-cpp > /tmp/available.tmpl && mv /tmp/available.tmpl $INSTALLROOT/tools/available.tmpl

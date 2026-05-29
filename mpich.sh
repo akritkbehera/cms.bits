@@ -1,26 +1,29 @@
 package: mpich
 version: 4.3.2
-sources: 
- - https://github.com/pmodels/mpich/releases/download/v%(version)s/mpich-%(version)s.tar.gz
+tag: v%(version)s
+source: https://github.com/pmodels/mpich
 build_requires:
- - autotools
- - cuda
- - rocm
+  - autotools
 requires:
- - Python
- - gcc
- - cuda-flags
- - rocm-flags
- - libfabric
- - ucx
- - hwloc
- - xpmem
+  - Python
+  - gcc
+  - cuda
+  - rocm
+  - cuda-flags
+  - rocm-flags
+  - libfabric
+  - ucx
+  - hwloc
+  - xpmem
 ---
 export PYTHONHOME=$PYTHON_ROOT
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
-export j=$(echo $cuda_arch | sed -e's/ \+/,/g')
+
+cd "$BUILDDIR"
+
 rm -rf modules/hwloc
 sed -e's/do_hwloc=.*/do_hwloc=no/' -i autogen.sh
 rm -rf modules/libfabric
@@ -29,9 +32,10 @@ rm -rf modules/ucx
 sed -e's/do_ucx=.*/do_ucx=no/' -i autogen.sh
 
 ./autogen.sh
+
 configure_args=(
   --prefix="$INSTALLROOT"
-  --enable-error-checking="all"
+  --enable-error-checking=all
   --enable-tag-error-bits=yes
   --enable-fast=O2,ndebug,sse2
   --enable-cxx
@@ -57,13 +61,13 @@ configure_args=(
   --with-xpmem="$XPMEM_ROOT"
   --with-yaksa=embedded
   --with-device=ch4:ucx
-  )
+)
 
 if [[ -z $CUDA_ROOT ]]; then
-  configure_args+=("--without-cuda")
+  configure_args+=(--without-cuda)
 else
-  configure_args+=("--with-cuda=$CUDA_ROOT")
-  configure_args+=("--with-cuda-sm=$j")
+  j=$(echo "$cuda_arch" | sed -e 's/ \+/,/g')
+  configure_args+=(--with-cuda="$CUDA_ROOT" --with-cuda-sm="$j")
 fi
 
 ./configure "${configure_args[@]}"

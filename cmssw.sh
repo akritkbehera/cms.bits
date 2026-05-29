@@ -11,7 +11,6 @@ variables:
   enable_biglib: "1"
   srctree: "src"
   bootstrapfile: "config/bootsrc.xml"
-  skipreqtools: jcompiler rivet2 opencl opencl-cpp intel-vtune icx-cxxcompiler icx-ccompiler icx-f77compiler mpich
 sources:
  - git+https://github.com/cms-sw/cmssw-config.git?obj=master/%(configtag)s&export=config&output=/cmssw-config-%(configtag)s.tgz
  - git+https://github.com/cms-sw/cmssw.git?protocol=https&obj=%(branch)s/%(version)s&module=CMSSW&export=%(srctree)s&output=/src.tar.gz

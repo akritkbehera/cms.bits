@@ -31,4 +31,3 @@ cmake -S "$BUILDDIR" -B "$BUILDROOT/build" \
 
 ninja -v ${JOBS:+-j$JOBS} -C "$BUILDROOT/build"
 ninja -v ${JOBS:+-j$JOBS} -C "$BUILDROOT/build" install
-

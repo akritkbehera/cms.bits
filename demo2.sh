@@ -1,5 +1,7 @@
-package: demo2
-version: abc
+version: v2
 variables:
- jack: john
+  compiler: llvm
+  toolchain: zig
 ---
+echo hello
+sleep 10

@@ -26,6 +26,7 @@ patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
 patch -p1 < "$SOURCEDIR/$PATCH2"
 
+rm -rf TrackerOnline/Fed9U/Fed9USoftware/Fed9UUtils/2.4/slc3_ia32_gcc323
 perl -p -i -e "s|-Werror||" FecSoftwareV3_0/generic/Makefile
 
 export ENV_TRACKER_DAQ="$BUILDDIR/%(releasename)s/opt/trackerDAQ"

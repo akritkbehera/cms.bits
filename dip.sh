@@ -15,24 +15,20 @@ requires:
 tar -xzf "$SOURCEDIR/$SOURCE0" -C "$BUILDDIR"
 tar -xzf "$SOURCEDIR/$SOURCE1" -C "$BUILDDIR"
 
-# Patch out conan dependencies
 sed -i -e '/conanbuildinfo.cmake\|conan_basic_setup/d' "$BUILDDIR/dip/CMakeLists.txt"
 sed -i -e 's|CONAN_PKG::||g;s|log4cplus|log4cplusS|' "$BUILDDIR/dip/CMakeLists.txt"
 sed -i -e '/conanbuildinfo.cmake\|conan_basic_setup/d' "$BUILDDIR/platform-dependent/CMakeLists.txt"
 
-# Build platform-dependent first
-mkdir -p "$BUILDDIR/build/platform-dependent"
-cd "$BUILDDIR/build/platform-dependent"
-cmake "$BUILDDIR/platform-dependent" -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
-make ${JOBS:+-j$JOBS} VERBOSE=1
-make install
+cmake -S "$BUILDDIR/platform-dependent" -B "$BUILDROOT/build/platform-dependent" \
+  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
+cmake --build "$BUILDROOT/build/platform-dependent" ${JOBS:+--parallel $JOBS} -- VERBOSE=1
+cmake --install "$BUILDROOT/build/platform-dependent"
 
-# Build dip
-mkdir -p "$BUILDDIR/build/dip"
-cd "$BUILDDIR/build/dip"
 LDFLAGS="-L${LOG4CPLUS_ROOT}/lib64 -L$INSTALLROOT/lib" \
   CXXFLAGS="-I$INSTALLROOT/include -I${LOG4CPLUS_ROOT}/include" \
-  cmake "$BUILDDIR/dip" -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
-make ${JOBS:+-j$JOBS} VERBOSE=1
-make install
+  cmake -S "$BUILDDIR/dip" -B "$BUILDROOT/build/dip" \
+    -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
+cmake --build "$BUILDROOT/build/dip" ${JOBS:+--parallel $JOBS} -- VERBOSE=1
+cmake --install "$BUILDROOT/build/dip"
+
 rm -rf "$INSTALLROOT/lib/cmake"

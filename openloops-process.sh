@@ -20,8 +20,8 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 cd "$BUILDDIR/openloops-%(version)s"
 patch -p1 < "$SOURCEDIR/$PATCH0"
 
-sed -i 's/SafeConfigParser/RawConfigParser/g' pyol/tools/OLBaseConfig.py
 sed -i 's/SafeConfigParser/RawConfigParser/g; s/\.readfp(/.read_file(/g' pyol/tools/OLBaseConfig.py
+sed -i 's/^link_libraries\s*=.*/link_libraries = collier cuttools trred rambo/' openloops.cfg
 
 python3 pyol/bin/download_process.py $(cat "$SOURCEDIR/$SOURCE1" | tr '\n' ' ')
 tar -czf "%(process_src)s" process_src proclib

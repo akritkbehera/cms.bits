@@ -75,4 +75,3 @@ fi
 
 mkdir -p "$INSTALLROOT/test"
 cp "$BUILDROOT/build/cuda-compatible-runtime" "$INSTALLROOT/test/"
-

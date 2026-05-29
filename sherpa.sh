@@ -37,11 +37,7 @@ if [[ $(uname -m) =~ ^x86_64.*$ ]]; then
   ARCH_CMSPLATF="-m64"
 fi
 
-patch -p1 < "$SOURCEDIR/$PATCH0"
-patch -p1 < "$SOURCEDIR/$PATCH1"
-patch -p1 < "$SOURCEDIR/$PATCH2"
-
-export PYTHONHOME=$PYTHON_ROOT
+export PYTHON=$(which python3)
 
 ./configure --prefix=$INSTALLROOT --enable-analysis --disable-silent-rules \
             --enable-fastjet=$FASTJET_ROOT \

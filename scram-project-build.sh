@@ -17,6 +17,8 @@ PACKAGE_VECTORIZATION="%(package_vectorization:-0)s"
 USERCXXFLAGS="%(usercxxflags:-)s"
 
 # Derived — computed at runtime from environment
+# SCRAMV1_VERSION is overwritten by bits env setup with the package version being built;
+# derive the actual SCRAM tool version from its root path.
 SCRAMV1_VERSION=$(basename "$SCRAMV1_ROOT")
 SCRAMCMD="$SCRAMV1_ROOT/bin/scram --arch $ARCHITECTURE"
 SCRAM_SCRIPT_PREFIX=".py"
@@ -52,9 +54,9 @@ if [ ! -f "$BUILDDIR/config/updateConfig.py" ]; then
   tar -xzf "$SOURCEDIR/${SOURCE0}" --strip-components=1 -C "$BUILDDIR/config"
 fi
 
-#if [ ! -d "$BUILDDIR/$SRCTREE" ] && [ -n "${SOURCE1:-}" ] && [ -f "$SOURCEDIR/$SOURCE1" ]; then
-#  tar -xzf "$SOURCEDIR/$SOURCE1" -C "$BUILDDIR"
-#fi
+if [ ! -d "$BUILDDIR/$SRCTREE" ] && [ -n "${SOURCE1:-}" ] && [ -f "$SOURCEDIR/$SOURCE1" ]; then
+  tar -xzf "$SOURCEDIR/$SOURCE1" -C "$BUILDDIR"
+fi
 
 echo "$CONFIGTAG" > "$BUILDDIR/config/config_tag"
 
@@ -101,7 +103,6 @@ fi
 rm -rf "$INSTALLROOT"
 mkdir -p "$(dirname "$INSTALLROOT")"
 $SCRAMCMD project -d "$(dirname "$INSTALLROOT")" -b "$BUILDDIR/$BOOTSTRAPFILE"
-echo "$(basename "$SCRAMV1_ROOT")" > "$INSTALLROOT/config/scram_version"
 
 # Populate src tree — scram bootstrap does not copy sources automatically
 if [ -d "$BUILDDIR/$SRCTREE" ]; then

@@ -276,7 +276,7 @@ for type in selected available; do
         {
             echo "cat << 'EOF_TOOLFILE' >> \$PKGINSTROOT/tools/${type}/${tool}"
             cat "$xml"
-	    echo
+            echo              # guarantee newline before delimiter if XML has no trailing newline
             echo "EOF_TOOLFILE"
             echo
         } >> "$tmpl_file"

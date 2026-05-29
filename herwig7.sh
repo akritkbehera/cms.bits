@@ -2,6 +2,7 @@ package: herwig7
 version: 7.2.2
 sources:
  - https://www.hepforge.org/archive/herwig/Herwig-%(version)s.tar.bz2
+ - https://lhapdfsets.web.cern.ch/current/CT14lo.tar.gz
 patches: 
  - herwig_Matchbox_mg_py3.patch
  - herwig7-fxfx-fix.patch
@@ -63,8 +64,12 @@ PYTHON=python3 ./configure --prefix=$INSTALLROOT \
 
 
 make ${JOBS:+-j$JOBS} all V=1
+
+mkdir -p "$BUILDROOT/pdfsets"
+tar -xzf "$SOURCEDIR/${SOURCE1}" -C "$BUILDROOT/pdfsets"
+
 export LHAPDF_DATA_PATH="$LHAPDF_ROOT/share/LHAPDF:$BUILDROOT/pdfsets"
-make ${JOBS:+-j$JOBS} install LHAPDF_DATA_PATH=$LHAPDF_ROOT/share/LHAPDF
+make ${JOBS:+-j$JOBS} install
 
 mv $INSTALLROOT/bin/Herwig  $INSTALLROOT/bin/Herwig-cms
 cat <<HERWIG_WRAPPER > "$INSTALLROOT/bin/Herwig"
@@ -79,3 +84,4 @@ chmod +x $INSTALLROOT/bin/Herwig
 
 sed -i -e 's|^#!.*python|#!/usr/bin/env python3|' $INSTALLROOT/bin/ufo2herwig $INSTALLROOT/bin/slha2herwig $INSTALLROOT/bin/herwig-mergegrids $INSTALLROOT/bin/gosam2herwig $INSTALLROOT/bin/mg2herwig
 sed -i -e 's|^#!.*python|#!/usr/bin/env python3|' $INSTALLROOT/lib/Herwig/python/ufo2herwig $INSTALLROOT/lib/Herwig/python/slha2herwig
+

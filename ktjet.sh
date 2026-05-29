@@ -16,4 +16,4 @@ patch -p1 <$SOURCEDIR/$PATCH0
 
 CPPFLAGS=" -DKTDOUBLEPRECISION -fPIC" ./configure --with-clhep=$CLHEP_ROOT --prefix=$INSTALLROOT
 
-make
+make install

@@ -1,6 +1,6 @@
 package: coral-tools
 version: "v1"
-tag: 95c34a89349f361c7172a9884f48068fa089ebf1
+tag: 1f62b8d7f279ac403318c03d900d472407812707
 source: https://github.com/akritkbehera/scram-tools.file.git
 variables:
   skipreqtools: jcompiler                # Tools to move from selected -> available (not actively used)
@@ -286,5 +286,5 @@ for type in selected available; do
     # coral-tool-conf will regenerate the XMLs from templates
     rm -rf "$type_dir"
 done
-python3 $BUILDDIR/bin/resolve_meta.py $INSTALLROOT/tools/selected.tmpl | cpp -P -x assembler-with-cpp > /tmp/selected.tmpl && mv /tmp/selected.tmpl $INSTALLROOT/tools/selected.tmpl
-python3 $BUILDDIR/bin/resolve_meta.py $INSTALLROOT/tools/available.tmpl
+python3 $WORK_DIR/wrapper-scripts/resolve_meta.py $INSTALLROOT/tools/selected.tmpl | cpp -P -x assembler-with-cpp > /tmp/selected.tmpl && mv /tmp/selected.tmpl $INSTALLROOT/tools/selected.tmpl
+python3 $WORK_DIR/wrapper-scripts/resolve_meta.py $INSTALLROOT/tools/available.tmpl

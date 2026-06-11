@@ -6,19 +6,19 @@
 # ---------------------------------------------------------------------------
 # Block 1: Configurable — substituted by calling package
 # ---------------------------------------------------------------------------
-CONFIGTAG="%(configtag:-V09-09-03)s"
-BUILDTARGET="%(buildtarget:-release-build)s"
-SCRAM_COMPILER="%(scram_compiler:-gcc)s"
-ENABLE_BIGLIB="%(enable_biglib:-1)s"
-SRCTREE="%(srctree:-src)s"
-BOOTSTRAPFILE="%(bootstrapfile:-config/bootsrc.xml)s"
-SUBPACKAGE_DEBUG="%(subpackageDebug:-0)s"
-PACKAGE_VECTORIZATION="%(package_vectorization:-0)s"
-USERCXXFLAGS="%(usercxxflags:-)s"
+CONFIGTAG="%(configtag)s"
+BUILDTARGET="%(buildtarget)s"
+SCRAM_COMPILER="%(scram_compiler)s"
+ENABLE_BIGLIB="%(enable_biglib)s"
+SRCTREE="%(srctree)s"
+BOOTSTRAPFILE="%(bootstrapfile)s"
+SUBPACKAGE_DEBUG="%(subpackageDebug)s"
+PACKAGE_VECTORIZATION="%(package_vectorization)s"
+USERCXXFLAGS="%(usercxxflags)s"
 
 # Derived — computed at runtime from environment
 SCRAMV1_VERSION=$(basename "$SCRAMV1_ROOT")
-SCRAMCMD="$SCRAMV1_ROOT/bin/scram --arch $ARCHITECTURE"
+SCRAMCMD="$SCRAMV1_ROOT/bin/scram -v --arch $ARCHITECTURE"
 SCRAM_SCRIPT_PREFIX=".py"
 UCPROJTYPE=$(echo "$PKGNAME" | sed -e 's|-patch||' | tr 'a-z' 'A-Z')
 LCPROJTYPE=$(echo "$UCPROJTYPE" | tr 'A-Z' 'a-z')
@@ -31,8 +31,8 @@ CMSSW_LIBS="biglib/$ARCHITECTURE lib/$ARCHITECTURE"
 #   1. subpackageDebug on  → fdebug-prefix-map both cmsroot and instroot + -g
 #   2. usercxxflags set    → pass through as USER_CXXFLAGS
 #   3. neither             → empty
-# %{cmsroot}  = $WORK_DIR
-# %{instroot} = $WORK_DIR/$ARCHITECTURE
+# cmsroot  = $WORK_DIR
+# instroot = $WORK_DIR/$ARCHITECTURE
 # ---------------------------------------------------------------------------
 if [ "$SUBPACKAGE_DEBUG" != "0" ]; then
     EXTRA_CXXFLAGS="-fdebug-prefix-map=$WORK_DIR=$INSTALLROOT -fdebug-prefix-map=$WORK_DIR/$ARCHITECTURE=$INSTALLROOT -g${USERCXXFLAGS:+ $USERCXXFLAGS}"
@@ -45,16 +45,25 @@ fi
 # ---------------------------------------------------------------------------
 # Block 3: PREP — config setup
 # ---------------------------------------------------------------------------
-rm -rf "$BUILDDIR/poison"
+#rm -rf "$BUILDDIR/poison"
 
 if [ ! -f "$BUILDDIR/config/updateConfig.py" ]; then
   mkdir -p "$BUILDDIR/config"
   tar -xzf "$SOURCEDIR/${SOURCE0}" --strip-components=1 -C "$BUILDDIR/config"
 fi
 
-#if [ ! -d "$BUILDDIR/$SRCTREE" ] && [ -n "${SOURCE1:-}" ] && [ -f "$SOURCEDIR/$SOURCE1" ]; then
-#  tar -xzf "$SOURCEDIR/$SOURCE1" -C "$BUILDDIR"
-#fi
+
+for i in 1 2 3; do
+  src_var="SOURCE$i"
+  if [ -n "${!src_var}" ] && [ -f "$SOURCEDIR/${!src_var}" ]; then
+    mkdir -p "$BUILDDIR/src"
+    tar -xzf "$SOURCEDIR/${!src_var}" --strip-components=1 -C "$BUILDDIR/src"
+  fi
+done
+
+sed -i '$a <flags CXXFLAGS="-Wno-error=format-overflow"/>' "$BUILDDIR/src/CoralBase/BuildFile.xml"
+#sed -i 's/<use   name="python3"\/>/<use   name="Python"\/>/' "$BUILDDIR/src/PyCoral/BuildFile.xml"
+sed -i 's/PyUnicode_GET_SIZE/PyUnicode_GET_LENGTH/g' "$BUILDDIR/src/PyCoral/src/Attribute.cpp"
 
 echo "$CONFIGTAG" > "$BUILDDIR/config/config_tag"
 
@@ -78,9 +87,13 @@ fi
 # ---------------------------------------------------------------------------
 # Block 4: Vectorization Self.xml edits, release flags, SCRAM bootstrap
 # ---------------------------------------------------------------------------
-SCRAM_TARGET_DEFAULT="%(scram_target_default:-auto)s"
-RELEASE_USERCXXFLAGS="%(release_usercxxflags:-)s"
-RELEASE_USERLDFLAGS="%(release_userldflags:-)s"
+SCRAM_TARGET_DEFAULT="%(scram_target_default)s"
+RELEASE_USERCXXFLAGS="%(release_usercxxflags)s"
+RELEASE_USERLDFLAGS="%(release_userldflags)s"
+PACKAGE_VECTORIZATION="%(package_vectorization)s"
+if [-z $PACKAGE_VECTORIZATION] && [-n $SCRAM_TARGET_DEFAULT ]; then
+  export SCRAM_TARGET_DEFAULT="auto"
+fi
 
 if [ "$PKGNAME" != "coral" ] && [ "$PACKAGE_VECTORIZATION" != "0" ]; then
   if [ -e "$TOOLCONF_PATH/vectorized_packages.txt" ]; then
@@ -98,21 +111,20 @@ fi
 [ -n "$RELEASE_USERLDFLAGS" ] && \
   echo "<flags LDFLAGS=\"$RELEASE_USERLDFLAGS\"/>" >> "$BUILDDIR/config/BuildFile.xml"
 
-rm -rf "$INSTALLROOT"
-mkdir -p "$(dirname "$INSTALLROOT")"
+# Legacy RPM macros removed - patches are now applied via bits recipe 'patches:' field
+
 $SCRAMCMD project -d "$(dirname "$INSTALLROOT")" -b "$BUILDDIR/$BOOTSTRAPFILE"
 echo "$(basename "$SCRAMV1_ROOT")" > "$INSTALLROOT/config/scram_version"
 
 # Populate src tree — scram bootstrap does not copy sources automatically
-if [ -d "$BUILDDIR/$SRCTREE" ]; then
-  rsync -a "$BUILDDIR/$SRCTREE/" "$INSTALLROOT/$SRCTREE/"
-fi
-
+#if [ -d "$BUILDDIR/$SRCTREE" ]; then
+#  rsync -a "$BUILDDIR/$SRCTREE/" "$INSTALLROOT/$SRCTREE/"
+#fi
 # ---------------------------------------------------------------------------
 # Block 5: BUILD — pre-compile cleanup and tool setup
 # ---------------------------------------------------------------------------
-EXTRA_TOOLS="%(extra_tools:-)s"
-REMOVE_TOOLS="%(remove_tools:-)s"
+EXTRA_TOOLS="%(extra_tools)s"
+REMOVE_TOOLS="%(remove_tools)s"
 
 find "$INSTALLROOT/$SRCTREE" -type d -name cmt -exec rm -rf {} + 2>/dev/null || true
 
@@ -140,13 +152,13 @@ $SCRAMCMD b clean
 # ---------------------------------------------------------------------------
 # Block 6: BUILD — compile
 # ---------------------------------------------------------------------------
-COMPILE_OPTIONS="%(compile_options:-)s"
-NOLIBCHECKS="%(nolibchecks:-0)s"
-PREBUILDTARGET="%(prebuildtarget:-)s"
-ADDITIONAL_BUILD_TARGET="%(additionalBuildTarget0:-)s"
-POSTBUILDTARGET="%(postbuildtarget:-)s"
-IGNORE_COMPILE_ERRORS="%(ignore_compile_errors:-0)s"
-PGO_GENERATE="%(pgo_generate:-0)s"
+COMPILE_OPTIONS="%(compile_options)s"
+NOLIBCHECKS="%(nolibchecks)s"
+PREBUILDTARGET="%(prebuildtarget)s"
+ADDITIONAL_BUILD_TARGET="%(additionalBuildTarget0)s"
+POSTBUILDTARGET="%(postbuildtarget)s"
+IGNORE_COMPILE_ERRORS="%(ignore_compile_errors)s"
+PGO_GENERATE="%(pgo_generate)s"
 
 [ "$NOLIBCHECKS" != "0" ] && { export SCRAM_NOLOADCHECK=true; export SCRAM_NOSYMCHECK=true; }
 
@@ -188,7 +200,7 @@ fi
 # ---------------------------------------------------------------------------
 # Block 7: saveDeps + edmPluginRefresh
 # ---------------------------------------------------------------------------
-SAVEDEPS="%(saveDeps:-0)s"
+SAVEDEPS="%(saveDeps)s"
 
 if [ "$SAVEDEPS" != "0" ]; then
   mkdir -p "$INSTALLROOT/etc/dependencies"
@@ -221,7 +233,7 @@ fi
 # ---------------------------------------------------------------------------
 # Block 8: INSTALL
 # ---------------------------------------------------------------------------
-RUNGLIMPSE="%(runGlimpse:-0)s"
+RUNGLIMPSE="%(runGlimpse)s"
 
 export SCRAM_ARCH="$ARCHITECTURE"
 cd "$INSTALLROOT"
@@ -296,7 +308,7 @@ cat > "$INSTALLROOT/etc/profile.d/post-relocate.sh" << 'POSTRELOCATE_EOF'
 #!/bin/bash
 PKG_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$PKG_ROOT"
-export SCRAM_ARCH="${SCRAM_ARCH:-$ARCHITECTURE}"
+export SCRAM_ARCH="$ARCHITECTURE"
 
 if [ -e src.tar.gz ]; then
   tar xzf src.tar.gz
@@ -305,8 +317,9 @@ fi
 
 OLD_WORK_DIR=$(cat config/scram_basedir)
 
-./config/SCRAM/projectAreaRename.py "$OLD_WORK_DIR/$SCRAM_ARCH" "$WORK_DIR" "$SCRAM_ARCH"
-./config/SCRAM/projectAreaRename.py "$OLD_WORK_DIR"             "$WORK_DIR" "$SCRAM_ARCH"
+# Only rename paths from OLD_WORK_DIR to WORK_DIR (for cross-machine relocation)
+# Do NOT strip architecture from paths - external tools need the full arch path
+./config/SCRAM/projectAreaRename.py "$OLD_WORK_DIR" "$WORK_DIR" "$SCRAM_ARCH"
 
 for lib in biglib/$SCRAM_ARCH lib/$SCRAM_ARCH; do
   [ -f "$lib/.edmplugincache" ] || continue

@@ -11,11 +11,28 @@ variables:
   enable_biglib: "1"
   srctree: "src"
   bootstrapfile: "config/bootsrc.xml"
+  package_vectorization: ""
+  usercxxflags: ""
+  scram_target_default: ""
+  release_usercxxflags: ""
+  release_userldflags: ""
+  extra_tools: "Python"
+  remove_tools: ""
+  compile_options: ""
+  nolibchecks: ""
+  prebuildtarget: ""
+  additionalBuildTarget0: ""
+  postbuildtarget: ""
+  ignore_compile_errors: ""
+  pgo_generate: ""
+  runGlimpse: ""
+  saveDeps: ""
 sources:
  - git+https://github.com/cms-sw/cmssw-config.git?obj=master/%(configtag)s&export=config&output=/cmssw-config-%(configtag)s.tgz
  - git+https://github.com/%(github_user)s/coral.git?protocol=https&obj=%(branch)s/%(tag)s&module=coral&export=%(srctree)s&output=/src.tar.gz
 patches:
  - coral-2_3_21-gcc8.patch
+ - coral-2_3_21-py312.patch
 build_requires:
  - SCRAMV1
  - dwz
@@ -34,15 +51,5 @@ requires:
  - xerces-c
 force_revision: ""
 ---
-# Extract coral source first so patches can be applied before template runs
-tar -xzf "$SOURCEDIR/src.tar.gz" -C "$BUILDDIR"
-
-# Coral-specific source patches (applied to BUILDDIR; template rsync carries them to INSTALLROOT)
-sed -i '$a <flags CXXFLAGS="-Wno-error=format-overflow"/>' "$BUILDDIR/src/CoralBase/BuildFile.xml"
-sed -i 's/<use   name="python3"\/>/<use   name="Python"\/>/' "$BUILDDIR/src/PyCoral/BuildFile.xml"
-sed -i 's/PyUnicode_GET_SIZE/PyUnicode_GET_LENGTH/g' "$BUILDDIR/src/PyCoral/src/Attribute.cpp"
-
-python3 $WORK_DIR/wrapper-scripts/resolve_meta.py $BITS_CONFIG_DIR/scram-project-build.sh > $BUILDDIR/scram-build.sh
-chmod +x $BUILDDIR/scram-build.sh
 source $WORK_DIR/cmsset_default.sh
-bash $BUILDDIR/scram-build.sh 2>&1 | tee $BUILDROOT/scram.log; exit ${PIPESTATUS[0]}
+%(##INCLUDE:cms.bits/scram-project-build.sh)s

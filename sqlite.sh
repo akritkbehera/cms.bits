@@ -4,7 +4,7 @@ tag: version-3.48.0
 source: https://github.com/sqlite/sqlite
 requires:
  - zlib
- - gcc
+ - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
       --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/

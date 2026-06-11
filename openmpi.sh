@@ -9,13 +9,13 @@ build_requires:
  - autotools
  - flex
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - libfabric
  - hwloc
  - rdma-core
  - xpmem
  - ucx
- - cuda
+ - "cuda:(?cuda)"
  - zlib
 sources:
  - git://github.com/open-mpi/ompi.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz

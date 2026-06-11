@@ -11,7 +11,7 @@ variables:
  versiontag: "2_7_3"
 requires:
  - autotools
- - Python
+ - python3
  - py-six
  - hepmc
  - ROOT
@@ -21,7 +21,7 @@ requires:
  - pythia8
  - thepeg
  - collier 
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

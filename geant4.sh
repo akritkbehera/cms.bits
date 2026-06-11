@@ -10,8 +10,8 @@ build_requires:
 - CMake 
 - gmake 
 requires:
-- gcc
-- vecgeom
+- "gcc:(?gcc)"
+- "vecgeom:(?vecgeom)"
 - clhep
 - expat
 - geant4-data

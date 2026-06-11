@@ -5,7 +5,7 @@ build_requires:
 sources:
  - https://github.com/cms-hls4ml/%(package)s/archive/refs/tags/v%(version)s.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

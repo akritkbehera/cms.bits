@@ -13,7 +13,7 @@ build_requires:
   - CMake
   - ninja
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - yaml-cpp
   - llvm
   - zlib

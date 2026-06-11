@@ -6,7 +6,7 @@ build_requires:
 requires:
  - zlib
  - xz
- - gcc
+ - "gcc:(?gcc)"
 source: https://gitlab.gnome.org/GNOME/libxml2
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/

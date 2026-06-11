@@ -6,7 +6,7 @@ variables:
 sources:
  - git+https://github.com/cms-externals/dxr.git?obj=%(branch)s/%(dxrCommit)s&export=dxr-%(dxrCommit)s&module=dxr-%(dxrCommit)s&output=/dxr-%(dxrCommit)s.tgz
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - zlib
  - llvm
  - sqlite

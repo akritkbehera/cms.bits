@@ -3,12 +3,12 @@ version: "16.2"
 sources:
 - https://mirror.ibcp.fr/pub/gnu/gdb/gdb-%(version)s.tar.gz
 requires:
- - Python
+ - python3
  - zlib
  - xz
  - expat
  - py-six
- - gcc
+ - "gcc:(?gcc)"
 patches:
  - gdb-disable-makeinfo.patch
 ---

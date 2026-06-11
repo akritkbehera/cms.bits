@@ -4,7 +4,7 @@ sources:
 - http://www.libarchive.org/downloads/libarchive-%(version)s.tar.gz
 requires:
 - xz-bootstrap
-- gcc
+- "gcc:(?gcc)"
 ---
 tar xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

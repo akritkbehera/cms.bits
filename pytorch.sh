@@ -13,16 +13,16 @@ build_requires:
 - CMake 
 - ninja
 requires:
-- cuda
+- "cuda:(?cuda)"
 - cudnn
-- gcc
+- "gcc:(?gcc)"
 - eigen
 - fxdiv
 - numactl
 - openmpi
 - protobuf
 - psimd
-- Python
+- python3
 - py-PyYAML
 - OpenBLAS
 - zlib

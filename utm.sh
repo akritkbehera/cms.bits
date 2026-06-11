@@ -6,7 +6,7 @@ build_requires:
 requires:
 - xerces-c
 - boost
-- gcc
+- "gcc:(?gcc)"
 source: https://gitlab.cern.ch/cms-l1t-utm/utm
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/

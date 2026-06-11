@@ -6,7 +6,7 @@ patches:
  - ktjet-1.0.6-nobanner.patch
 requires:
  - clhep
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

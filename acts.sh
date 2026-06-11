@@ -6,19 +6,19 @@ build_requires:
   - CMake
 requires:
   - boost
-  - gcc
+  - "gcc:(?gcc)"
   - bz2lib
   - dd4hep
   - eigen
   - expat
   - geant4
   - json
-  - Python
+  - python3
   - ROOT
   - xerces-c
   - zlib
-  - cuda
-  - rocm
+  - "cuda:(?cuda)"
+  - "rocm:(?rocm)"
   - hepmc3
   - TBB
   - cuda-flags

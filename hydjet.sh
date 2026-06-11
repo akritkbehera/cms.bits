@@ -6,7 +6,7 @@ build_requires:
  - CMake
  - gmake
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - pyquen
  - pythia6
  - lhapdf

@@ -3,7 +3,7 @@ version: 4.1.4
 sources:
  - https://sourceforge.net/projects/giflib/files/libungif-4.x/libungif-%(version)s/libungif-%(version)s.tar.gz/download
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

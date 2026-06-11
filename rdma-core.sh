@@ -6,7 +6,7 @@ build_requires:
  - CMake
  - ninja
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$PKGNAME-$PKGVERSION"/
 

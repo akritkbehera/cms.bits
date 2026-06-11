@@ -4,7 +4,7 @@ tag: 97620c648f31c9129b42c0b38fe4bd1ddfee9cab
 source: https://github.com/cms-externals/hepmc
 build_requires:
   - CMake
-  - gcc
+  - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 

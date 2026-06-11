@@ -3,7 +3,7 @@ version: v1
 tag: bd299a84cde9e2efed17b220969b6daf2ca3447e
 source: https://github.com/akritkbehera/scram-tools.file.git
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - zlib
   - bz2lib
   - expat
@@ -13,13 +13,13 @@ requires:
   - gdbm
   - libffi
   - sqlite
-  - Python
+  - python3
   - curl
   - numactl
   - fmt
   - zstd
-  - cuda
-  - rocm
+  - "cuda:(?cuda)"
+  - "rocm:(?rocm)"
   - xpmem
   - gdrcopy
   - rdma-core

@@ -12,7 +12,7 @@ build_requires:
  - CMake
  - ninja
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - protobuf
  - py-numpy
  - py-onnx
@@ -21,7 +21,7 @@ requires:
  - py-pybind11
  - re2
  - eigen
- - cuda
+ - "cuda:(?cuda)"
  - cudnn
  - cuda-flags
 prepend_path:

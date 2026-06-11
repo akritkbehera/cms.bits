@@ -3,7 +3,7 @@ version: 3.4.2
 sources:
  - https://herwig.hepforge.org/downloads?f=mirror/qgraf-%(version)s.tgz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

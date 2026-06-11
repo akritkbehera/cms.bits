@@ -5,7 +5,7 @@ variables:
 sources:
   - https://github.com/cms-externals/%(package)s/archive/%(tag)s.tar.gz
 requires:
-  - gcc
+  - "gcc:(?gcc)"
 env:
   ORACLE_HOME: "%(root_dir)s"
 prepend_path:

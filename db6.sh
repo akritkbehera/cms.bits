@@ -2,7 +2,7 @@ package: db6
 version: "%(tag_basename)s"
 tag: 6.2.32
 requires:
- - gcc
+ - "gcc:(?gcc)"
 sources: 
 - http://cmsrep.cern.ch/cmssw/download/db-%(tag_basename)s.tar.gz
 ---

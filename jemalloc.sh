@@ -9,7 +9,7 @@ sources:
 build_requires:
  - autotools
  - gmake
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

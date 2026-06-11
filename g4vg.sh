@@ -7,7 +7,7 @@ build_requires:
   - gmake
 requires:
   - geant4
-  - vecgeom
+  - "vecgeom:(?vecgeom)"
   - clhep
   - expat
   - xerces-c

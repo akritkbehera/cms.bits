@@ -22,8 +22,8 @@ build_requires:
 requires:
  - coral-tool-conf
  - pcre
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
  - expat
  - boost
  - frontier_client

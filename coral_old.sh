@@ -36,8 +36,8 @@ requires:
  - coral-tools
  - coral-tool-conf
  - pcre
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
  - expat
  - boost
  - frontier-client

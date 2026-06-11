@@ -3,7 +3,7 @@ version: "5.4.7"
 sources: 
 -   http://www.lua.org/ftp/lua-%(version)s.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

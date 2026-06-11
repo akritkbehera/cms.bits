@@ -9,7 +9,7 @@ sources:
 build_requires:
   - gmake
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - zlib
   - llvm
   - sqlite

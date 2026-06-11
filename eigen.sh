@@ -8,7 +8,7 @@ sources:
  - git+https://github.com/%(github_user)s/eigen-git-mirror.git?obj=%(branch)s/%(tag)s&export=eigen-%(version)s&output=/eigen-%(version)s.tgz
 build_requires:
  - CMake
- - gcc
+ - "gcc:(?gcc)"
 prepend_path:
   PKG_CONFIG_PATH: $EIGEN_ROOT/share/pkgconfig
 ---

@@ -5,11 +5,11 @@ source: https://github.com/cern-fts/davix
 build_requires:
  - CMake
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - libxml2
  - libuuid
  - curl
- - Python
+ - python3
  - zlib
 ---
 cd $SOURCEDIR

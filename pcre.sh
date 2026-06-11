@@ -3,7 +3,7 @@ version: "8.43"
 requires:
  - bz2lib
  - zlib
- - gcc
+ - "gcc:(?gcc)"
 sources:
 - https://sourceforge.net/projects/pcre/files/pcre/%(version)s/pcre-%(version)s.tar.gz/download
 ---

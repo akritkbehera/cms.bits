@@ -4,7 +4,7 @@ sources:
  - https://github.com/alpaka-group/%(package)s/archive/%(version)s.tar.gz
 requires:
  - boost
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

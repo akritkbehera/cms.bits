@@ -3,7 +3,7 @@ version: "5.6.4"
 sources:
  - http://tukaani.org/xz/xz-%(version)s.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

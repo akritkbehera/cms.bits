@@ -4,7 +4,7 @@ sources:
  - http://tauolapp.web.cern.ch/tauolapp/resources/TAUOLA.%(version)s/TAUOLA.%(version)s-LHC.tar.gz
 requires:
   - hepmc
-  - gcc
+  - "gcc:(?gcc)"
   - pythia8
   - boost
   - lhapdf

@@ -7,8 +7,8 @@ variables:
 sources:
   - git+https://github.com/%(github_user)s/boost.git?obj=%(branch)s/%(tag_basename)s&export=boost-%(version)s&output=/boost-%(version)s.tgz
 requires:
-  - gcc
-  - Python
+  - "gcc:(?gcc)"
+  - python3
   - bz2lib
   - zlib
   - openmpi

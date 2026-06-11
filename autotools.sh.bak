@@ -15,7 +15,7 @@ sources:
  - https://ftp.gnu.org/gnu/gettext/gettext-%(gettext_version)s.tar.gz
  - https://pkgconfig.freedesktop.org/releases/pkg-config-%(pkg_config_version)s.tar.gz
 requires:
-- gcc
+- "gcc:(?gcc)"
 
 env:
  M4: "$M4_ROOT/bin/m4"

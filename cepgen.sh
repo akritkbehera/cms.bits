@@ -6,7 +6,7 @@ build_requires:
  - CMake
  - ninja
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - GSL
  - OpenBLAS
  - hepmc
@@ -17,7 +17,7 @@ requires:
  - bz2lib
  - zlib
  - xz
- - Python
+ - python3
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

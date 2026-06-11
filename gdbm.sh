@@ -3,7 +3,7 @@ version: "1.26"
 build_requires:
  - gmake 
 requires:
- - gcc
+ - "gcc:(?gcc)"
 sources: 
 - https://mirror.ibcp.fr/pub/gnu/gdbm/gdbm-%(version)s.tar.gz
 ---

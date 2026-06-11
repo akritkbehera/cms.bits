@@ -14,7 +14,7 @@ requires:
   - xerces-c
   - gmake
   - root
-  - gcc
+  - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=0 \

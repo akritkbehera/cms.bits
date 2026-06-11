@@ -13,7 +13,7 @@ build_requires:
  - gmake
 requires:
  - llvm
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

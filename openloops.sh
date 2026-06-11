@@ -11,7 +11,7 @@ build_requires:
  - openloops-sources
  - openloops-process
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$OPENLOOPS_SOURCES_ROOT/openloops_source/" "$BUILDDIR"/
 

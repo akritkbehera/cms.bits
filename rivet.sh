@@ -8,8 +8,8 @@ requires:
  - hdf5
  - highfive
  - onnxruntime
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
  - zlib
  - openmpi
 build_requires:

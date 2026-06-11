@@ -5,7 +5,7 @@ source: https://github.com/numactl/numactl
 build_requires:
  - autotools
 requires:
- - gcc
+ - "gcc:(?gcc)"
 prepend_path:
   MANPATH: $NUMACTL_ROOT/share/man
 ---

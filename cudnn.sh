@@ -1,8 +1,8 @@
 package: cudnn
 version: "9.9.0.52"
 requires:
-- cuda
-- gcc
+- "cuda:(?cuda)"
+- "gcc:(?gcc)"
 - zlib
 variables:
   cudaversion: "12"

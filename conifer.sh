@@ -4,7 +4,7 @@ sources:
  - https://github.com/thesps/%(package)s/archive/v%(version)s.tar.gz
 requires:
  - json
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

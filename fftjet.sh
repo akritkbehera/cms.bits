@@ -3,7 +3,7 @@ version: 1.5.0
 sources:
  - http://www.hepforge.org/archive/fftjet/%(package)s-%(version)s.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - FFTW3
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

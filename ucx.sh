@@ -5,12 +5,12 @@ source: https://github.com/openucx/ucx
 build_requires:
  - autotools
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - numactl
  - rdma-core
  - xpmem
- - cuda
- - rocm
+ - "cuda:(?cuda)"
+ - "rocm:(?rocm)"
  - gdrcopy
 ---
 export without_rocm="yes"

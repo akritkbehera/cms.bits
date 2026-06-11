@@ -4,7 +4,7 @@ tag: v%(version)s
 requires:
  - hepmc
  - hepmc3
- - gcc
+ - "gcc:(?gcc)"
 source: https://gitlab.cern.ch/photospp/photospp.git
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/

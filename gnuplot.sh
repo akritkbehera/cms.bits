@@ -4,7 +4,7 @@ sources:
  - http://downloads.sourceforge.net/project/gnuplot/gnuplot/%(version)s/gnuplot-%(version)s.tar.gz
 requires:
  - zlib
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

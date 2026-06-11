@@ -4,9 +4,9 @@ sources:
  - https://github.com/bazelbuild/bazel/releases/download/%(version)s/bazel-%(version)s-dist.zip
 build_requires:
  - java-env
- - Python
+ - python3
 requires:
- - gcc
+ - "gcc:(?gcc)"
 patches:
  - bazel-3.7.0-patches.patch
  - bazel-absl.patch

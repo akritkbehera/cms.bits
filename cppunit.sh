@@ -10,7 +10,7 @@ build_requires:
  - gmake
  - autotools
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

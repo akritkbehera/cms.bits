@@ -7,7 +7,7 @@ requires:
  - zlib
  - xz
  - zstd
- - gcc
+ - "gcc:(?gcc)"
  ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 

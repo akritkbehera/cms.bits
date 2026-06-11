@@ -8,9 +8,9 @@ variables:
   package_vectorization: ""              # Vectorization settings (empty = default)
 requires:
   # Core build toolchain
-  - gcc
+  - "gcc:(?gcc)"
   # Python and its dependencies
-  - Python
+  - python3
   - zlib
   - bz2lib
   - expat
@@ -20,15 +20,15 @@ requires:
   - gdbm
   - libffi
   - sqlite
-  - Python
+  - python3
   - curl
   # HPC and parallel computing libraries
   - numactl
   - fmt
   - zstd
   # GPU support (NVIDIA and AMD)
-  - cuda
-  - rocm
+  - "cuda:(?cuda)"
+  - "rocm:(?rocm)"
   # High-performance networking and communication
   - xpmem
   - gdrcopy

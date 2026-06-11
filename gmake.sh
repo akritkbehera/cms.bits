@@ -3,7 +3,7 @@ version: "4.3"
 sources:
  - https://mirror.ibcp.fr/pub/gnu/make/make-%(version)s.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
 

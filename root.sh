@@ -10,14 +10,14 @@ build_requires:
 - CMake
 - ninja
 requires:
-- gcc
+- "gcc:(?gcc)"
 - GSL
 - libjpeg-turbo
 - libpng
 - libtiff
 - giflib
 - pcre2
-- Python
+- python3
 - FFTW3
 - xz
 - XRootD
@@ -31,7 +31,7 @@ requires:
 - FreeType
 - zstd
 - dcap
-- cuda
+- "cuda:(?cuda)"
 ---
 case "$(uname)" in
 Darwin)

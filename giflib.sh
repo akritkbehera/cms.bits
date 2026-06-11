@@ -3,7 +3,7 @@ version: "5.2.1"
 sources:
  - https://sourceforge.net/projects/giflib/files/giflib-%(version)s.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

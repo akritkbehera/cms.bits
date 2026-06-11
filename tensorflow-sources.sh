@@ -16,7 +16,7 @@ build_requires:
  - java-env
  - git
 requires:
- - Python
+ - python3
  - py-numpy
  - py-pybind11
  - py-mock
@@ -44,7 +44,7 @@ requires:
  - giflib
  - sqlite
  - py-wheel
- - cuda
+ - "cuda:(?cuda)"
  - cudnn
  - grpc
  - flatbuffers

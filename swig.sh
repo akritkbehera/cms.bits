@@ -4,7 +4,7 @@ sources:
   - http://prdownloads.sourceforge.net/swig/swig-%(version)s.tar.gz
 requires:
   - zlib
-  - gcc
+  - "gcc:(?gcc)"
 env:
   SWIG_HOME: "$SWIG_ROOT"
   SWIG_LIB: "$SWIG_ROOT/share/swig/$SWIG_VERSION"

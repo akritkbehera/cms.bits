@@ -3,7 +3,7 @@ version: "317"
 sources:
  - https://pythia.org/download/pythia83/%(package)s%(version)s.tgz
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - hepmc
  - hepmc3
  - lhapdf

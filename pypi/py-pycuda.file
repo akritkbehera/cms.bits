@@ -1,6 +1,6 @@
 requires:
 - py-numpy
-- cuda
+- "cuda:(?cuda)"
 - py-pytools
 - py-pytest
 - py-decorator

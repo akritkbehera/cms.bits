@@ -4,7 +4,7 @@ sources:
  - ftp://ftp.openldap.org/pub/OpenLDAP/%(package)s-release/%(package)s-%(version)s.tgz
 requires:
  - db6
- - gcc
+ - "gcc:(?gcc)"
  - libuuid
 prepend_path:
   LD_LIBRARY_PATH: $OPENLDAP_ROOT/lib

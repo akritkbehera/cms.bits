@@ -21,7 +21,7 @@ build_requires:
 env:
  M4: "$AUTOTOOLS_ROOT/bin/m4"
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 for f in "$SOURCEDIR"/*; do
     case "$f" in

@@ -6,7 +6,7 @@ build_requires:
   - CMake
   - gmake
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - bz2lib
   - zlib
   - libpng

@@ -5,7 +5,7 @@ sources:
 requires:
  - zlib
  - openmpi
- - gcc
+ - "gcc:(?gcc)"
  - autotools
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

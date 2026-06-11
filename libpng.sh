@@ -2,7 +2,7 @@ package: libpng
 version: "%(tag_basename)s"
 tag: cms/v1.6.44
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - zlib
 build_requires:
   - CMake

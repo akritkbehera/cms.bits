@@ -6,7 +6,7 @@ sources:
 patches:
   - libuuid-2.40-disable-get_uuid_via_daemon.patch
 requires:
-  - gcc
+  - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
 cd $BUILDDIR/util-linux-*

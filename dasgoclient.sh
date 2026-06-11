@@ -6,7 +6,7 @@ variables:
 sources:
  - https://github.com/dmwm/dasgoclient/releases/download/v02.04.52/dasgoclient_amd64
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 mkdir -p "$INSTALLROOT/etc" "$INSTALLROOT/bin"
 

@@ -3,7 +3,7 @@ version: "0.7.4"
 build_requires:
 - CMake
 requires:
-- gcc
+- "gcc:(?gcc)"
 sources:
 - https://github.com/QuantStack/xtl/archive/%(version)s.tar.gz
 ---

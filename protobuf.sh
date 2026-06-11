@@ -4,7 +4,7 @@ tag: v3.21.9
 sources: 
 - https://github.com/protocolbuffers/protobuf/archive/refs/tags/%(tag_basename)s.tar.gz
 requires:
-- gcc
+- "gcc:(?gcc)"
 - zlib
 build_requires:
 - CMake

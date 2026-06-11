@@ -14,7 +14,7 @@ requires:
  - c-ares
  - abseil-cpp
  - re2
- - gcc
+ - "gcc:(?gcc)"
 patches:
  - grpc-mno-outline-atomics.patch
  - grpc-openssl-no-engine.patch

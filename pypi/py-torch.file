@@ -19,7 +19,7 @@ requires:
  - openmpi
  - protobuf
  - psimd
- - Python
+ - python3
  - py-PyYAML
  - OpenBLAS
  - zlib

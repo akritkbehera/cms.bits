@@ -9,7 +9,7 @@ sources:
 patches:
   - starlight-r193-allow-setting-CMAKE_CXX_FLAGS.patch
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - clhep
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

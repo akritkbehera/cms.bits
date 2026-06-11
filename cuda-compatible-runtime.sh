@@ -7,7 +7,7 @@ variables:
 sources:
   - git+https://github.com/cms-patatrack/cuda-compatible-runtime.git?obj=%(branch)s/%(commit)s&export=cuda-compatible-runtime&filter=./test.cu&output=/cuda-compatible-runtime-%(version)s.tgz
 requires:
-  - cuda
+  - "cuda:(?cuda)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

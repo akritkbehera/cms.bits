@@ -4,7 +4,7 @@ tag: 61c39efdea943ac863037d7e35b236145904e64d
 sources: 
  - https://github.com/hpc/xpmem/archive/%(tag_basename)s.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

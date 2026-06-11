@@ -8,8 +8,8 @@ sources:
  - http://www.hepforge.org/archive/lhapdf/pdfsets/6.1/MSTW2008nlo68cl.tar.gz
  - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_17_0_X/g14/lhapdf_pdfsetsindex.file
 requires:
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
  - py-cython
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

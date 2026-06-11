@@ -36,7 +36,7 @@ requires:
  - flatbuffers
  - fmt
  - gbl
- - gcc
+ - "gcc:(?gcc)"
  - gdbm
  - geant4
  - geant4-data
@@ -75,7 +75,7 @@ requires:
  - pyquen
  - pythia6
  - pythia8
- - Python
+ - python3
  - ROOT
  - libpciaccess
  - numactl
@@ -162,7 +162,7 @@ requires:
  - zlib
  - openldap
  - gperftools
- - cuda
+ - "cuda:(?cuda)"
  - cuda-compatible-runtime
  - gdrcopy
  - cudnn
@@ -180,7 +180,7 @@ requires:
  - icx
  - intel-vtune
  - ruff
- - rocm
+ - "rocm:(?rocm)"
  - cmsmon-tools
  - log4cplus
  - dip

@@ -7,7 +7,7 @@ patches:
 requires:
  - qgraf
  - form
- - gcc
+ - "gcc:(?gcc)"
 build_requires:
  - gmake
 ---

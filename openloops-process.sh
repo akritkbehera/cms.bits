@@ -11,8 +11,8 @@ sources:
 patches:
  - openloops-urlopen2curl.patch
 requires:
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"

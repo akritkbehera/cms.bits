@@ -13,7 +13,7 @@ build_requires:
  - tauolapp
  - photospp
 requires:
- - gcc
+ - "gcc:(?gcc)"
 patches:
  - evtgen-2.0.0.patch
 ---

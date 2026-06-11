@@ -3,7 +3,7 @@ version: 2.10.2
 sources: 
  - http://frontier.cern.ch/dist/frontier_client__%(version)s__src.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - expat
  - pacparser
  - zlib

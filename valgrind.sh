@@ -4,7 +4,7 @@ build_requires:
 - autotools
 - gmake
 requires:
-- gcc
+- "gcc:(?gcc)"
 sources:
 -  https://sourceware.org/pub/valgrind/valgrind-%(version)s.tar.bz2
 ---

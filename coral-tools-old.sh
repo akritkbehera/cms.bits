@@ -13,8 +13,8 @@ requires:
  - microarch-flag
  - SCRAMV1
  - pcre
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
  - expat
  - boost
  - frontier-client

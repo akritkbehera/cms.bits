@@ -5,7 +5,7 @@ build_requires:
 - gmake
 requires:
 - XRootD
-- gcc
+- "gcc:(?gcc)"
 sources:
 - https://github.com/xrootd/xrdcl-record/archive/refs/tags/v%(version)s.tar.gz
 ---

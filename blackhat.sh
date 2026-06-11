@@ -12,8 +12,8 @@ build_requires:
  - autotools
 requires:
  - qd
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
  - py-disutils
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

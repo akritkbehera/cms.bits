@@ -3,7 +3,7 @@ version: "%(tag_basename)s"
 tag: 3.0.4
 source: https://github.com/libjpeg-turbo/libjpeg-turbo
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - nasm
  - CMake
 ---

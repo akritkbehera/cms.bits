@@ -9,7 +9,7 @@ sources:
 requires:
   - protobuf
   - root
-  - gcc
+  - "gcc:(?gcc)"
 ---
 mkdir -p "$INSTALLROOT/bin"
 

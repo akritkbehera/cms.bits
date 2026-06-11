@@ -2,7 +2,7 @@ package: libffi
 version: "%(tag_basename)s"
 tag: v3.5.2
 requires:
- - gcc
+ - "gcc:(?gcc)"
 source: https://github.com/libffi/libffi
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \

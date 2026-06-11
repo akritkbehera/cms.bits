@@ -4,7 +4,7 @@ tag: v3.3.9
 source: https://github.com/alisw/fftw3
 build_requires:
   - CMake
-  - gcc
+  - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 

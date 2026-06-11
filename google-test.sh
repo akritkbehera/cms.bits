@@ -9,7 +9,7 @@ build_requires:
   - CMake
   - ninja
 requires:
-  - gcc
+  - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

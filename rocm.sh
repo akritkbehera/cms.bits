@@ -17,8 +17,8 @@ requires:
  - numactl
  - zstd
  - fmt
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
 sources:
 - https://%(repository)s/%(repoversion)s/main/amd-smi-lib-26.1.0.70100-20.el8.%(arch)s.rpm
 - https://%(repository)s/%(repoversion)s/main/comgr-3.0.0.70100-20.el8.%(arch)s.rpm

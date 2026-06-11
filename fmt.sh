@@ -6,7 +6,7 @@ build_requires:
 - CMake
 - gmake
 requires:
-- gcc
+- "gcc:(?gcc)"
 ---
 #mkdir -p $BUILDDIR/src
 #rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR/src"

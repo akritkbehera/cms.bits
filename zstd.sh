@@ -5,7 +5,7 @@ source: https://github.com/facebook/zstd
 build_requires:
  - CMake
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 

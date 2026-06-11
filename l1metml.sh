@@ -5,7 +5,7 @@ sources:
 requires:
  - hls4mlemulatorextras
  - hls
- - gcc
+ - "gcc:(?gcc)"
 build_requires:
  - gmake
 ---

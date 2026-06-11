@@ -6,7 +6,7 @@ build_requires:
 - autotools
 requires:
 - zlib
-- gcc
+- "gcc:(?gcc)"
 - gmake
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

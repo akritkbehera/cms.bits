@@ -6,16 +6,16 @@ build_requires:
  - CMake
  - gmake
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - clhep
  - expat
  - xerces-c
- - vecgeom
+ - "vecgeom:(?vecgeom)"
  - zlib
  - ROOT
  - boost
  - geant4
- - gcc
+ - "gcc:(?gcc)"
  - json
 ---
 export build_flags="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"

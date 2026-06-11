@@ -5,7 +5,7 @@ source: https://github.com/PCRE2Project/pcre2
 requires:
  - bz2lib
  - zlib
- - gcc
+ - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 

@@ -3,7 +3,7 @@ version: "1.5.4"
 sources:
  - https://github.com/facebook/zstd/releases/download/v%(version)s/zstd-%(version)s.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 # extract
 tar -xzf "$SOURCEDIR/$SOURCE0" \

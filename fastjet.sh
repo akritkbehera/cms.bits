@@ -9,9 +9,9 @@ sources:
 patches:
   - fastjet-deprecated-warn.patch
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - autotools
-  - Python
+  - python3
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---

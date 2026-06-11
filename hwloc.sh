@@ -5,11 +5,11 @@ sources:
 build_requires:
  - autotools
 requires:
- - gcc
- - rocm
- - cuda
+ - "gcc:(?gcc)"
+ - "rocm:(?rocm)"
+ - "cuda:(?cuda)"
  - zlib
- - gcc
+ - "gcc:(?gcc)"
  - libpciaccess
  - libxml2
  - numactl

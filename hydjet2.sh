@@ -7,7 +7,7 @@ build_requires:
  - gmake
 requires:
  - ROOT
- - gcc
+ - "gcc:(?gcc)"
  - pyquen
  - pythia6
  - lhapdf

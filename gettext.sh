@@ -4,7 +4,7 @@ tag: "0.22"
 sources:
 - https://mirror.ibcp.fr/pub/gnu/gettext/gettext-0.22.tar.gz
 requires:
-- gcc
+- "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

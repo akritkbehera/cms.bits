@@ -8,7 +8,7 @@ build_requires:
   - ninja
   - CMake
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - eigen
   - boost
 ---

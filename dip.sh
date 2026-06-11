@@ -10,7 +10,7 @@ build_requires:
   - gmake
 requires:
   - log4cplus
-  - gcc
+  - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/$SOURCE0" -C "$BUILDDIR"
 tar -xzf "$SOURCEDIR/$SOURCE1" -C "$BUILDDIR"

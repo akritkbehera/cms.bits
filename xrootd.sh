@@ -7,12 +7,12 @@ requires:
   - libuuid
   - curl
   - davix
-  - Python
+  - python3
   - setuptools
   - libxml2
   - isal
   - pip
-  - gcc
+  - "gcc:(?gcc)"
 build_requires:
   - CMake
   - gmake

@@ -11,13 +11,13 @@ build_requires:
  - swig
  - autotools
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - hepmc
  - hepmc3
  - lhapdf
  - blackhat
  - sqlite
- - Python
+ - python3
  - fastjet
  - openmpi
 prepend_path:

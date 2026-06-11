@@ -9,7 +9,7 @@ patches:
 build_requires:
  - gmake
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
 cp "$SOURCEDIR/${SOURCE1}" "$BUILDDIR/config.sub"

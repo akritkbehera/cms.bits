@@ -9,7 +9,7 @@ build_requires:
  - autotools
  - lhapdf
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - lhapdf
  - GSL
  - OpenBLAS

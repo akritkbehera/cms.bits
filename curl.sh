@@ -3,7 +3,7 @@ version: "8.13.0"
 sources:
   - http://curl.haxx.se/download/curl-%(version)s.tar.gz
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - zlib
 build_requires:
   - gmake

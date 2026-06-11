@@ -6,7 +6,7 @@ build_requires:
  - autotools
 requires:
  - autotools
- - gcc
+ - "gcc:(?gcc)"
 env:
   BISON_PKGDATA_DIR: $BISON_ROOT/share/bison
 ---

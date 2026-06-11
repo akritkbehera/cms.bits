@@ -9,7 +9,7 @@ requires:
   - qgraf
   - form
   - gosamcontrib
-  - Python
+  - python3
   - py-cython
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

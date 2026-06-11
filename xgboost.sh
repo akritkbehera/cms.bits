@@ -8,7 +8,7 @@ build_requires:
 patches:
 - xgboost-arm-and-ppc.patch
 requires:
-- gcc
+- "gcc:(?gcc)"
 ---
 ARCH="$(uname -m)"
 mkdir -p $BUILDDIR/$PKGNAME-$PKGVERSION

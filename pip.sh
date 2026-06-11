@@ -4,9 +4,9 @@ tag: 26.0.1
 sources:
 - https://raw.githubusercontent.com/pypa/get-pip/refs/tags/%(version)s/public/get-pip.py
 requires:
- - Python
+ - python3
  - setuptools
- - gcc
+ - "gcc:(?gcc)"
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---

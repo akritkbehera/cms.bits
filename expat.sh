@@ -2,7 +2,7 @@ package: expat
 version: "%(tag_basename)s"
 tag: R_2_7_1
 requires:
- - gcc
+ - "gcc:(?gcc)"
 source: https://github.com/libexpat/libexpat
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/

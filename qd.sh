@@ -3,7 +3,7 @@ version: "2.3.13"
 sources:
 - https://www.davidhbailey.com/dhbsoftware/qd-%(version)s.tar.gz
 requires:
-- gcc
+- "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

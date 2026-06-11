@@ -6,11 +6,11 @@ build_requires:
  - gmake
  - CMake
 requires:
- - gcc
- - Python
+ - "gcc:(?gcc)"
+ - python3
  - json
  - geant4
- - vecgeom
+ - "vecgeom:(?vecgeom)"
  - clhep
  - expat
  - xerces-c

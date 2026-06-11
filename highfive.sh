@@ -8,7 +8,7 @@ build_requires:
 requires:
  - boost
  - hdf5
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

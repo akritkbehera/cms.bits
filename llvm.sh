@@ -12,13 +12,13 @@ build_requires:
  - CMake
  - ninja
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - zlib
- - Python
+ - python3
  - libxml2
  - zstd
  - libunwind
- - cuda
+ - "cuda:(?cuda)"
  - libffi
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"

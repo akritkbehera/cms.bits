@@ -6,7 +6,7 @@ requires:
  - zlib
  - zstd
  - lz4
- - gcc
+ - "gcc:(?gcc)"
 build_requires:
  - ninja
  - CMake

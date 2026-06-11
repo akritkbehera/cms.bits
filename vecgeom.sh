@@ -11,7 +11,7 @@ build_requires:
  - CMake
  - gmake
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - xerces-c
 env:
   USE_VECGEOM: "1"

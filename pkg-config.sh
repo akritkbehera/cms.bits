@@ -4,7 +4,7 @@ tag: "0.29.2"
 sources:
 - https://pkgconfig.freedesktop.org/releases/pkg-config-%(tag_basename)s.tar.gz
 requires:
-- gcc
+- "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

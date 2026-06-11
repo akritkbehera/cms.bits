@@ -11,7 +11,7 @@ requires:
   - eigen
   - py-iminuit
   - setuptools
-  - gcc
+  - "gcc:(?gcc)"
 build_requires:
   - py-cython
   - pip

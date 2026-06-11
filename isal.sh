@@ -5,7 +5,7 @@ source: https://github.com/intel/isa-l
 build_requires:
  - nasm
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 

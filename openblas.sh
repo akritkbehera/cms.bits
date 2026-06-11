@@ -3,7 +3,7 @@ version: 0.3.27
 tag: v%(version)s
 source: https://github.com/OpenMathLib/OpenBLAS
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 

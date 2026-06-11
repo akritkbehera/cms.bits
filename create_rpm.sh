@@ -1,7 +1,7 @@
 package: create_rpm
 version: vCMS
 requires:
- - Python
+ - python3
  - nfpm
 ---
 create_rpm_package() {

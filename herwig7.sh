@@ -22,7 +22,7 @@ requires:
  - gosamcontrib
  - gosam
  - madgraph5amcatnlo
- - Python
+ - python3
  - openloops
 ---
 tar -xjf "$SOURCEDIR/${SOURCE0}" \

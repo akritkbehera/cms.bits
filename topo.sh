@@ -7,7 +7,7 @@ source: https://github.com/cms-hls4ml/TOPO.git
 build_requires:
  - gmake
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - hls4mlemulatorextras
  - hls
 ---

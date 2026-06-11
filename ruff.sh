@@ -3,7 +3,7 @@ version: "0.5.6"
 sources:
  - https://github.com/astral-sh/ruff/releases/download/%(version)s/ruff-x86_64-unknown-linux-gnu.tar.gz
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

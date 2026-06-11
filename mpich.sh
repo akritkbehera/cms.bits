@@ -5,10 +5,10 @@ source: https://github.com/pmodels/mpich
 build_requires:
   - autotools
 requires:
-  - Python
-  - gcc
-  - cuda
-  - rocm
+  - python3
+  - "gcc:(?gcc)"
+  - "cuda:(?cuda)"
+  - "rocm:(?rocm)"
   - cuda-flags
   - rocm-flags
   - libfabric

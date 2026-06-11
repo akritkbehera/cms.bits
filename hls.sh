@@ -10,7 +10,7 @@ sources:
 build_requires:
  - gmake
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

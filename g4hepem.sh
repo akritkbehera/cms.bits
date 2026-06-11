@@ -15,8 +15,8 @@ requires:
   - expat
   - xerces-c
   - zlib
-  - vecgeom
-  - gcc
+  - "vecgeom:(?vecgeom)"
+  - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

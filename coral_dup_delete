@@ -9,8 +9,8 @@ requires:
  - SCRAMV1
  - hwloc
  - pcre
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
  - expat
  - boost
  - frontier-client

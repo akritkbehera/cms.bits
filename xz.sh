@@ -2,7 +2,7 @@ package: xz
 version: 5.6.4
 tag: v%(version)s
 requires:
- - gcc
+ - "gcc:(?gcc)"
  - autotools
 source: https://github.com/tukaani-project/xz
 ---

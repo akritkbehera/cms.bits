@@ -23,8 +23,8 @@ requires:
   - py-numpy
   - py-grpcio-tools
   - py-python-rapidjson
-  - cuda
-  - gcc
+  - "cuda:(?cuda)"
+  - "gcc:(?gcc)"
   - zlib
   - c-ares
 prepend_path:

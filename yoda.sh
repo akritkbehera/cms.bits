@@ -2,8 +2,8 @@ package: yoda
 version: "2.1.2"
 tag: "yoda-2.1.2"
 requires:
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
  - ROOT
  - hdf5
  - highfive

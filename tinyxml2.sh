@@ -5,7 +5,7 @@ sources:
 build_requires:
   - CMake
   - gmake
-  - gcc
+  - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

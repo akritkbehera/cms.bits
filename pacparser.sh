@@ -5,8 +5,8 @@ sources:
 patches:
  - pacparser-pymod-install.patch
 requires:
- - Python
- - gcc
+ - python3
+ - "gcc:(?gcc)"
 build_requires:
  - setuptools
 prepend_path:

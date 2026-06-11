@@ -5,7 +5,7 @@ source: https://gitlab.gnome.org/GNOME/libxslt.git
 build_requires:
 - autotools
 requires:
-- gcc
+- "gcc:(?gcc)"
 - libxml2
 - pkg-config
 ---

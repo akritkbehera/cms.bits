@@ -6,7 +6,7 @@ build_requires:
  - gmake
 requires:
  - zlib
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

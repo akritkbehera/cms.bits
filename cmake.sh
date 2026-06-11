@@ -3,7 +3,7 @@ version: "3.31.7"
 sources:
   - https://cmake.org/files/v3.31/cmake-%(version)s.tar.gz
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - bz2lib
   - expat
   - zlib

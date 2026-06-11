@@ -5,7 +5,7 @@ env:
 requires:
   - ROOT
   - curl
-  - Python
+  - python3
   - XRootD
   - llvm
   - hdf5

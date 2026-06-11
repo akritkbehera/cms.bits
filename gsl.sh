@@ -3,7 +3,7 @@ version: "%(tag_basename)s"
 tag: "v2.6.0"
 source: https://github.com/ampl/gsl
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - OpenBLAS
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/

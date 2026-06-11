@@ -11,8 +11,8 @@ build_requires:
 - CMake
 - ninja
 requires:
-- gcc
-- Python
+- "gcc:(?gcc)"
+- python3
 - py-numpy
 - libpng
 - libjpeg-turbo

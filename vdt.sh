@@ -2,9 +2,9 @@ package: vdt
 version: "0.4.3"
 build_requires:
 - CMake
-- Python
+- python3
 requires:
-- gcc
+- "gcc:(?gcc)"
 sources: 
 - https://github.com/dpiparo/vdt/archive/v%(version)s.tar.gz
 patches:

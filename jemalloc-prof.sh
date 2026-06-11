@@ -9,7 +9,7 @@ sources:
 build_requires:
  - autotools
  - gmake
- - gcc
+ - "gcc:(?gcc)"
  - libunwind
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

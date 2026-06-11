@@ -5,7 +5,7 @@ sources:
 patches:
  - pythia6-gcc14.patch
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR" 

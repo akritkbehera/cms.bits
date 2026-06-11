@@ -5,12 +5,12 @@ variables:
   github_user: ofiwg
 source: https://github.com/ofiwg/libfabric.git
 requires:
-  - gcc
+  - "gcc:(?gcc)"
   - curl
   - numactl
   - rdma-core
   - xpmem
-  - cuda
+  - "cuda:(?cuda)"
   - gdrcopy
   - autotools
 build_requires:

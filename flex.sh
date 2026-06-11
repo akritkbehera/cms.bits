@@ -3,13 +3,13 @@ version: "2.6.4"
 sources:
  - https://github.com/westes/flex/releases/download/v%(version)s/flex-%(version)s.tar.gz
 patches:
- - gcc-flex-nonfull-path-m4.patch
- - gcc-flex-disable-doc.patch
+ - "gcc:(?gcc)"-flex-nonfull-path-m4.patch
+ - "gcc:(?gcc)"-flex-disable-doc.patch
 build_requires:
  - autotools
  - bison
 requires:
- - gcc
+ - "gcc:(?gcc)"
 ---
 CMS_BITS_MARCH=$(gcc -dumpmachine)
 

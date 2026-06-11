@@ -3,7 +3,7 @@ version: "1.0.8"
 build_requires:
  - gmake
 requires:
- - gcc
+ - "gcc:(?gcc)"
 sources:
  - https://gitlab.com/bzip2/bzip2/-/archive/bzip2-%(version)s/bzip2-bzip2-%(version)s.tar.gz
 ---

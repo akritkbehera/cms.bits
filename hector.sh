@@ -4,7 +4,7 @@ tag: 566e76718059fde2bf044579a2010a482b52a04a
 source: https://github.com/cms-externals/hector
 requires:
  - ROOT
- - gcc
+ - "gcc:(?gcc)"
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 mkdir -p obj lib

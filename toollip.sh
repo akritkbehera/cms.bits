@@ -7,7 +7,7 @@ build_requires:
 requires:
  - hls4mlemulatorextras
  - hls
- - gcc
+ - "gcc:(?gcc)"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

@@ -12,6 +12,7 @@ patches:
 build_requires:
  - CMake
 requires:
+ - gcc
  - pcre
  - libunwind
 ---
@@ -21,11 +22,9 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 <$SOURCEDIR/$PATCH0
 
-rm -rf ../build && mkdir -p ../build && cd ../build
-
-cmake $BUILDDIR \
+cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
    -DCMAKE_INSTALL_PREFIX=$INSTALLROOT -DCMAKE_VERBOSE_MAKEFILE=TRUE \
    -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-g -O3 -Wno-error=deprecated-declarations" \
    -DCMAKE_PREFIX_PATH="$LIBUNWIND_ROOT;$PCRE_ROOT"
-make DEBUG=1 VERBOSE=1 ${JOBS:+-j $JOBS} 
-make ${JOBS:+-j $JOBS} install
+make -C "$BUILDDIR/build" DEBUG=1 VERBOSE=1 ${JOBS:+-j$JOBS}
+make -C "$BUILDDIR/build" ${JOBS:+-j$JOBS} install

@@ -43,7 +43,7 @@ rm -rf $BUILDROOT/build && mkdir -p $BUILDROOT/build && cd $BUILDROOT/build
 cmake_args=(
   -G Ninja
   -Wno-dev
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
   -DCMAKE_INSTALL_LIBDIR=lib
   -Donnxruntime_ENABLE_PYTHON=ON

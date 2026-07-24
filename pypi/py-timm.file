@@ -1,0 +1,7 @@
+requires:
+- py-pdm-backend
+- py-huggingface-hub
+- py-PyYAML
+- py-safetensors
+- py-torchvision
+---

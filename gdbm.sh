@@ -1,46 +1,25 @@
 package: gdbm
-version: "1.10"
+version: "1.26"
+sources:
+- http://ftp.gnu.org/gnu/gdbm/gdbm-%(version)s.tar.gz
 build_requires:
- - gmake 
+ - gmake
 requires:
  - gcc
-sources: 
-- https://mirror.ibcp.fr/pub/gnu/gdbm/gdbm-%(version)s.tar.gz
 ---
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
+
+# Update to detect aarch64 and ppc64le
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
-CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"
-CONFIG_SUB_URL="${CONFIG_BASE_URL}/config.sub"
+rm -f "$BUILDDIR/build-aux"/config.{sub,guess}
+curl -L -k -s -o "$BUILDDIR/build-aux/config.guess" "$CONFIG_BASE_URL/config.guess"
+curl -L -k -s -o "$BUILDDIR/build-aux/config.sub" "$CONFIG_BASE_URL/config.sub"
+chmod +x "$BUILDDIR/build-aux"/config.{sub,guess}
+[[ -s "$BUILDDIR/build-aux/config.guess" && -s "$BUILDDIR/build-aux/config.sub" ]] || exit 1
 
-tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
-
-TMPDIR=$(echo $BUILDDIR/gdbm-*/build-aux)
-
-rm -f $TMPDIR/config.{sub,guess}
-
-curl -L -k -s -o "$TMPDIR/config.guess" "$CONFIG_GUESS_URL"
-
-curl -L -k -s -o "$TMPDIR/config.sub" "$CONFIG_SUB_URL"
-
-ls -l "$TMPDIR"/config.*
-
-if [[ -f "$TMPDIR/config.guess" && -f "$TMPDIR/config.sub" ]]; then
-    ls -la "$TMPDIR"/config.{guess,sub}
-else
-    exit 1
-fi
-for CONFIG_GUESS_FILE in $(find "$BUILDDIR" -name 'config.guess' -not -path "*/build-aux/*"); do
-    rm -f "$CONFIG_GUESS_FILE" || { echo "❌ Failed to remove $CONFIG_GUESS_FILE"; exit 1; }
-    cp "$TMPDIR/config.guess" "$CONFIG_GUESS_FILE" || { echo "❌ Failed to copy config.guess to $CONFIG_GUESS_FILE"; exit 1; }
-    chmod +x "$CONFIG_GUESS_FILE" || { echo "❌ Failed to chmod $CONFIG_GUESS_FILE"; exit 1; }
-done
-
-for CONFIG_SUB_FILE in $(find "$BUILDDIR" -name 'config.sub' -not -path "*/build-aux/*"); do
-    rm -f "$CONFIG_SUB_FILE" || { echo "❌ Failed to remove $CONFIG_SUB_FILE"; exit 1; }
-    cp "$TMPDIR/config.sub" "$CONFIG_SUB_FILE" || { echo "❌ Failed to copy config.sub to $CONFIG_SUB_FILE"; exit 1; }
-    chmod +x "$CONFIG_SUB_FILE" || { echo "❌ Failed to chmod $CONFIG_SUB_FILE"; exit 1; }
-done
-
-cd $BUILDDIR/gdbm-*
+cd "$BUILDDIR"
 ./configure \
   --enable-libgdbm-compat \
   --prefix="$INSTALLROOT" \
@@ -48,5 +27,5 @@ cd $BUILDDIR/gdbm-*
   --disable-nls \
   --disable-rpath
 
-make ${JOBS:+-j $JOBS}
+make ${JOBS:+-j$JOBS}
 make install

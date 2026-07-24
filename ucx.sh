@@ -1,7 +1,9 @@
 package: ucx
-version: "1.18.1"
-tag: v1.18.1
-source: https://github.com/openucx/ucx
+version: "1.21.0"
+sources:
+  # submodules=1 is required: ucx 1.21 pulls the DOCA gpunetio headers
+  # (external/gpunetio -> NVIDIA-DOCA/gpunetio) needed by the mlx5 gda component.
+  - git+https://github.com/openucx/ucx.git?obj=master/v%(version)s&export=ucx-%(version)s&submodules=1&output=/ucx.tar.gz
 build_requires:
  - autotools
 requires:
@@ -10,12 +12,12 @@ requires:
  - rdma-core
  - xpmem
  - cuda
- - rocm
+ - cuda-flags
+ - rocm-hip
+ - rocr-runtime
  - gdrcopy
 ---
-export without_rocm="yes"
-
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" --strip-components=1 -C "$BUILDDIR"
 
 ./autogen.sh
 
@@ -32,26 +34,30 @@ CONFIGURE_OPTS="\
   --enable-compiler-opt \
   --enable-cma \
   --enable-mt \
+  --disable-logging \
+  --disable-debug \
+  --disable-assertions \
+  --disable-params-check \
   --with-pic \
   --with-gnu-ld \
-  --with-avx \
-  --with-sse41 \
-  --with-sse42 \
   --without-go \
   --without-java"
 
-# Conditionally enable CUDA
+# Conditionally enable CUDA (microarch now via CFLAGS below; x86-64-v2 block dropped upstream)
 if [ -z "$without_cuda" ]; then
   CONFIGURE_OPTS+=" --with-cuda=$CUDA_ROOT"
   CONFIGURE_OPTS+=" --with-gdrcopy=$GDRCOPY_ROOT"
+  # --with-nvcc-gencode is a single value containing spaces (-gencode ... -Wno-...);
+  # pass it as one quoted arg at the configure call (see below), not via the
+  # word-split CONFIGURE_OPTS string.
 else
   CONFIGURE_OPTS+=" --without-cuda"
   CONFIGURE_OPTS+=" --without-gdrcopy"
 fi
 
-# Conditionally enable ROCM
+# Conditionally enable ROCM (rocm split into rocm-hip / rocr-runtime upstream)
 if [ -z "$without_rocm" ]; then
-  CONFIGURE_OPTS+=" --with-rocm=$ROCM_ROOT"
+  CONFIGURE_OPTS+=" --with-rocm=$ROCM_HIP_ROOT"
 else
   CONFIGURE_OPTS+=" --without-rocm"
 fi
@@ -71,8 +77,13 @@ CONFIGURE_OPTS+=" \
 
 export CPPFLAGS="-I$NUMACTL_ROOT/include"
 export LDFLAGS="-L$NUMACTL_ROOT/lib"
+export CFLAGS="$selected_microarch"
 
-./configure $CONFIGURE_OPTS
+if [ -z "$without_cuda" ]; then
+  ./configure $CONFIGURE_OPTS --with-nvcc-gencode="$nvcc_flags_cuda_archs"
+else
+  ./configure $CONFIGURE_OPTS
+fi
 make ${JOBS:+-j$JOBS}
 make install
 

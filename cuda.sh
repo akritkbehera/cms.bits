@@ -1,7 +1,7 @@
 package: cuda
-version: "12.9.1"
+version: "13.3.1"
 variables:
-  driversversion: 575.57.08
+  driversversion: 610.43.02
   aarch64_src: "linux-sbsa"
   x86_64_src: "linux"
   selected_src: "%%(%(platform_machine)s_src)s"
@@ -23,15 +23,11 @@ chmod +x cuda_"$PKGVERSION"_"$CUDADRIVER_VERSION"_linux*.run
 
 mkdir -p $BUILDDIR/{build,tmp}
 
-CUDA_INSTALL_CMD=(/bin/sh cuda_${PKGVERSION}_${CUDADRIVER_VERSION}_linux*.run \
-  --silent \
-  --override \
-  --tmpdir="${BUILDDIR}/tmp" \
-  --installpath="${BUILDDIR}/build" \
-  --toolkit \
-  --keep)
-
-"${CUDA_INSTALL_CMD[@]}"
+# Run under a pseudo-tty (script) so the NVIDIA .run makeself wrapper does not re-exec
+# itself with --xwin (spawning rxvt) when detached from a terminal — that hangs headless
+# builds with no $DISPLAY. Paths here are hash dirs with no spaces, so no inner quoting.
+RUNFILE=$(ls cuda_${PKGVERSION}_${CUDADRIVER_VERSION}_linux*.run)
+script -qec "/bin/sh $RUNFILE --silent --override --tmpdir=${BUILDDIR}/tmp --installpath=${BUILDDIR}/build --toolkit --keep" /dev/null
 
 mkdir -p $INSTALLROOT/{include,lib64}
 

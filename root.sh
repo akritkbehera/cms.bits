@@ -1,6 +1,6 @@
 package: ROOT
-version: 6.36.05
-tag: 7947cea45c6fdee76ce1afc0f8a652df351b71bd
+version: 6.36.11
+tag: fd0da82cb47abe082dafec8b7e46c4339d206b95
 source: https://github.com/cms-sw/root
 env:
  ROOTSYS: $ROOT_ROOT
@@ -30,6 +30,7 @@ requires:
 - lz4
 - FreeType
 - zstd
+- json
 - dcap
 - cuda
 ---
@@ -74,7 +75,7 @@ ARCH=$(uname -m)
 cmake_args=(
   "../$PKGNAME/$PKGNAME-$PKGVERSION"
   -G Ninja
-  -DCMAKE_BUILD_TYPE="${cmake_build_type}"
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s
   -DLLVM_BUILD_TYPE="Release"
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
   -DCMAKE_C_COMPILER=gcc
@@ -116,7 +117,7 @@ cmake_args=(
   -Dbuiltin_ftgl=ON
   -Dbuiltin_gl2ps=ON
   -Dbuiltin_xxhash=ON
-  -Dbuiltin_nlohmannjson=ON
+  -Dbuiltin_nlohmannjson=OFF
   -Darrow=OFF
   -DGSL_ROOT_DIR="${GSL_ROOT}"
   -DGSL_CBLAS_LIBRARY="${OPENBLAS_ROOT}/lib/libopenblas.${soext}"
@@ -158,7 +159,7 @@ cmake_args=(
   -DZLIB_ROOT="${ZLIB_ROOT}"
   -DZLIB_INCLUDE_DIR="${ZLIB_ROOT}/include"
   -DZSTD_ROOT="${ZSTD_ROOT}"
-  -DCMAKE_PREFIX_PATH="${LZ4_ROOT};${GSL_ROOT};${XZ_ROOT};${GIFLIB_ROOT};${FREETYPE_ROOT};${PYTHON3_ROOT};${LIBPNG_ROOT};${PCRE2_ROOT};${TBB_ROOT};${OPENBLAS_ROOT};${DAVIX_ROOT};${LIBXML2_ROOT};${ZSTD_ROOT}"
+  -DCMAKE_PREFIX_PATH="${LZ4_ROOT};${GSL_ROOT};${XZ_ROOT};${GIFLIB_ROOT};${FREETYPE_ROOT};${PYTHON3_ROOT};${LIBPNG_ROOT};${PCRE2_ROOT};${TBB_ROOT};${OPENBLAS_ROOT};${DAVIX_ROOT};${LIBXML2_ROOT};${ZSTD_ROOT};${JSON_ROOT}"
 )
 
 # Add OS-specific options
@@ -217,6 +218,7 @@ for d in \
   ${LZ4_ROOT} \
   ${FREETYPE_ROOT} \
   ${ZSTD_ROOT} \
+  ${JSON_ROOT} \
   ${DCAP_ROOT}; do
 
   if [ -d "${d}/include" ]; then
@@ -227,6 +229,11 @@ done
 export ROOT_INCLUDE_PATH
 export ROOTSYS=$INSTALLROOT
 ninja -v ${JOBS:+-j$JOBS} install
+
+# Generate cuda.pcm if CUDA is available
+if [ -n "$CUDA_ROOT" ]; then
+  echo '#include <cuda_runtime.h>' | $INSTALLROOT/bin/root -b -n -l
+fi
 
 find $INSTALLROOT -type f -name '*.py' | xargs chmod -x
 grep -rlI '#!.*python' $INSTALLROOT | xargs chmod +x

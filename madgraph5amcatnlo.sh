@@ -58,3 +58,4 @@ sed -ideleteme 's|#!.*/bin/python|#!/usr/bin/env python|' \
 find $INSTALLROOT -name '*deleteme' -delete
 rm -f $INSTALLROOT/basiceventgeneration/*.log
 rm -f $INSTALLROOT/basiceventgeneration/Source/StdHEP/log.mcfio.*
+rm -f $INSTALLROOT/MG5_debug

@@ -5,7 +5,7 @@ sources:
 build_requires:
  - autotools
  - cuda
- - rocm
+ - rocm-hip
 requires:
  - Python
  - gcc

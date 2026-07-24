@@ -2,11 +2,12 @@ package: hdf5
 version: "1.14.6"
 sources:
  - https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5_%(version)s.tar.gz
+build_requires:
+ - autotools
 requires:
  - zlib
  - openmpi
  - gcc
- - autotools
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
@@ -21,6 +22,7 @@ rm -f "$CONFIGDIR"/config.{sub,guess}
 
 curl -L -k -s -o "$CONFIGDIR"/config.guess "$CONFIG_GUESS_URL"
 curl -L -k -s -o "$CONFIGDIR"/config.sub "$CONFIG_SUB_URL"
+chmod +x "$CONFIGDIR"/config.{sub,guess}
 
 CXXFLAGS=-I${OPENMPI_ROOT}/include \
 LDFLAGS="-L${OPENMPI_ROOT}/lib -lmpi" \

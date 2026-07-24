@@ -4,19 +4,20 @@ variables:
   branch: cms/v%%(version)s
   github_user: cms-externals
   tag: 3e8ac1f06ef3612088505de448c8e127157076a7
-sources: 
+sources:
  - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
 patches:
  - blackhat.patch
+build_requires:
+ - autotools
 requires:
  - qd
  - Python
  - gcc
  - py-disutils
 ---
-tar -xzf "$SOURCEDIR/${SOURCE0}" \
-    --strip-components=1 \
-    -C "$BUILDDIR"
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+patch -p1 < "$SOURCEDIR/$PATCH0"
 
 sed -i -e 's|else return Cached_OLHA_user_normal|else return new Cached_OLHA_user_normal|' src/cached_OLHA.cpp
 
@@ -29,6 +30,8 @@ rm -f "$CONFIGDIR"/config.{sub,guess}
 curl -L -k -o "$CONFIGDIR"/config.guess "$CONFIG_GUESS_URL"
 curl -L -k -o "$CONFIGDIR"/config.sub "$CONFIG_SUB_URL"
 chmod +x "$CONFIGDIR"/config.{sub,guess}
+
+autoreconf -ivf
 
 PYTHON=$(which python3) ./configure --prefix=$INSTALLROOT \
   --with-QDpath=$QD_ROOT \

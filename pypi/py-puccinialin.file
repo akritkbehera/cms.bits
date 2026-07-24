@@ -1,0 +1,6 @@
+requires:
+- py-filelock
+- py-httpx
+- py-platformdirs
+- py-tqdm
+---

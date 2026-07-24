@@ -36,7 +36,6 @@ mkdir -p $INSTALLROOT/c-api
 numpy_core=$(ls -d $INSTALLROOT/lib/python*/site-packages/numpy/core | sed 's|$INSTALLROOT/|../|')
 ln -s ${numpy_core} $INSTALLROOT/c-api/core
 echo "#!/bin/bash" > $INSTALLROOT/bin/f2py
-echo "echo \$PYTHONPATH" >> $INSTALLROOT/bin/f2py
 echo "python3 -m numpy.f2py \$*" >> $INSTALLROOT/bin/f2py
 chmod +x $INSTALLROOT/bin/f2py
 EOF

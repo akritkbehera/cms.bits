@@ -34,19 +34,19 @@ if [ "${TARGET_ARCH}" = "" ] ; then
 fi
 
 if [ "$ARCH" = "x86_64" ]; then
-    make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 TARGET=${TARGET_ARCH}
+    make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 ${JOBS:+MAKE_NB_JOBS=$JOBS} TARGET=${TARGET_ARCH}
 fi
 
 if [ "$ARCH" = "aarch64" ]; then
-    make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 TARGET=ARMV8 CFLAGS="-march=armv8-a -mno-outline-atomics"
+    make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 ${JOBS:+MAKE_NB_JOBS=$JOBS} TARGET=ARMV8 CFLAGS="-march=armv8-a -mno-outline-atomics"
 fi
 
 if [ "$ARCH" = "ppc64le" ]; then
-    make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 TARGET=POWER8 CFLAGS="-mcpu=power8 -mtune=power8 --param=l1-cache-size=64 --param=l1-cache-line-size=128 --param=l2-cache-size=512"
+    make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 ${JOBS:+MAKE_NB_JOBS=$JOBS} TARGET=POWER8 CFLAGS="-mcpu=power8 -mtune=power8 --param=l1-cache-size=64 --param=l1-cache-line-size=128 --param=l2-cache-size=512"
 fi
 
 if [ "$ARCH" = "riscv64" ]; then
-    make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 TARGET=RISCV64_GENERIC shared
+    make FC=gfortran BINARY=64 NUM_THREADS=256 DYNAMIC_ARCH=0 ${JOBS:+MAKE_NB_JOBS=$JOBS} TARGET=RISCV64_GENERIC shared
 fi
 
 make PREFIX=$INSTALLROOT install MAKE_NB_JOBS=$JOBS

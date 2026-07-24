@@ -6,12 +6,12 @@ requires:
  - crab-dev
 architecture: share
 sources:
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_17_0_X/g14/crab/crab.sh.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_17_0_X/g14/crab/crab-proxy-package.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_17_0_X/g14/crab/crab-setup.csh.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_17_0_X/g14/crab/crab-setup.sh.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_17_0_X/g14/crab/crab-env.csh.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_17_0_X/g14/crab/crab-env.sh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab.sh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-proxy-package.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-setup.csh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-setup.sh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-env.csh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-env.sh.file
 ---
 cp $SOURCEDIR/$SOURCE0 $INSTALLROOT/
 cp $SOURCEDIR/$SOURCE1 $INSTALLROOT/

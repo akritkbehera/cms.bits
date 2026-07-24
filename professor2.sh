@@ -25,7 +25,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 ARCH=$(uname -m)
 
 if [[ "$ARCH" == "ppc64le" ]]; then
-    patch -p1 < "$PATCH0"
+    patch -p1 < "$SOURCEDIR/$PATCH0"
 fi
 
 if [[ "$ARCH" == "riscv64" ]]; then

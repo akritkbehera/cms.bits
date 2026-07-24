@@ -1,0 +1,7 @@
+build_requires:
+- py-hatchling
+- py-hatch-requirements-txt
+requires:
+- py-dnspython
+---
+PipPreBuild="export CARGO_HOME=$BUILDDIR/cargo_home"

@@ -1,22 +1,27 @@
 package: FFTW3
-version: "%(tag_basename)s"
-tag: v3.3.9
-source: https://github.com/alisw/fftw3
+version: "3.3.8"
+sources:
+ - http://www.fftw.org/fftw-%(version)s.tar.gz
 build_requires:
-  - CMake
-  - gcc
+ - gmake
+requires:
+ - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
-CONFIG_ARGS="--enable-maintainer-mode --with-pic --enable-shared --enable-threads --disable-fortran
-             --disable-dependency-tracking --disable-mpi --disable-openmp --disable-doc
-             --prefix=${INSTALLROOT}"
+CMS_BITS_MARCH=$(gcc -dumpmachine)
+
+CONFIG_ARGS="--with-pic --enable-shared --enable-threads --disable-fortran
+             --disable-dependency-tracking --disable-mpi --disable-openmp
+             --prefix=${INSTALLROOT} --build=${CMS_BITS_MARCH} --host=${CMS_BITS_MARCH}"
 
 if [ "$(uname -m)" = "x86_64" ]; then
   CONFIG_ARGS="${CONFIG_ARGS} --enable-sse2"
 fi
 
-sh bootstrap.sh
+cd "$BUILDDIR"
 ./configure ${CONFIG_ARGS}
 make ${JOBS:+-j$JOBS}
 make install

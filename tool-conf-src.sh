@@ -1,3 +1,8 @@
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+chmod +x "$BUILDDIR/bin/get_tools"
+chmod +x "$BUILDDIR/bin/fix_tool_variables"
+[ -f "$BUILDDIR/bin/get_vectorized_tools" ] && chmod +x "$BUILDDIR/bin/get_vectorized_tools"
+
 export UCTOOL=$(echo "$PKG_NAME" | tr 'a-z-' 'A-Z_')
 rm -rf $INSTALLROOT
 mkdir -p $INSTALLROOT/tools/selected $INSTALLROOT/tools/available
@@ -119,3 +124,10 @@ for type in selected available ; do
   done
   rm -rf $INSTALLROOT/tools/${type}
 done
+
+mkdir -p touch $INSTALLROOT/etc/profile.d
+touch $INSTALLROOT/etc/profile.d/post-relocate.sh
+cat >"$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EoF
+  cp $INSTALLROOT/tools/selected.tmpl \$WORK_DIR/$PKGNAME.selected.tmpl
+  cp $INSTALLROOT/tools/available.tmpl \$WORK_DIR/$PKGNAME.available.tmpl
+EoF

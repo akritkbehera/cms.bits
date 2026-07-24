@@ -31,7 +31,7 @@ cmake_args=(
     -S "$BUILDDIR"
     -B "$BUILDDIR/build"
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
-    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_BUILD_TYPE=%(cms_build_type)s
     -DGIT_VERSION="%(version)s"
     -DCMAKE_PREFIX_PATH="${YAML_CPP_ROOT};${ZLIB_ROOT}"
     -DBUILD_TESTING=OFF

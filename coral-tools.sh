@@ -1,6 +1,6 @@
 package: coral-tools
 version: "v1"
-tag: 32ce1d54d32a2602efc0ca6a6f00b2da24e2c712
+tag: cb06ad14f7ba04453ee45667de5648bd5fd38eaa
 source: https://github.com/akritkbehera/scram-tools.file.git
 variables:
   skipreqtools: jcompiler
@@ -10,7 +10,8 @@ variables:
   gpu_backend_specific_packages: ""
   gpu_types: ""
   default_microarch: "-march=x86-64-v2"
-  cuda_gcc_support: "false"
+  cuda_gcc_support: "true"
+  override_microarch_name: ""
   min_microarch_name: "-march=x86-64-v2"
   use_system_gcc: "0"
 requires:
@@ -60,8 +61,8 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 chmod +x "$BUILDDIR/bin/get_tools"
 chmod +x "$BUILDDIR/bin/fix_tool_variables"
 [ -f "$BUILDDIR/bin/get_vectorized_tools" ] && chmod +x "$BUILDDIR/bin/get_vectorized_tools"
-
-%(##INCLUDE:cms.bits/tool-conf-src.file)s
+#!include  <microarch-flag.sh>
+#!include  <tool-conf-src.file>
 mkdir -p touch $INSTALLROOT/etc/profile.d
 touch $INSTALLROOT/etc/profile.d/post-relocate.sh
 cat >"$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EoF

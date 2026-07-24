@@ -1,7 +1,7 @@
 package: gdb
 version: "16.2"
 sources:
-- https://mirror.ibcp.fr/pub/gnu/gdb/gdb-%(version)s.tar.gz
+- https://ftp.gnu.org/gnu/gdb/gdb-%(version)s.tar.gz
 requires:
  - Python
  - zlib
@@ -18,9 +18,9 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 < $SOURCEDIR/$PATCH0
 
-rm -rf build; mkdir build; cd build
+rm -rf "$BUILDDIR/build"; mkdir "$BUILDDIR/build"; cd "$BUILDDIR/build"
 
-../configure \
+"$BUILDDIR/configure" \
     --prefix="$INSTALLROOT" \
     --disable-rpath \
     --with-system-gdbinit=$INSTALLROOT/share/gdbinit \
@@ -28,6 +28,7 @@ rm -rf build; mkdir build; cd build
     --with-libexpat-prefix=${EXPAT_ROOT} \
     --with-zlib=yes \
     --with-python=$PYTHON_ROOT/bin/python3 \
+    --with-python-libdir="${PYTHON_ROOT}/lib" \
     --with-lzma=yes \
     --with-liblzma-prefix=${XZ_ROOT} \
     LDFLAGS="-L${PYTHON_ROOT}/lib -L${ZLIB_ROOT}/lib -L${EXPAT_ROOT}/lib -L${XZ_ROOT}/lib" \

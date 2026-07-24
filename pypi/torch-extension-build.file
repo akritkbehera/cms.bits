@@ -1,0 +1,41 @@
+# Shared build fragment for the torch C++ extensions (torch-scatter/sparse/cluster,
+# pyg-lib). Port of cmsdist pip/files/torch-extension-build.file.
+# Sourced/included by the extension packages; the consumer must carry the deps in its
+# frontmatter (build_requires: CMake, ninja / requires: zlib) since bits has no ## INCLUDE
+# dependency-merge. cmsdist provides cpp-standard, compilation_flags and microarch_flags;
+# in bits those give $CXXSTD, $arch_build_flags and $default_microarch.
+
+build_flags="-O2 ${arch_build_flags} ${default_microarch}"
+
+PipPreBuild=$(cat <<'EOF'
+export CPATH="${PY_PYBIND11_ROOT}/include"
+export MAX_JOBS=$JOBS
+export CFLAGS="-I${ZLIB_ROOT}/include ${build_flags}"
+export CXXFLAGS="-I${ZLIB_ROOT}/include ${build_flags}"
+export LDFLAGS="-L${ZLIB_ROOT}/lib"
+export FORCE_CUDA=0
+EOF
+)
+
+# C++ API build (cmsdist gates this on enable_cpp_api=yes, set by the *-common files).
+# Configure out-of-source with -S/-B, then build+install with cmake --build/--install.
+PipPostBuild=$(cat <<'EOF'
+if [ "${enable_cpp_api}" = "yes" ]; then
+  rm -rf "$BUILDDIR/build"
+  cmake -S "$PYPI_SRC" -B "$BUILDDIR/build" \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_PREFIX_PATH="${GCC_ROOT};${PY_TORCH_ROOT};${CUDA_ROOT};${ZLIB_ROOT}" \
+    -DCMAKE_CXX_STANDARD="${CXXSTD}" \
+    -DCMAKE_CXX_FLAGS="${build_flags}" \
+    -DCMAKE_C_FLAGS="${build_flags}" \
+    -DBUILD_TEST=OFF \
+    -DWITH_PYTHON=OFF \
+    -DBUILD_SHARED_LIBS=ON
+  cmake --build "$BUILDDIR/build" ${JOBS:+-j $JOBS} --verbose
+  cmake --install "$BUILDDIR/build"
+fi
+EOF
+)

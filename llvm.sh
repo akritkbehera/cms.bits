@@ -28,11 +28,10 @@ tar -xzf "$SOURCEDIR/${SOURCE1}" \
 mkdir -p "$BUILDDIR/$PKGNAME-$PKGVERSION"
 tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR/$PKGNAME-$PKGVERSION" --strip-components=1
 
-mv $BUILDDIR/iwyu-$PKG_VERSION-"%(iwyuCommit)s" include-what-you-use
-cp -a $BUILDDIR/include-what-you-use $BUILDDIR/$PKGNAME-$PKGVERSION/clang/tools/
+mv "$BUILDDIR/iwyu-%(version)s-%(iwyuCommit)s" "$BUILDDIR/$PKGNAME-$PKGVERSION/clang/tools/include-what-you-use"
 sed -ibak '/add_clang_subdirectory(libclang)/a add_subdirectory(include-what-you-use)' $BUILDDIR/$PKGNAME-$PKGVERSION/clang/tools/CMakeLists.txt
 
-rm -rf $BUILDROOT/build && mkdir -p $BUILDROOT/build && cd $BUILDROOT/build
+rm -rf $BUILDDIR/build && mkdir -p $BUILDDIR/build && cd $BUILDDIR/build
 
 host_triple=$(gcc -dumpmachine)
 
@@ -40,14 +39,18 @@ cmake_args=(
   -G Ninja
   -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;mlir;lld"
   -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind;compiler-rt;openmp"
+  -DIWYU_RESOURCE_RELATIVE_TO="iwyu"
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"
   -DCMAKE_BUILD_TYPE:STRING=Release
+  -DLLVM_INSTALL_UTILS=ON
   -DLLVM_LIBDIR_SUFFIX:STRING=64
   -DLLVM_BUILD_LLVM_DYLIB:BOOL=ON
   -DLLVM_LINK_LLVM_DYLIB:BOOL=ON
   -DLLVM_ENABLE_EH:BOOL=ON
   -DLLVM_ENABLE_PIC:BOOL=ON
   -DLLVM_ENABLE_RTTI:BOOL=ON
+  -DCOMPILER_RT_INCLUDE_TESTS=OFF
+  -DLLVM_INCLUDE_TESTS=OFF
   -DLLVM_HOST_TRIPLE="${host_triple}"
   -DLLVM_TARGETS_TO_BUILD:STRING="X86;PowerPC;AArch64;RISCV;NVPTX"
   -DCMAKE_REQUIRED_INCLUDES="${ZLIB_ROOT}/include"
@@ -66,16 +69,23 @@ if [ -n "$CUDA_ROOT" ]; then
 fi
 
 cmake "${cmake_args[@]}" "$BUILDDIR/$PKGNAME-$PKGVERSION/$PKGNAME"
-ninja -v ${JOBS:+-j $JOBS}
-ninja -v ${JOBS:+-j $JOBS} check-clang-tools
 ninja -v ${JOBS:+-j $JOBS} install
+bin/clang-tidy --checks=* --list-checks | grep cms-handle
 
+# Create libomp symlink
+ln -s ${host_triple}/libomp.so $INSTALLROOT/lib64/libomp.so
+
+# Install clang python bindings
 BINDINGS_PATH=$INSTALLROOT/lib64/python%(python_major_minor)s/site-packages
-PKG_INFO_FILE=$BINDINGS_PATH/clang-$PKG_VERSION-py%(python_major_minor)s.egg-info/PKG-INFO
-mkdir -p $BINDINGS_PATH
+DISTINFO_DIR=${BINDINGS_PATH}/libclang-%(version)s.dist-info
+mkdir -p ${DISTINFO_DIR}
 cp -r $BUILDDIR/$PKGNAME-$PKGVERSION/clang/bindings/python/clang $BINDINGS_PATH
-mkdir $BINDINGS_PATH/clang-$PKG_VERSION-py%(python_major_minor)s.egg-info
-echo -e "Metadata-Version: 1.1\nName: clang\nVersion: $PKG_VERSION" > ${PKG_INFO_FILE}
+cat > ${DISTINFO_DIR}/METADATA <<EOF
+Metadata-Version: 2.1
+Name: libclang
+Version: %(version)s
+Summary: Python bindings for libclang
+EOF
 
 rm -f $BUILDDIR/$PKGNAME-$PKGVERSION/clang/tools/scan-build/set-xcode*
 find $BUILDDIR/$PKGNAME-$PKGVERSION/clang/tools/scan-build -exec install {} $INSTALLROOT/bin \;

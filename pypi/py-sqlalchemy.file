@@ -1,0 +1,5 @@
+patches:
+- py-sqlalchemy-1.3.24-add-frontier-dialect.patch
+- py-sqlalchemy-1.3.24-fix-sqlite-dialect-timestamp.patch
+- py-sqlalchemy-1.3.24-server_version_info.patch
+---

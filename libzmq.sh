@@ -8,7 +8,6 @@ sources:
 build_requires:
 - autotools
 requires:
-- autotools
 - gcc
 ---
 tar -xzf "$SOURCEDIR/$SOURCE0" \

@@ -8,6 +8,7 @@ variables:
 patches:
  - openloops-py3.patch
 requires:
+ - gcc
  - py-scons
  - openloops-sources
 ---
@@ -22,6 +23,10 @@ else
     drop_process=""
 fi
 
+# Fix for GCC 10+
+gcc10_extra_flag=""
+if [[ `gcc --version | head -1 | cut -d' ' -f3 | cut -d. -f1,2,3 | tr -d .` -gt 1000 ]] ; then export gcc10_extra_flag=-fallow-invalid-boz ; fi
+
 cat <<EOF > openloops.cfg
 [OpenLoops]
 fortran_compiler = gfortran
@@ -35,6 +40,9 @@ EOF
 export SCONSFLAGS="-j$JOBS"
 cp $OPENLOOPS_SOURCES_ROOT/openloops-user.coll.file openloops-user.coll
 ./openloops update --processes generator=0
+
+# create process_src and delete any un-needed processes
+rm -rf process_src
 tar -xzf $OPENLOOPS_SOURCES_ROOT/process_src.tgz
 
 for xproc in $drop_process; do

@@ -1,5 +1,5 @@
 package: numactl
-version: "2.0.14"
+version: "2.0.19"
 tag: v%(version)s
 source: https://github.com/numactl/numactl
 build_requires:

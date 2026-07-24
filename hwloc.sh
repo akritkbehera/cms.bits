@@ -6,10 +6,8 @@ build_requires:
  - autotools
 requires:
  - gcc
- - rocm
+ - rocm-smi-lib
  - cuda
- - zlib
- - gcc
  - libpciaccess
  - libxml2
  - numactl
@@ -52,15 +50,13 @@ if [[ -n "$ROCM_ROOT" ]]; then
     --with-rocm="$ROCM_ROOT"
     --enable-rsmi
   )
-  if [[ -n "$CUDA_ROOT" ]]; then
-    args+=(
-      --enable-plugins=cuda,nvml,rsmi
-    )
-  else
-    args+=(
-      --enable-plugins=rsmi
-    )
-  fi
+fi
+
+plugins=""
+[[ -n "$CUDA_ROOT" ]] && plugins="cuda,nvml"
+[[ -n "$ROCM_ROOT" ]] && plugins="${plugins:+$plugins,}rsmi"
+if [[ -n "$plugins" ]]; then
+  args+=(--enable-plugins=$plugins)
 fi
 
 ./configure "${args[@]}"

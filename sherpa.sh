@@ -20,6 +20,7 @@ requires:
  - Python
  - fastjet
  - openmpi
+ - openloops
 prepend_path:
  LD_LIBRARY_PATH: $SHERPA_ROOT/lib/SHERPA-MC
 ---

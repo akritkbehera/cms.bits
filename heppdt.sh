@@ -39,10 +39,10 @@ for CONFIG_SUB_FILE in $(find "$BUILDDIR" -name 'config.sub' -not -path "*/tmp/*
     chmod +x "$CONFIG_SUB_FILE"
 done
 
-export cms_cxx="$cms_cxx g++"
-export cms_cxxflags="$cms_cxxflags -O2 -std=c++$CXXSTD"
+export cms_cxx="${cms_cxx:-g++}"
+export cms_cxxflags="${cms_cxxflags:--O2 -std=c++%(cms_cxx_std)s}"
 
-CXX="$cms_cxx" CXXFLAGS="$cms_cxxflags" CPPFLAGS="-I$TBB_ROOT/include" LDFLAGS="-I$TBB_ROOT/lib" ./configure --prefix=$INSTALLROOT
+CXX="$cms_cxx" CXXFLAGS="$cms_cxxflags" CPPFLAGS="-I$TBB_ROOT/include" LDFLAGS="-L$TBB_ROOT/lib -ltbb" ./configure --prefix=$INSTALLROOT
 
 make
 make install

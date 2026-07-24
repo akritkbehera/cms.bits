@@ -1,5 +1,5 @@
 package: icx
-version: "2025.0"
+version: "2026.0"
 ---
 export year=$(echo $PKGVERSION | cut -d. -f1)
 cat << EoF > "$INSTALLROOT/etc/profile.d/post-relocate.sh"

@@ -1,6 +1,7 @@
 sources:
 - https://files.pythonhosted.org/packages/38/69/2912ab63036e21c72748019e1d8e09e8a1fc3368b3e83fc27898a1858575/jaxlib-0.10.1-cp312-cp312-manylinux_2_27_x86_64.whl
 requires:
+- py-wheel
 - py-ml_dtypes
 - py-numpy
 - py-scipy

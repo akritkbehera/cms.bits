@@ -1,5 +1,5 @@
 package: EMTF_NN
-version: 1.0.0
+version: 1.0.2
 tag: v%(version)s
 source: https://github.com/cms-hls4ml/EMTF_NN
 requires:

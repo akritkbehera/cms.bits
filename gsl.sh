@@ -47,5 +47,12 @@ make install
 
 rm -rf ${INSTALLROOT}/lib/pkgconfig
 rm -fv $INSTALLROOT/lib/*.la
+# Move away gslcblas library to make sure that no one links against it.
+# We want to use the OpenBLAS implementation
+# https://github.com/cms-sw/cmsdist/issues/5528
 mkdir ${INSTALLROOT}/cblas
 mv ${INSTALLROOT}/lib/libgslcblas* ${INSTALLROOT}/cblas/
+
+# Make sure openblas library exists
+test -e "${OPENBLAS_ROOT}/lib/libopenblas.so"
+sed -i -e "s|-lgslcblas|-L${OPENBLAS_ROOT}/lib -lopenblas|" "${INSTALLROOT}/bin/gsl-config"

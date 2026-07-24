@@ -1,0 +1,48 @@
+# Shared build fragment for py-pyg-lib (and py-pyg-lib-cuda).
+# Port of cmsdist pip/files/pyg-lib-common.file.
+# NOTE: unlike the torch-scatter/sparse/cluster commons, this does NOT set enable_cpp_api,
+# so torch-extension-build's PipPostBuild (the separate cmake C++ API build) is skipped;
+# pyg-lib builds through its own setup.py with FORCE_NINJA=1. It still uses that fragment's
+# PipPreBuild exports. Relies on cpp-standard ($CXXSTD) and compilation_flags ($arch_build_flags).
+
+# cmsdist: %define build_flags -Wall -Wextra %{?arch_build_flags}
+# torch-extension-build (sourced after this file) redefines build_flags to
+# "-O2 ... $default_microarch"; cmsdist's last-%define-wins makes that the effective value,
+# preserved here by the source order in py-pyg-lib.file.
+build_flags="-Wall -Wextra ${arch_build_flags}"
+
+# cmsdist: %define patchsrc0 — runs in the unpacked source root ($PYPI_SRC) via runIt.
+# (This is in addition to Patch0 = pyg-lib.patch, applied from the frontmatter patches: list.)
+PipPatchSource=$(cat <<'EOF'
+grep -q 'CMAKE_CXX_STANDARD 17' CMakeLists.txt && sed -i -e "s|CMAKE_CXX_STANDARD 17|CMAKE_CXX_STANDARD ${CXXSTD}|" CMakeLists.txt
+EOF
+)
+
+# cmsdist: %define PipPreBuildPy (leads with %{?AdditionalPipPreBuildPy}).
+# The -cuda variant sets $AdditionalPipPreBuildPy (a script of export lines). We run it with an
+# inner eval so its quotes/$(...) parse correctly — a bare ${AdditionalPipPreBuildPy} would be
+# word-split when runIt evals PipPreBuildPy. Empty for the base -> eval "" (no-op).
+# CMAKE_PREFIX_PATH is the *environment* variable here, so it is ':'-separated (cf. py-torch).
+PipPreBuildPy=$(cat <<'EOF'
+eval "${AdditionalPipPreBuildPy:-}"
+export ZLIB_ROOT=${ZLIB_ROOT}
+export CMAKE_PREFIX_PATH="${GCC_ROOT}:${PY_TORCH_ROOT}:${CUDA_ROOT}:${ZLIB_ROOT}"
+export FORCE_NINJA=1
+export VERBOSE=1
+export CMAKE_CXX_FLAGS="${build_flags}"
+EOF
+)
+
+# cmsdist: %define PipPostInstall — symlink pyg_lib headers + libpyg.so into the install tree.
+PipPostInstall=$(cat <<'EOF'
+pushd $INSTALLROOT
+  mkdir -p include
+  ln -s ../${PYTHON3_LIB_SITE_PACKAGES}/pyg_lib include/pyg_lib
+  ln -s ../${PYTHON3_LIB_SITE_PACKAGES}/libpyg.so lib/libpyg.so
+popd
+EOF
+)
+
+# cmsdist: ## INCLUDE pip/files/torch-extension-build
+# -> compose with torch-extension-build.file (PipPreBuild). Its PipPostBuild is skipped here
+#    because enable_cpp_api is unset. Include wiring TBD (consumer sources it).

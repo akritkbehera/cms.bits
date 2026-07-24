@@ -1,4 +1,4 @@
-package: cluestering
+package: CLUEstering
 version: 2.7.2
 sources:
   - https://gitlab.cern.ch/kalos/%(package)s/-/archive/%(version)s/%(package)s-%(version)s.tar.gz

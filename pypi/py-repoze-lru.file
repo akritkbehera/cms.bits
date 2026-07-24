@@ -1,0 +1,5 @@
+# Real PyPI dist name is repoze.lru, not repoze-lru (cmsdist's %define pip_name).
+variables:
+  pypi_name: repoze.lru
+  pypi_source_name: repoze.lru-%(version)s.tar.gz
+---

@@ -34,18 +34,24 @@ export LHAPDF_PATH="${LHAPDF_ROOT}"
 export PYTHIA6_DIR="${PYTHIA6_ROOT}"
 export ROOTSYS="${ROOT_ROOT}"
 
-cmake_args=(
+CMAKE_ARGS=(
     -G Ninja
     -S "$BUILDDIR"
     -B "$BUILDDIR/build"
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
-    -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
+    -DCMAKE_BUILD_TYPE=%(cms_build_type)s
     -DBoost_NO_SYSTEM_PATHS=ON
     -DCMAKE_PREFIX_PATH="${BZ2LIB_ROOT};${ZLIB_ROOT};${XZ_ROOT}"
 )
-cmake "${cmake_args[@]}"
-ninja -C "$BUILDDIR/build" -v ${JOBS:+-j$JOBS}
-ninja -C "$BUILDDIR/build" -v ${JOBS:+-j$JOBS} install
+
+if [[ "$VERBOSE" == "1" ]]; then
+    CMAKE_ARGS+=(-DCMAKE_VERBOSE_MAKEFILE=ON)
+fi
+
+cmake "${CMAKE_ARGS[@]}"
+
+ninja -C "$BUILDDIR/build" ${JOBS:+-j"$JOBS"} ${VERBOSE:+-v}
+ninja -C "$BUILDDIR/build" ${JOBS:+-j"$JOBS"} ${VERBOSE:+-v} install
 
 # Remove unversioned addon libraries
 rm -f "$INSTALLROOT/lib/libCepGen"-[A-Z]*-"%(version)s.so"

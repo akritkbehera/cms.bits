@@ -4,8 +4,12 @@ tag: v%(version)s
 source: https://github.com/facebook/zstd
 build_requires:
  - CMake
+ - gmake
 requires:
  - gcc
+env:
+  ZSTD_SOURCE: https://github.com/facebook/zstd/releases/download/v%(version)s/zstd-%(version)s.tar.gz
+  ZSTD_STRIP_PREFIX: zstd-%(version)s
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 
@@ -13,7 +17,7 @@ cmake build/cmake \
  -DZSTD_BUILD_CONTRIB:BOOL=OFF \
  -DZSTD_BUILD_STATIC:BOOL=OFF \
  -DZSTD_BUILD_TESTS:BOOL=OFF \
- -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
+ -DCMAKE_BUILD_TYPE=%(cms_build_type)s \
  -DZSTD_BUILD_PROGRAMS:BOOL=OFF \
  -DZSTD_LEGACY_SUPPORT:BOOL=OFF \
  -DCMAKE_INSTALL_PREFIX:STRING=$INSTALLROOT \

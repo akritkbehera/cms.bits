@@ -1,8 +1,7 @@
 package: dcap
-version: "2.47.12"
-tag: 5753eec777a47908a40de670094903ce6b13176b
+version: "2.47.14"
 sources:
--  git+https://github.com/cms-externals/dcap.git?obj=cms/%(version)s/%(tag_basename)s&export=dcap-%(version)s&output=/dcap-%(version)s-%(tag_basename)s.tgz
+- https://github.com/dCache/dcap/archive/refs/tags/%(version)s.tar.gz
 build_requires:
 - autotools
 requires:

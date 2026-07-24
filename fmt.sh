@@ -8,8 +8,7 @@ build_requires:
 requires:
 - gcc
 ---
-#mkdir -p $BUILDDIR/src
-#rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR/src"
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 
 if [ -z "${arch_build_flags:-}" ]; then
   case "$(uname -m)" in
@@ -21,7 +20,9 @@ if [ -z "${arch_build_flags:-}" ]; then
 fi
 
 CMAKE_ARGS=(
-  -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
+  -S "$BUILDDIR"
+  -B "$BUILDDIR/build"
+  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
   -DCMAKE_INSTALL_LIBDIR=lib
   -DBUILD_SHARED_LIBS=TRUE
 )
@@ -29,7 +30,10 @@ CMAKE_ARGS=(
 if [[ -n "${arch_build_flags}" ]]; then
   CMAKE_ARGS+=("-DCMAKE_CXX_FLAGS=${arch_build_flags}")
 fi
+if [[ "$VERBOSE" == "1" ]]; then
+  CMAKE_ARGS+=(-DCMAKE_VERBOSE_MAKEFILE=ON)
+fi
 
-cmake "${CMAKE_ARGS[@]}" "$SOURCEDIR" 
-make ${JOBS:+-j$JOBS}
-make install
+cmake "${CMAKE_ARGS[@]}"
+make -C "$BUILDDIR/build" ${JOBS:+-j$JOBS}
+make -C "$BUILDDIR/build" install

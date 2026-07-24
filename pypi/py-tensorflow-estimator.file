@@ -1,3 +1,5 @@
+requires:
+- py-wheel
 sources:
 - pip://tensorflow_estimator/%(version)s?pip_options=--no-deps%%20--no-binary%%3D:none,arch%%3Dx86_64:&output=/tensorflow_estimator-%(version)s-py2.py3-none-any.whl
 ---

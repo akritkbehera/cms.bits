@@ -1,0 +1,18 @@
+build_requires:
+- py-poetry-core
+requires:
+- py-termcolor
+- py-PyYAML
+- py-jsonschema
+- py-Jinja2
+- setuptools
+---
+# Modern setuptools (82.x) no longer ships pkg_resources, which barectf imports.
+# Patch it out (as cmsdist does) so `barectf` runs as a code generator for e.g. rocprofiler.
+PipPostInstall=$(cat <<'EOF'
+sed -i \
+  -e 's/import pkg_resources/import os as _pkg_os/' \
+  -e 's/pkg_resources\.resource_filename(__name__, /_pkg_os.path.join(_pkg_os.path.dirname(__file__), /g' \
+  "$INSTALLROOT/$PYTHON3_LIB_SITE_PACKAGES/barectf/config_parse_common.py"
+EOF
+)

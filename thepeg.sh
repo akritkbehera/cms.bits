@@ -1,10 +1,11 @@
 package: thepeg
 version: "2.2.2"
 sources:
- - http://www.hepforge.org/archive/thepeg/ThePEG-%(version)s.tar.bz2
+ - https://thepeg.hepforge.org/downloads/?f=ThePEG-%(version)s.tar.bz2
 patches:
  - LHEEventNum.patch
  - thepeg-deprecated-warn.patch
+ - thepeg-cpp23.patch
 build_requires:
  - autotools
  - lhapdf
@@ -26,6 +27,7 @@ tar -xjf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
+patch -p1 < "$SOURCEDIR/$PATCH2"
 autoreconf -fiv
 
 export CXX="$(which g++) -fPIC"
@@ -57,4 +59,8 @@ COMPILE_FLAGS="-g0 -O2 -DNDEBUG -std=c++$CXXSTD"
 make ${JOBS:+-j$JOBS} V=1
 make install
 find $INSTALLROOT/lib -name '*.la' -exec rm -f {} \;
+
+# create link to LesHouches library
+cd $INSTALLROOT/lib/ThePEG/
+ln -s LesHouches.so libLesHouches.so
 

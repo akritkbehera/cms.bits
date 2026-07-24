@@ -1,7 +1,7 @@
 package: gosamcontrib
 version: "2.0-20180708"
 sources:
- - http://www.hepforge.org/archive/gosam/gosam-contrib-%(version)s.tar.gz
+ - https://gosam.hepforge.org/downloads/?f=gosam-contrib-2.0-20180708.tar.gz
 patches:
  - gosamcontrib-module-patch.patch
 requires:
@@ -29,6 +29,6 @@ PLATF_CONF_OPTS="--enable-shared --enable-static"
             --libdir="$INSTALLROOT/lib" \
             CXX="$CXX" CC="$CC" FC="$FC" F77="$FC"
 
-make ${JOBS:+-j$JOBS}
+make ${JOBS:+-j$JOBS} all
 make install
 rm $INSTALLROOT/lib/*.la

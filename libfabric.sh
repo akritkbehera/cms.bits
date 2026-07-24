@@ -12,8 +12,9 @@ requires:
   - xpmem
   - cuda
   - gdrcopy
-  - autotools
+  - rocr-runtime
 build_requires:
+  - autotools
   - gmake
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/

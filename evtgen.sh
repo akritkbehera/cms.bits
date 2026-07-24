@@ -8,12 +8,12 @@ sources:
  - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
 build_requires:
  - CMake
+requires:
+ - gcc
  - hepmc
  - pythia8
  - tauolapp
  - photospp
-requires:
- - gcc
 patches:
  - evtgen-2.0.0.patch
 ---
@@ -23,9 +23,9 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 < "$SOURCEDIR/$PATCH0"
 
-mkdir -p $BUILDROOT/build && cd $BUILDROOT/build
-
 cmake_args=(
+  -S "$BUILDDIR"
+  -B "$BUILDDIR/build"
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"
   -DEVTGEN_HEPMC3:BOOL=OFF
   -DHEPMC2_ROOT_DIR:PATH="$HEPMC_ROOT"
@@ -37,16 +37,13 @@ cmake_args=(
   -DTAUOLAPP_ROOT_DIR:PATH="$TAUOLAPP_ROOT"
 )
 
-cmake "${cmake_args[@]}" "$BUILDDIR"
+cmake "${cmake_args[@]}"
 
-if [[ $(uname) == "Darwin" ]]; then
-  perl -p -i -e "s|-shared|-dynamiclib -undefined dynamic_lookup|" make.inc
-fi
+# spec builds serially (plain make, no %makeprocesses)
+make -C "$BUILDDIR/build"
+make -C "$BUILDDIR/build" install
 
-make
-make install
-
-mkdir -p $INSTALLROOT/lib
-find $INSTALLROOT/lib64 -name "*.*" -exec mv {} $INSTALLROOT/lib \;
-rm -rf $INSTALLROOT/lib64
-ls $INSTALLROOT/lib
+mkdir -p "$INSTALLROOT/lib"
+find "$INSTALLROOT/lib64" -name "*.*" -exec mv {} "$INSTALLROOT/lib" \;
+rm -rf "$INSTALLROOT/lib64"
+ls "$INSTALLROOT/lib"

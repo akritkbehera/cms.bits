@@ -14,6 +14,6 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR" 
 
 cmake -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
-    -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE
+    -DCMAKE_BUILD_TYPE=%(cms_build_type)s
 
 make install

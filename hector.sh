@@ -9,10 +9,7 @@ requires:
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 mkdir -p obj lib
 
-if [[ $(uname) == "Darwin" ]]; then
-  perl -p -i -e 's|-rdynamic||g' Makefile
-fi
-
-sed -i.bak 's/@g++/ -fPIC -O2 -std=c++20/g' Makefile
+# Add CXX and CXXFLAGS to Makefile and increase output verbose level
+sed -i.bak 's/@g++/$(CXX) $(CXXFLAGS)/g' Makefile
 make
 rsync -a . $INSTALLROOT

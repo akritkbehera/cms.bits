@@ -16,11 +16,9 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-mkdir build
-cd build
-cmake ../ \
+cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
   -DBUILD_TESTING=OFF \
-  -DCMAKE_CXX_STANDARD=$CXXSTD
+  -DCMAKE_CXX_STANDARD=%(cms_cxx_std)s
 
-make install
+make -C "$BUILDDIR/build" install

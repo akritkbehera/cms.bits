@@ -4,6 +4,8 @@ sources:
  - https://github.com/01org/IntelSEAPI/archive/%(version)s.tar.gz
 build_requires:
  - CMake
+requires:
+ - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

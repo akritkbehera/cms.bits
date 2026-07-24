@@ -15,6 +15,9 @@ build_requires:
  - bazel
  - java-env
  - git
+ # The wheel step shells out to `patchelf`. cmsdist gets it from the build OS; here it
+ # only exists in this package.
+ - patchelf-bootstrap
 requires:
  - Python
  - py-numpy

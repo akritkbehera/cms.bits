@@ -2,13 +2,13 @@ package: cuda-flags
 version: vCMS
 env:
   # build support for Pascal (6.x), Volta (7.0), Turing (7.5), Ampere (8.x), Lovelace (8.9) and Hopper (9.0)
-  cuda_arch: "60 70 75 80 89 90"
+  cuda_arch: "75 80 89 90 100 120"
   # LIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES style for listing the supported CUDA compute architectures
   omptarget_cuda_archs: "$(echo $cuda_arch | sed 's/ /,/g')"
   # LLVM style for listing the supported CUDA compute architectures
   llvm_flags_cuda_archs: "$(for arch in $cuda_arch; do echo -n '--offload-arch=sm_'$arch ; done)-Wunknown-cuda-version"
   # C++ standard to use for building host and device code with nvcc
-  nvcc_flags_stdcxx: "-std=c++$CXXSTD"
+  nvcc_flags_stdcxx: "-std=c++$CMS_CXX_STD"
   # generate optimised code
   nvcc_flags_opt: "-O3"
   # generate debugging information for device code
@@ -18,7 +18,7 @@ env:
   # allow __host__, __device__ attributes in lambda declarations
   nvcc_flags_lambda: "--extended-lambda"
   # build support for the various compute architectures
-  nvcc_flags_cuda_archs: "$(echo $(for arch in $cuda_arch; do echo -n '-gencode arch=compute'+$arch',code=[sm_'$arch',compute_'$arch']' ; done)) -Wno-deprecated-gpu-targets"
+  nvcc_flags_cuda_archs: "$(echo $(for arch in $cuda_arch; do echo -n '-gencode arch=compute_'$arch',code=[sm_'$arch',compute_'$arch']' ; done)) -Wno-deprecated-gpu-targets"
   #various cuda diag-suppress flags e.g.
   # 3012: suppress volatile destination type for a compound assignment expression is deprecated
   # 3189: suppress "module" is parsed as an identifier rather than a keyword because the tokens that follow it do not match those of a preprocessor directive

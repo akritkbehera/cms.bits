@@ -11,10 +11,6 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 <$SOURCEDIR/$PATCH0
 
-if [[ $(uname) == Darwin ]]; then
-  sed -i.bak 's/install -p -D/install -p/g' bin/install.sh
-fi
-
 make ${JOBS:+-j$JOBS}
 mkdir -p $INSTALLROOT/bin
 make PREFIX=$INSTALLROOT BIN_DIR=$INSTALLROOT/bin install

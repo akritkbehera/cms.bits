@@ -15,18 +15,23 @@ build_requires:
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"
 
-cmake_args=(
+CMAKE_ARGS=(
     -G Ninja
     -S "$BUILDDIR/$PKGNAME-$PKGVERSION"
     -B "$BUILDDIR/build"
-    -DCLHEP_BUILD_CXXSTD="-std=c++${CXXSTD}"
+    -DCLHEP_BUILD_CXXSTD="-std=c++%(cms_cxx_std)s"
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    -DCMAKE_BUILD_TYPE=%(cms_build_type)s
     -DCLHEP_BUILD_STATIC_LIBS=OFF
 )
-cmake "${cmake_args[@]}"
-ninja -C "$BUILDDIR/build" -v ${JOBS:+-j$JOBS}
-ninja -C "$BUILDDIR/build" -v ${JOBS:+-j$JOBS} install
+
+if [[ "$VERBOSE" == "1" ]]; then
+    CMAKE_ARGS+=(-DCMAKE_VERBOSE_MAKEFILE=ON)
+fi
+
+cmake "${CMAKE_ARGS[@]}"
+
+ninja -C "$BUILDDIR/build" ${JOBS:+-j"$JOBS"} ${VERBOSE:+-v}
+ninja -C "$BUILDDIR/build" ${JOBS:+-j"$JOBS"} ${VERBOSE:+-v} install
 
 rm -f "$INSTALLROOT/lib/libCLHEP-[A-Z]*-%(version)s.so"
-

@@ -20,6 +20,7 @@ TMPDIR="$BUILDDIR/build"
 rm -f "$TMPDIR"/config.{sub,guess}
 curl -L -k -s -o "$TMPDIR"/config.guess "$CONFIG_GUESS_URL"
 curl -L -k -s -o "$TMPDIR"/config.sub "$CONFIG_SUB_URL"
+chmod +x "$TMPDIR"/config.{sub,guess}
 
 ./configure \
   --prefix=$INSTALLROOT \
@@ -27,8 +28,8 @@ curl -L -k -s -o "$TMPDIR"/config.sub "$CONFIG_SUB_URL"
   --with-tls=openssl \
   --disable-static \
   --disable-slapd \
-  CPPFLAGS="-I${DB6_ROOT}/include" \
-  LDFLAGS="-L${DB6_ROOT}/lib"
+  CPPFLAGS="-I${DB6_ROOT}/include -I${LIBUUID_ROOT}/include" \
+  LDFLAGS="-L${DB6_ROOT}/lib -L${LIBUUID_ROOT}/lib"
 make depend
 make
 

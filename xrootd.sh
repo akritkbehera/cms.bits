@@ -1,7 +1,7 @@
 package: XRootD
-version: "%(tag_basename)s"
-tag: "v5.8.4"
-source: https://github.com/xrootd/xrootd
+version: "6.0.2"
+sources:
+  - https://github.com/xrootd/xrootd/releases/download/v%(version)s/xrootd-%(version)s.tar.gz
 requires:
   - zlib
   - libuuid
@@ -11,28 +11,30 @@ requires:
   - setuptools
   - libxml2
   - isal
+  - libzip
   - pip
   - gcc
 build_requires:
   - CMake
   - gmake
+  - autotools
   - pip
+prepend_path:
+  LD_LIBRARY_PATH: $XROOTD_ROOT/lib64
+  PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
-OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-SOEXT="so"
-if [[ "$OS" == "darwin" ]]; then
-   SOEXT="dylib"
-fi
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 sed -i \
-  -e 's|^ *check_cxx_symbol_exists("uuid_generate_random" "uuid/uuid.h" _have_libuuid.*$|set(_have_libuuid TRUE)|' \
-  $SOURCEDIR/cmake/Findlibuuid.cmake
+  -e 's|^ *check_library_exists("uuid" "uuid_generate_random".*$|set(_have_libuuid True)|' \
+  "$BUILDDIR/cmake/Findlibuuid.cmake"
 
 unset PIP_ROOT
-#SKIP_PIP_INSTALL=1
-cmake "$SOURCEDIR" \
+cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -DCMAKE_INSTALL_PREFIX=${INSTALLROOT} \
-  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s \
   -DFORCE_ENABLED=ON \
   -DENABLE_FUSE=FALSE \
   -DENABLE_VOMS=FALSE \
@@ -47,7 +49,7 @@ cmake "$SOURCEDIR" \
   -DPIP_OPTIONS="--verbose" \
   -DCMAKE_CXX_FLAGS="-I${LIBUUID_ROOT}/include" \
   -DCMAKE_SHARED_LINKER_FLAGS="-L${LIBUUID_ROOT}/lib64" \
-  -DCMAKE_PREFIX_PATH="$CURL_ROOT;$ZLIB_ROOT;$EXPAT_ROOT;$BZ2LIB_ROOT;$DAVIX_ROOT;$PIP_ROOT"
+  -DCMAKE_PREFIX_PATH="$CURL_ROOT;$ZLIB_ROOT;$EXPAT_ROOT;$BZ2LIB_ROOT;$DAVIX_ROOT;$PIP_ROOT;$LIBZIP_ROOT"
 
-make ${JOBS:+-j $JOBS}
-make install
+make -C "$BUILDDIR/build" ${JOBS:+-j $JOBS} VERBOSE=1
+make -C "$BUILDDIR/build" install VERBOSE=1

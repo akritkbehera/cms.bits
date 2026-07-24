@@ -2,6 +2,8 @@ package: dablooms
 version: 0.9.1
 tag: v%(version)s
 source: https://github.com/bitly/dablooms
+build_requires:
+ - gmake
 requires:
  - gcc
 ---

@@ -1,11 +1,11 @@
 package: boost
-version: "1.80.0"
-tag: 66e4a726b4ac46155ef33553b65172900660dde5
+version: "1.91.0"
 variables:
-  github_user: "cms-externals"
-  branch: "cms/v%(version)s"
+  # underscore form for the release-tarball name (boost_1_91_0.tar.gz)
+  boost_underscore: "1_91_0"
 sources:
-  - git+https://github.com/%(github_user)s/boost.git?obj=%(branch)s/%(tag_basename)s&export=boost-%(version)s&output=/boost-%(version)s.tgz
+  # Upstream switched from the cms-externals git fork to the official release tarballs.
+  - https://archives.boost.io/release/%(version)s/source/boost_%(boost_underscore)s.tar.gz
 requires:
   - gcc
   - Python
@@ -77,9 +77,29 @@ b2_args=(
 )
 b2 "${b2_args[@]}"
 
-# Install libraries, cmake files and headers
+# Install libraries, cmake files and headers.
+# Use tar to copy so the lib/cmake/ directory hierarchy is preserved (boost's
+# *-config.cmake reference siblings via ${CMAKE_CURRENT_LIST_DIR}/../ and break if
+# flattened into lib/).
 mkdir -p "$INSTALLROOT/lib" "$INSTALLROOT/include"
-find "$BUILDDIR/stage/lib" \( -name "*.so*" -o -name "*.cmake" \) \
-    -exec cp -a {} "$INSTALLROOT/lib/" \;
-cp -r "$BUILDDIR/boost" "$INSTALLROOT/include/"
+pushd "$BUILDDIR/stage/lib"
+  find . -name "*.so*"   -type f | tar cf - -T - | (cd "$INSTALLROOT/lib" && tar xfp -)
+  find . -name "*.cmake" -type f | tar cf - -T - | (cd "$INSTALLROOT/lib" && tar xfp -)
+popd
+pushd "$BUILDDIR"
+  find boost -name '*.[hi]*' | tar cf - -T - | (cd "$INSTALLROOT/include" && tar xfp -)
+popd
+
+# Relocate the CMake package files (b2 stage bakes build-tree paths into them):
+#   1. rewrite the staged build path to the install root
+#   2. fix boost's include-dir computation: ${_BOOST_CMAKEDIR}/../../../ overshoots to
+#      the parent of the install dir; it must resolve to <prefix>/include
+find "$INSTALLROOT/lib/cmake" -name '*.cmake' -print0 | xargs -0 sed -i \
+  -e "s#${BUILDDIR}/stage#${INSTALLROOT}#g" \
+  -e 's#_BOOST_INCLUDEDIR "${_BOOST_CMAKEDIR}/../../../"#_BOOST_INCLUDEDIR "${_BOOST_CMAKEDIR}/../../include/"#g'
+
+# Create unversioned shared-library symlinks (libboost_x.so.1.80.0 -> libboost_x.so)
+for l in $(find "$INSTALLROOT/lib" -name "*.so.*"); do
+  ln -sf "$(basename "$l")" "$(echo "$l" | sed -e 's|[.]so[.].*|.so|')"
+done
 

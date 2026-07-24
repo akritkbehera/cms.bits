@@ -1,5 +1,5 @@
 package: openmpi
-version: "5.0.9"
+version: "5.0.10"
 variables:
  branch: v5.0.x
  tag: v%(version)s
@@ -16,6 +16,7 @@ requires:
  - xpmem
  - ucx
  - cuda
+ - rocm-hip
  - zlib
 sources:
  - git://github.com/open-mpi/ompi.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
@@ -29,16 +30,16 @@ prepend_path:
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
-    -C "$BUILDDIR" 
+    -C "$BUILDDIR"
 patch -p1 -i "$SOURCEDIR/$PATCH0"
-echo "<runtime name=\"HFI_NO_BACKTRACE\" value=\"%(HFI_NO_BACKTRACE)s\"/>"
-echo "<runtime name=\"HFI_NO_BACKTRACE\" value=\"%(IPATH_NO_BACKTRACE)s\"/>"
+
+# Make sure IPATH_NO_BACKTRACE and HFI_NO_BACKTRACE default values match what we expect
 grep ' opal_setenv("IPATH_NO_BACKTRACE", "%(IPATH_NO_BACKTRACE)s", true, &environ)' opal/runtime/opal_init.c
 grep ' opal_setenv("HFI_NO_BACKTRACE", "%(HFI_NO_BACKTRACE)s", true, &environ)' opal/runtime/opal_init.c
 
-AUTOMAKE_JOBS=${JOBS:+-j$JOBS} ./autogen.pl
+AUTOMAKE_JOBS=${JOBS:-1} ./autogen.pl
 unset HWLOC_VERSION
-CMS_BITS_MARCH=$(gcc -dumpmachine)
+
 CONFIGURE_OPTS="\
   --prefix=$INSTALLROOT \
   --disable-dependency-tracking \
@@ -46,15 +47,11 @@ CONFIGURE_OPTS="\
   --enable-shared \
   --disable-static \
   --disable-mpi-java \
-  --enable-openib-rdmacm-ibaddr \
   --with-zlib=$ZLIB_ROOT \
   --with-hwloc=$HWLOC_ROOT \
   --with-ofi=$LIBFABRIC_ROOT \
   --without-portals4 \
-  --without-psm \
   --without-psm2 \
-  --with-verbs=$RDMA_CORE_ROOT \
-  --without-mxm \
   --with-ucx=$UCX_ROOT \
   --with-cma \
   --without-knem \
@@ -64,13 +61,12 @@ CONFIGURE_OPTS="\
   --with-gnu-ld \
   --with-pmix=internal \
   "
-[ -z "$without_cuda" ] && CONFIGURE_OPTS+=" --with-cuda=$CUDA_ROOT"
+[ -n "$CUDA_ROOT" ] && CONFIGURE_OPTS+=" --with-cuda=$CUDA_ROOT --with-cuda-libdir=$CUDA_ROOT/lib64/stubs"
+[ -n "$ROCM_ROOT" ] && CONFIGURE_OPTS+=" --with-rocm=$ROCM_ROOT"
+
 ./configure $CONFIGURE_OPTS
 make ${JOBS:+-j$JOBS}
 make install
 
-#sed -i \
-#  -e 's|-Wl,-rpath -Wl,@{libdir}||g' \
-#  -e 's|\(.*-Wl,-rpath,\$ORIGIN/../lib\).*--enable-new-dtags|\1 -Wl,--enable-new-dtags|' \
-#  $INSTALLROOT/share/openmpi/*wrapper-data.txt
-find $INSTALLROOT/lib/ -name '*.la' -delete 
+# remove the libtool library files
+find $INSTALLROOT/lib/ -name '*.la' -delete

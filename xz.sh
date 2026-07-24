@@ -1,9 +1,10 @@
 package: xz
-version: 5.2.5
+version: 5.8.3
 tag: v%(version)s
+build_requires:
+ - autotools
 requires:
  - gcc
- - autotools
 source: https://github.com/tukaani-project/xz
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded \

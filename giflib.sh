@@ -2,6 +2,8 @@ package: giflib
 version: "5.2.1"
 sources:
  - https://sourceforge.net/projects/giflib/files/giflib-%(version)s.tar.gz
+build_requires:
+ - autotools
 requires:
  - gcc
 ---

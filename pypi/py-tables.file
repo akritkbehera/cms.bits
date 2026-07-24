@@ -1,4 +1,9 @@
+patches:
+ # BLOSC2_MAX_DIM was renamed B2ND_MAX_DIM in newer c-blosc2.
+ - tables-blosc2-max-dim.patch
+ - tables-cblosc-cpp23.patch
 requires:
+ - py-typing-extensions
  - py-numexpr
  - py-six
  - hdf5

@@ -1,5 +1,5 @@
 package: CMake
-version: "3.31.7"
+version: "3.31.12"
 sources:
   - https://cmake.org/files/v3.31/cmake-%(version)s.tar.gz
 requires:
@@ -8,6 +8,9 @@ requires:
   - expat
   - zlib
   - curl
+patches:
+  # Remove after updating to CMake 4.4+ (upstream note).
+  - cmake_cuda_std_23.patch
 ---
 #!/bin/bash -e
 SONAME=so
@@ -38,6 +41,8 @@ EOF
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
+
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 export CMAKE_PREFIX_PATH=$CURL_ROOT:$ZLIB_ROOT:$EXPAT_ROOT:$BZ2LIB_ROOT
 

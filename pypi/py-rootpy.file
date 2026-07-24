@@ -1,0 +1,27 @@
+requires:
+- ROOT
+- py-matplotlib
+- py-packaging
+---
+# rootpy's setup.py opens with a "setuptools >= 0.7" guard implemented via pkg_resources,
+# which setuptools 82 no longer ships -- so metadata generation dies before the build even
+# starts (hence PipPatchSource rather than a post-install fixup). The check itself is
+# vacuous here, so the two names are re-implemented on importlib.metadata/packaging.
+PipPatchSource=$(cat <<'PATCH_EOF'
+python3 - <<'PY'
+p = "setup.py"
+s = open(p).read()
+old = "    from pkg_resources import parse_version, get_distribution"
+new = (
+    "    from packaging.version import parse as parse_version\n"
+    "    from types import SimpleNamespace\n"
+    "    def get_distribution(_name):\n"
+    "        from importlib.metadata import version as _v\n"
+    "        return SimpleNamespace(parsed_version=parse_version(_v(_name)),\n"
+    "                               version=_v(_name))"
+)
+assert old in s, "rootpy setup.py no longer has the pkg_resources setuptools guard"
+open(p, "w").write(s.replace(old, new))
+PY
+PATCH_EOF
+)

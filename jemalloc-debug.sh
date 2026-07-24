@@ -9,6 +9,8 @@ sources:
 build_requires:
  - autotools
  - gmake
+ - patchelf-bootstrap
+requires:
  - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
@@ -35,7 +37,7 @@ make install
 
 mv $INSTALLROOT/lib/libjemalloc.so.2 $INSTALLROOT/lib/lib${PKGNAME}.so.2
 rm $INSTALLROOT/lib/libjemalloc.so
-ln -sf $INSTALLROOT/lib$PKGNAME.so.2 $INSTALLROOT/lib/lib$PKGNAME.so
+ln -sf lib$PKGNAME.so.2 $INSTALLROOT/lib/lib$PKGNAME.so
 patchelf --set-soname lib$PKGNAME.so.2 $INSTALLROOT/lib/lib$PKGNAME.so.2
 # We make sure there are no other libs.
 # If there are then we should fail and update the recipe

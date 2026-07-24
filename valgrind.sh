@@ -24,3 +24,8 @@ fi
 
 make ${JOBS:+-j $JOBS}
 make install
+
+perl -p -i -e 's|^#!.*perl(.*)|#!/usr/bin/env perl$1|' $(grep -r -e "^#!.*perl.*" $INSTALLROOT | cut -d: -f 1)
+# perl options don't play nicely with env, so drop the -w in these two scripts
+perl -p -i -e 's|perl -w|perl|' $INSTALLROOT/bin/callgrind_annotate
+perl -p -i -e 's|perl -w|perl|' $INSTALLROOT/bin/callgrind_control

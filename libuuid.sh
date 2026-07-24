@@ -1,19 +1,27 @@
 package: libuuid
-version: "%(tag_basename)s"
-tag: "2.34"
-sources: 
-- http://www.kernel.org/pub/linux/utils/util-linux/v%(tag_basename)s/util-linux-%(tag_basename)s.tar.gz 
+version: "2.40"
+sources:
+- http://www.kernel.org/pub/linux/utils/util-linux/v%(version)s/util-linux-%(version)s.tar.gz
+patches:
+- libuuid-2.40-disable-get_uuid_via_daemon.patch
+build_requires:
+  - gmake
 requires:
   - gcc
 ---
-tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
-cd $BUILDDIR/util-linux-*
-export CFLAGS="-Wno-error=implicit-function-declaration"
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
+
+patch -p1 < "$SOURCEDIR/$PATCH0"
+
+CMS_BITS_MARCH=$(gcc -dumpmachine)
 
 ./configure \
-    $([ $(uname) == Darwin ] && echo --disable-shared) \
     --libdir=$INSTALLROOT/lib64 \
     --prefix=$INSTALLROOT \
+    --build="$CMS_BITS_MARCH" \
+    --host="$CMS_BITS_MARCH" \
     --disable-silent-rules \
     --disable-tls \
     --disable-rpath \
@@ -35,6 +43,7 @@ export CFLAGS="-Wno-error=implicit-function-declaration"
     --disable-kill \
     --disable-utmpdump \
     --disable-rename \
+    --disable-liblastlog2 \
     --disable-login \
     --disable-sulogin \
     --disable-su \
@@ -44,14 +53,12 @@ export CFLAGS="-Wno-error=implicit-function-declaration"
     --without-ncurses \
     --enable-libuuid
 
-make ${JOBS:+-j $JOBS}
+make ${JOBS:+-j$JOBS} uuidd
 
+# There is no make install action for the libuuid libraries only
 mkdir -p $INSTALLROOT/lib64
-cp -p $BUILDDIR/util-linux-*/.libs/libuuid.a* $INSTALLROOT/lib64
-
-if [ "$(uname -s)" = "Linux" ]; then
-	cp -p $BUILDDIR/util-linux-*/.libs/libuuid.so* $INSTALLROOT/lib64
-fi
+cp -p $BUILDDIR/.libs/libuuid.a* $INSTALLROOT/lib64
+cp -p $BUILDDIR/.libs/libuuid.so* $INSTALLROOT/lib64
 
 mkdir -p $INSTALLROOT/include
 make install-uuidincHEADERS

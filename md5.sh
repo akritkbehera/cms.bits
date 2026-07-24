@@ -13,11 +13,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-if [ "$(uname)" == "Darwin" ]; then
-  gcc md5.c -shared -fPIC -o libcms-md5.dylib
-else
-  gcc md5.c -shared -fPIC -o libcms-md5.so
-fi
+gcc md5.c -shared -fPIC -o libcms-md5.so
 
 mkdir -p $INSTALLROOT/lib $INSTALLROOT/include
 cp $BUILDDIR/libcms-md5.* $INSTALLROOT/lib/

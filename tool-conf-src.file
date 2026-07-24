@@ -1,0 +1,233 @@
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+chmod +x "$BUILDDIR/bin/get_tools"
+chmod +x "$BUILDDIR/bin/fix_tool_variables"
+[ -f "$BUILDDIR/bin/get_vectorized_tools" ] && chmod +x "$BUILDDIR/bin/get_vectorized_tools"
+
+# =============================================================================
+# tool-conf-src.file - SCRAM tool configuration generator for bits
+# =============================================================================
+# Translated from cmsdist/scram/tool-conf-src.file
+
+rm -rf "$INSTALLROOT"
+mkdir -p "$INSTALLROOT/tools/selected" "$INSTALLROOT/tools/available"
+
+# requiredtools  - Tools for which we need to collect the SCRAMToolBox toolfiles
+#                  (This is set via $REQUIRES by bits)
+# skipreqtools   - Do not add these tools in selected directory
+
+for tool in $FULL_REQUIRES; do
+  echo ">> Copying tool files from: $tool"
+  uctool=$(echo $tool | tr '[a-z-]' '[A-Z_]')
+  toolbase=$(eval echo \$${uctool}_ROOT)
+  toolver=$(eval echo \$${uctool}_VERSION)
+  while [ $(jobs -r -p | wc -l) -gt ${JOBS:-4} ] ; do sleep 0.01; done
+  "$BUILDDIR/bin/get_tools" "$toolbase" "$toolver" "$INSTALLROOT" "${tool}" &
+done
+"$BUILDDIR/bin/get_tools" "" "system" "$INSTALLROOT" "systemtools"
+wait
+
+# Move skipped tools from selected -> available
+skipreqtools="%(skipreqtools)s"
+for stool in $(echo $skipreqtools | tr '[A-Z]' '[a-z]') ; do
+  [ "$stool" = "--" ] && continue
+  [ -f "$INSTALLROOT/tools/selected/${stool}.xml" ] || continue
+  mv "$INSTALLROOT/tools/selected/${stool}.xml" "$INSTALLROOT/tools/available"
+done
+
+# Validate tool XML files
+if [ -e "$SCRAMV1_ROOT/bin/chktool" ] ; then
+  touch "$INSTALLROOT/errors.log"
+  find "$INSTALLROOT/tools" -name '*.xml' -type f | (xargs "$SCRAMV1_ROOT/bin/chktool" >> "$INSTALLROOT/errors.log" 2>&1 || true)
+  if [ $(grep 'ERROR:' "$INSTALLROOT/errors.log" | wc -l) -gt 0 ] ; then
+    cat "$INSTALLROOT/errors.log"
+    exit 1
+  fi
+  rm -f "$INSTALLROOT/errors.log"
+fi
+
+# Setup Python paths
+echo '<tool name="python-paths" version="1.0" revision="1">' > "$INSTALLROOT/tools/selected/python-paths.xml"
+
+if [ "${PYTHON3PATH}" != "" ] ; then
+  py3List=$(echo ${PYTHON3PATH} | tr ':' '\n')
+  mkdir -p "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}"
+  touch "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/tool-deps.pth"
+  for pkg in ${py3List} ; do
+     echo "adding $pkg"
+     echo "$pkg" >> "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/tool-deps.pth"
+  done
+  echo '  <runtime name="PYTHON3PATH"  value="'"$INSTALLROOT"'/'${PYTHON3_LIB_SITE_PACKAGES}'" type="path"/>' >> "$INSTALLROOT/tools/selected/python-paths.xml"
+fi
+
+# Handle vectorized Python paths
+if [ "$package_vectorization" != "" ] && [ "$package_vectorization" != "--" ]; then
+if [ "$vectorized_packages" != "" ] && [ "$vectorized_packages" != "--" ]; then
+for pth in "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/tool-deps.pth" ; do
+  [ -f ${pth} ] ||  continue
+  dir=$(dirname $pth)
+  for tool in $vectorized_packages ; do
+    for vec in $package_vectorization ; do
+      uctool=$(echo ${tool}_${vec}_ROOT | tr '[a-z-]' '[A-Z_]')
+      toolbase=$(eval echo \$${uctool})
+      if [ $(grep "${toolbase}/" ${pth} 2>/dev/null | wc -l) -gt 0 ] ; then
+        mkdir -p ${dir}/scram_${vec}
+        grep "${toolbase}/" ${pth} >> ${dir}/scram_${vec}/tool-deps.pth
+        sed -i -e "\#^${toolbase}#d" ${pth}
+      fi
+    done
+  done
+done
+for vec in default $package_vectorization ; do
+  for item in PYTHON3PATH:${PYTHON3_LIB_SITE_PACKAGES} ; do
+    pydir=$(echo $item | sed 's|.*:||')
+    dir="$INSTALLROOT/${pydir}/${vec}"
+    [ "${vec}" != "default" ] && dir="$INSTALLROOT/${pydir}/scram_${vec}"
+    [ -f ${dir}/tool-deps.pth ] ||  continue
+    var=$(echo $item | sed 's|:.*||')
+    xvar=$(echo ${vec}_${var} | tr '[a-z-]' '[A-Z_]')
+    echo '  <runtime name="'${xvar}'"  value="'${dir}'" type="path"/>' >> "$INSTALLROOT/tools/selected/python-paths.xml"
+  done
+done
+fi
+fi
+
+# Handle GPU backend specific packages
+gpu_backend_specific_packages="%(gpu_backend_specific_packages)s"
+gpu_types="%(gpu_types)s"
+
+if [ "$gpu_backend_specific_packages" != "" ] && [ "$gpu_backend_specific_packages" != "--" ]; then
+if [ "$gpu_types" != "" ] && [ "$gpu_types" != "--" ]; then
+pth="$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/tool-deps.pth"
+if [ -f ${pth} ] ; then
+  dir=$(dirname $pth)
+  for pkg in $gpu_backend_specific_packages ; do
+    for gpu in cpu $gpu_types ; do
+      if [ "${gpu}" = "cpu" ] ; then
+        uctool=$(echo ${pkg}_ROOT | tr '[a-z-]' '[A-Z_]')
+      else
+        uctool=$(echo ${pkg}_${gpu}_ROOT | tr '[a-z-]' '[A-Z_]')
+      fi
+      toolbase=$(eval echo \$${uctool})
+      [ "${toolbase}" != "" ] || continue
+      if [ $(grep "${toolbase}/" ${pth} 2>/dev/null | wc -l) -gt 0 ] ; then
+        mkdir -p ${dir}/scram_${gpu}
+        grep "${toolbase}/" ${pth} >> ${dir}/scram_${gpu}/tool-deps.pth
+        sed -i -e "\#^${toolbase}#d" ${pth}
+      fi
+    done
+  done
+  for gpu in $gpu_types ; do
+    [ -e ${dir}/scram_${gpu} ] || ln -s scram_cpu ${dir}/scram_${gpu}
+  done
+  for gpu in cpu $gpu_types ; do
+    for item in PYTHON3PATH:${PYTHON3_LIB_SITE_PACKAGES} ; do
+      pydir=$(echo $item | sed 's|.*:||')
+      dir="$INSTALLROOT/${pydir}/scram_${gpu}"
+      [ -f ${dir}/tool-deps.pth ] ||  continue
+      var=$(echo $item | sed 's|:.*||')
+      xvar=$(echo ${gpu}_${var} | tr '[a-z-]' '[A-Z_]')
+      echo '  <runtime name="'${xvar}'"  value="'${dir}'" type="path"/>' >> "$INSTALLROOT/tools/selected/python-paths.xml"
+    done
+  done
+fi
+fi
+fi
+echo '</tool>' >> "$INSTALLROOT/tools/selected/python-paths.xml"
+
+# Generate tool files for Python packages
+pytool_content() {
+  local pkg=$1
+  pk_name=$(echo $pkg | tr '[A-Z]' '[a-z]')
+  if [ -f "$INSTALLROOT/tools/selected/${pk_name}.xml" ] ; then return ; fi
+  uctool=$(echo $pk_name | tr '[a-z-]' '[A-Z_]')
+  pk_ver=$(eval echo \$${uctool}_VERSION)
+  pk_root=$(eval echo \$${uctool}_ROOT)
+  [ -z "$pk_ver" ] && return
+  echo "<tool name=\"$pk_name\" version=\"$pk_ver\" path=\"$pk_root\" revision=\"1\">" > "$INSTALLROOT/tools/selected/${pk_name}.xml"
+  if [ -n "$pk_root" ] && [ -d "$pk_root/bin" ] ; then
+    echo "  <runtime name=\"PATH\" value=\"\$TOOL_BASE/bin\" type=\"path\"/>" >> "$INSTALLROOT/tools/selected/${pk_name}.xml"
+  fi
+  echo "</tool>" >> "$INSTALLROOT/tools/selected/${pk_name}.xml"
+}
+
+generate_defines_h() {
+    local INPUT="$1"
+    {
+        echo "/* Auto-generated defines */"
+        echo "#pragma once"
+        echo ""
+        echo "$INPUT" | tr ',' '\n' | while IFS='=' read -r key value; do
+            key=$(echo "$key" | tr -d ' ')
+            value=$(echo "$value" | tr -d " '")
+            [ -z "$key" ] && continue
+            echo "#define ${key} '${value}'"
+        done
+    } > defines.h
+}
+
+tool_content() {
+  local xml=$1
+  local type=$2
+  tool=$(basename $xml)
+  echo "cpp -P -x assembler-with-cpp << \\EOF_TOOLFILE >> \$PKGINSTROOT/tools/${type}/${tool}" > ${xml}.tmp
+  cat $xml                     >> ${xml}.tmp
+  echo -e "\nEOF_TOOLFILE\n"   >> ${xml}.tmp
+  grep -v '^\s*$' ${xml}.tmp > $xml
+  rm -f ${xml}.tmp
+}
+
+ALL_PY_BIN=""
+ALL_PY_BIN_PKGS=""
+for pkg in $(echo $FULL_REQUIRES | tr ' ' '\n' | grep -E '^py-' || true) ; do
+  while [ $(jobs -r -p | wc -l) -gt ${JOBS:-4} ] ; do sleep 0.01; done
+  pytool_content $pkg &
+  pk_name=$(echo $pkg | tr '[A-Z]' '[a-z]')
+  uctool=$(echo $pk_name | tr '[a-z-]' '[A-Z_]')
+  pk_root=$(eval echo \$${uctool}_ROOT)
+  if [ -n "$pk_root" ] && [ -d "$pk_root/bin" ] ; then
+    for b in $(ls "$pk_root/bin" 2>/dev/null) ; do
+      ALL_PY_BIN="${ALL_PY_BIN} ${b}"
+      ALL_PY_BIN_PKGS="${ALL_PY_BIN_PKGS} ${b}:${pk_name}"
+    done
+  fi
+done
+wait
+
+DUP_BIN=$(echo "${ALL_PY_BIN}" | tr ' ' '\n' | grep -v '__pycache__' | sort | uniq -c | sed 's|^\s*||' | grep -v '^1 ' | sed 's|^.* ||' || true)
+
+set +x
+if [ "${DUP_BIN}" != "" ] ; then
+  for p in ${DUP_BIN} ; do
+    echo ${ALL_PY_BIN_PKGS} | tr ' ' '\n' | grep "^${p}:"
+  done
+  echo "ERROR: Duplicate python binaries found. Please cleanup and make sure only one binary is available."
+  exit 1
+fi
+set -x
+
+# Handle CUDA-GCC compatibility
+cuda_gcc_support="%(cuda_gcc_support)s"
+if [ -e "$INSTALLROOT/tools/selected/cuda-gcc-support.xml" ] ; then
+  if [ "$cuda_gcc_support" != "true" ] ; then
+    rm -f "$INSTALLROOT/tools/selected/cuda-gcc-support.xml"
+    echo "WARNING: CUDA does not support this GCC version, removing cuda-gcc-support.xml tool file"
+  fi
+fi
+
+# Create template files
+mkdir -p "$INSTALLROOT/tools"
+for type in selected available ; do
+  rm -f "$INSTALLROOT/tools/${type}.tmpl"
+  touch "$INSTALLROOT/tools/${type}.tmpl"
+  [ -d "$INSTALLROOT/tools/${type}" ] || continue
+  for xml in $(ls "$INSTALLROOT/tools/${type}/"*.xml 2>/dev/null) ; do
+    while [ $(jobs -r -p | wc -l) -gt ${JOBS:-4} ] ; do sleep 0.01; done
+    tool_content "$xml" "$type" &
+  done
+  wait
+  find "$INSTALLROOT/tools/${type}" -name '*.xml' | xargs cat >> "$INSTALLROOT/tools/${type}.tmpl"
+  rm -rf "$INSTALLROOT/tools/${type}"
+done
+
+# Templates are in $INSTALLROOT/tools/{selected,available}.tmpl
+# coral-tool-conf will use envsubst to substitute $PKGINSTROOT at runtime

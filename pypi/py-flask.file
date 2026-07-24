@@ -1,0 +1,9 @@
+requires:
+ - py-blinker
+ - py-click
+ - py-importlib-metadata
+ - py-itsdangerous
+ - py-Jinja2
+ - py-MarkupSafe
+ - py-Werkzeug
+---

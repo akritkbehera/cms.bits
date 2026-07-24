@@ -1,7 +1,7 @@
 package: pythia8
-version: "311"
+version: "317"
 sources:
- - https://pythia.org/download/pythia83/%(package)s%(version)s.tgz
+ - https://pythia.org/releases/pythia83/pythia8317.tgz
 requires:
  - gcc
  - hepmc
@@ -17,7 +17,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
             --with-hepmc3=$HEPMC3_ROOT \
             --with-lhapdf6=$LHAPDF_ROOT \
             --enable-shared \
-            --enable-mg5mes
+            --with-mg5mes
 make ${JOBS:+-j$JOBS}
 make install
 test -f $INSTALLROOT/lib/libpythia8lhapdf6.so || exit 1

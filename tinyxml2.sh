@@ -5,16 +5,16 @@ sources:
 build_requires:
   - CMake
   - gmake
+requires:
   - gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-rm -rf ../build; mkdir ../build ; cd ../build
-
-cmake ../$PKGNAME \
+cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
-  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE
+  -DCMAKE_BUILD_TYPE=Release
 
-gmake ${JOBS:+-j$JOBS} install
+gmake -C "$BUILDDIR/build" ${JOBS:+-j$JOBS}
+gmake -C "$BUILDDIR/build" install

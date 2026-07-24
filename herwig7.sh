@@ -1,7 +1,7 @@
 package: herwig7
 version: 7.2.2
 sources:
- - https://www.hepforge.org/archive/herwig/Herwig-%(version)s.tar.bz2
+ -  https://herwig.hepforge.org/downloads/?f=Herwig-%(version)s.tar.bz2
 patches: 
  - herwig_Matchbox_mg_py3.patch
  - herwig7-fxfx-fix.patch
@@ -35,8 +35,8 @@ patch -p1 < "$SOURCEDIR/$PATCH3"
 
 autoreconf -fiv
 
-CXX="$(which g++) -fPIC -std=c++$CXXSTD"
-CC="$(which gcc)  -fPIC -std=c++$CXXSTD"
+CXX="$(which g++) -fPIC -std=c++%(cms_cxx_std)s"
+CC="$(which gcc)  -fPIC -std=c++%(cms_cxx_std)s"
 PLATF_CONF_OPTS="--enable-shared --disable-static"
 FCFLAGS=""
 if [[ `gcc --version | head -1 | cut -d' ' -f3 | cut -d. -f1,2,3 | tr -d .` -gt 1000 ]] ; then FCFLAGS="-fallow-argument-mismatch" ; fi
@@ -63,11 +63,10 @@ PYTHON=python3 ./configure --prefix=$INSTALLROOT \
 
 
 make ${JOBS:+-j$JOBS} all V=1
-export LHAPDF_DATA_PATH="$LHAPDF_ROOT/share/LHAPDF:$BUILDROOT/pdfsets"
 make ${JOBS:+-j$JOBS} install LHAPDF_DATA_PATH=$LHAPDF_ROOT/share/LHAPDF
 
 mv $INSTALLROOT/bin/Herwig  $INSTALLROOT/bin/Herwig-cms
-cat <<HERWIG_WRAPPER > "$INSTALLROOT/bin/Herwig"
+cat << 'HERWIG_WRAPPER' > "$INSTALLROOT/bin/Herwig"
 #!/bin/bash
 REPO_OPT=""
 if [ "$HERWIGPATH" != "" ] && [ -e "$HERWIGPATH/HerwigDefaults.rpo" ] ; then

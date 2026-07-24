@@ -13,7 +13,13 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-CFLAGS="-Wno-error=return-mismatch -Wno-error=implicit-int -Wno-error=implicit-function-declaration" ./configure --prefix=$INSTALLROOT
+# Legacy K&R-era C needs these with GCC > 13
+CFLAGS=""
+if [ "$(gcc -dumpversion | cut -d. -f1)" -gt 13 ]; then
+    CFLAGS="-Wno-error=return-mismatch -Wno-error=implicit-int -Wno-error=implicit-function-declaration -Wno-error=old-style-definition -Wno-error=int-conversion -Wno-error=incompatible-pointer-types -Wno-error=missing-prototypes -Wno-error=redundant-decls -Wno-error=return-type -std=gnu90"
+fi
+
+CFLAGS="$CFLAGS" ./configure --prefix=$INSTALLROOT
 
 perl -p -i -e "s|dynfilters||g" Makefile
 

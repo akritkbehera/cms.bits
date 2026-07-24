@@ -16,6 +16,7 @@ function chkDefined(){
 function unPackSource(){
   case ${SOURCE0} in
    *.tar.gz|*.tgz) tar -xzf ${SOURCEDIR}/${SOURCE0} ;;
+   *.zip) unzip ${SOURCEDIR}/${SOURCE0} ;;
    *.whl) wheel unpack ${SOURCEDIR}/${SOURCE0} ;;
    *)
      echo "ERROR: Unknown file type, please update here to support unpacking of this type of file"
@@ -27,7 +28,7 @@ function unPackSource(){
 
 function packSource(){
   case ${SOURCE0} in
-   *.tar.gz|*.tgz) ;;
+   *.tar.gz|*.tgz|*.zip) ;;
    *.whl)
      rm -rf bits-pack-${PKGNAME}
      mkdir bits-pack-${PKGNAME}

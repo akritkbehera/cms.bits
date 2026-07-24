@@ -1,0 +1,9 @@
+build_requires:
+ - SCRAMV1
+ - dwz
+requires:
+ - cmssw-tool-conf
+sources:
+ - git+https://github.com/cms-sw/cmssw-config.git?obj=master/%(configtag)s&export=config&output=/cmssw-config-%(configtag)s.tgz
+ - git+https://github.com/cms-sw/cmssw.git?protocol=https&obj=master&module=CMSSW&export=%(srctree)s&output=/src.tar.gz
+force_revision: ""

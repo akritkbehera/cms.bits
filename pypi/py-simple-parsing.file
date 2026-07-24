@@ -1,0 +1,6 @@
+requires:
+- py-poetry-dynamic-versioning
+- py-hatchling
+- py-docstring-parser
+- py-typing-extensions
+---

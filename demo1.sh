@@ -1,4 +1,8 @@
 package: demo1
 version: vCMS
+variables:
+ tag: '12312412'
 ---
-include /home/akbehera/Desktop/bitsorg/cms.bits/demo2.sh
+echo %(demo1_dir)s
+echo %(tag)s
+exit 1

@@ -12,9 +12,16 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-cmake \
-  -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT" \
-  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE
+CMAKE_ARGS=(
+    -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"
+    -DCMAKE_BUILD_TYPE=%(cms_build_type)s
+)
 
-make VERBOSE=1 ${JOBS:+-j$JOBS}
-make install
+if [[ "$VERBOSE" == "1" ]]; then
+    CMAKE_ARGS+=(-DCMAKE_VERBOSE_MAKEFILE=ON)
+fi
+
+cmake -S "$BUILDDIR" -B "$BUILDDIR" "${CMAKE_ARGS[@]}"
+
+make -C "$BUILDDIR" ${JOBS:+-j "$JOBS"} ${VERBOSE:+VERBOSE=1}
+make -C "$BUILDDIR" install

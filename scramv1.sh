@@ -3,7 +3,7 @@ version: V3_00_92
 tag: d324a51fc7b7ee32cf230189cde3a376977fc2bd
 branch: SCRAMV3
 source: https://github.com/cms-sw/SCRAM
-architecture: share
+architecture: "share"
 force_revision: ""
 env:
   SCRAMV1_VERSION: "$PKGVERSION"

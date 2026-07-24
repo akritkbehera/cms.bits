@@ -18,14 +18,15 @@ tar -xzf "$SOURCEDIR"/$SOURCE0 \
 
 
 pushd "$BUILDDIR/$PKGNAME-$PKGVERSION"
-if [[ "$ARCH" == "x86_64" && -f "$SOURCEDIR/$PATCH0" ]]; then
+# spec applies this patch on non-x86_64 (arm/ppc) only
+if [[ "$ARCH" != "x86_64" && -f "$SOURCEDIR/$PATCH0" ]]; then
     patch -p1 < "$SOURCEDIR/$PATCH0"
 fi
 popd
 
 CMAKE_ARGS=(
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
-  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s \
   -DUSE_CUDA=OFF
 )
 

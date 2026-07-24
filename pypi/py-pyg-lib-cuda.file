@@ -1,0 +1,32 @@
+package: py-pyg-lib-cuda
+version: 0.6.0
+sources:
+- git+https://github.com/pyg-team/pyg-lib?obj=master/%(version)s&export=pyg-lib-%(version)s&submodules=1&output=/source.tar.gz
+patches:
+- pyg-lib.patch
+build_requires:
+- CMake
+- ninja
+requires:
+- py-torch-cuda
+- cuda-flags
+- zlib
+---
+# cmsdist: pip/pyg-lib-cuda.file -> ## INCLUDE cuda-flags (+ CUDA overrides)
+#                                -> ## INCLUDE pyg-lib-common -> ## INCLUDE torch-extension-build
+# Package is py-pyg-lib-cuda but the PyPI distribution is "pyg-lib" (== cmsdist %define pip_name).
+Pypi_name="pyg-lib"
+
+# cmsdist uses AdditionalPipPreBuildPy, which pyg-lib-common's PipPreBuildPy runs via inner
+# eval. cuda_arch (from cuda-flags) -> dotted arch list; trailing space trimmed, no +PTX.
+AdditionalPipPreBuildPy=$(cat <<'EOF'
+export TORCH_CUDA_ARCH_LIST="$(echo "$cuda_arch" | tr ' ' '\n' | sed -E 's|([0-9])$|.\1|' | tr '\n' ' ' | sed 's| *$||')"
+export FORCE_CUDA=1
+export CUDNN_ROOT=${CUDNN_ROOT}
+export USE_CUDNN=1
+export USE_CUFILE=1
+EOF
+)
+
+source "${BITS_CONFIG_DIR}/pypi/pyg-lib-common.file"
+source "${BITS_CONFIG_DIR}/pypi/torch-extension-build.file"

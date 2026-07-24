@@ -10,19 +10,29 @@ requires:
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
-    -C "$BUILDDIR" 
+    -C "$BUILDDIR"
 
-sed -i 's;add_definitions(-Dcollierdd -DSING);add_definitions(-Dcollierdd -DSING -fPIC);g' ./CMakeLists.txt
+sed -i 's;add_definitions(-Dcollierdd -DSING);add_definitions(-Dcollierdd -DSING -fPIC);g' "$BUILDDIR/CMakeLists.txt"
 
-rm -rf ../build && mkdir ../build && cd ../build
+CMAKE_ARGS=(
+    -S "$BUILDDIR"
+    -B "$BUILDDIR/build"
+    -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
+    -DCMAKE_BUILD_TYPE=Release
+    -Dstatic=ON
+    -DCMAKE_Fortran_FLAGS=-fPIC
+)
+if [[ "$VERBOSE" == "1" ]]; then
+    CMAKE_ARGS+=(-DCMAKE_VERBOSE_MAKEFILE=ON)
+fi
 
-cmake $BUILDDIR \
-  -DCMAKE_INSTALL_PREFIX=$INSTALLPREFIX \
-  -DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
-  -Dstatic=ON \
-  -DCMAKE_Fortran_FLAGS=-fPIC
+cmake "${CMAKE_ARGS[@]}"
 
-make -j1
-mkdir -p $INSTALLROOT/lib $INSTALLROOT/include
-cp $BUILDDIR/libcollier.a $INSTALLROOT/lib
-cp $BUILDDIR/modules/*.mod $INSTALLROOT/include/
+# Upstream parallel build is broken for Fortran module deps — keep -j1 (spec uses make -j1)
+make -j1 -C "$BUILDDIR/build" ${VERBOSE:+VERBOSE=1}
+
+# COLLIER's CMakeLists sets ARCHIVE/MODULE output dirs to the source tree,
+# so the artifacts land in $BUILDDIR, not the cmake build dir
+mkdir -p "$INSTALLROOT/lib" "$INSTALLROOT/include"
+cp "$BUILDDIR/libcollier.a" "$INSTALLROOT/lib"
+cp "$BUILDDIR/modules/"*.mod "$INSTALLROOT/include/"

@@ -18,17 +18,17 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
-cmake -S "$BUILDDIR" -B "$BUILDROOT/build" \
+cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -G Ninja \
   -DCMAKE_CXX_COMPILER="g++" \
   -DCMAKE_CXX_FLAGS="-fPIC -DBOOST_DISABLE_ASSERTS $CMS_EIGEN_CXX_FLAGS ${selected_microarch}" \
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT" \
-  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s \
   -DBUILTIN_BOOST=OFF \
   -DBUILTIN_EIGEN=OFF \
   -DCMAKE_PREFIX_PATH="${EIGEN_ROOT};${BOOST_ROOT}" \
-  -DCMAKE_CXX_STANDARD="${CXXSTD:-20}"
+  -DCMAKE_CXX_STANDARD="%(cms_cxx_std)s"
 
-ninja -v ${JOBS:+-j$JOBS} -C "$BUILDROOT/build"
-ninja -v ${JOBS:+-j$JOBS} -C "$BUILDROOT/build" install
+ninja -v ${JOBS:+-j$JOBS} -C "$BUILDDIR/build"
+ninja -v ${JOBS:+-j$JOBS} -C "$BUILDDIR/build" install
 

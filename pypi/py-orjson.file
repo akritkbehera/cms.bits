@@ -1,0 +1,5 @@
+build_requires:
+- py-maturin
+---
+# orjson is a Rust extension built with the maturin backend (needs a writable CARGO_HOME).
+PipPreBuild='export CARGO_HOME="$BUILDDIR/.cargo";'

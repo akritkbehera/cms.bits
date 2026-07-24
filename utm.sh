@@ -1,6 +1,6 @@
 package: utm
 version: "%(tag_basename)s"
-tag: "utm_0.13.0"
+tag: "utm_0.14.1"
 build_requires:
 - gmake
 requires:
@@ -8,8 +8,13 @@ requires:
 - boost
 - gcc
 source: https://gitlab.cern.ch/cms-l1t-utm/utm
+patches:
+- utm-boost190.patch
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+
+# Drops -lboost_system from the makefiles: boost has been header-only for it since 1.69.
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 export XERCES_C_BASE=${XERCES_C_ROOT}
 export BOOST_BASE=${BOOST_ROOT}

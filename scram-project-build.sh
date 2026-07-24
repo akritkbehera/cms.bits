@@ -20,10 +20,11 @@ USERCXXFLAGS="%(usercxxflags)s"
 SCRAMV1_VERSION=$(basename "$SCRAMV1_ROOT")
 SCRAMCMD="$SCRAMV1_ROOT/bin/scram -v --arch $ARCHITECTURE"
 SCRAM_SCRIPT_PREFIX=".py"
-UCPROJTYPE=$(echo "$PKGNAME" | sed -e 's|-patch||' | tr 'a-z' 'A-Z')
+# Extract base project type: CMSSW_20_1_X -> CMSSW, coral -> CORAL
+UCPROJTYPE=$(echo "$PKGNAME" | sed -e 's|-patch||' -e 's|_[0-9].*||' | tr 'a-z' 'A-Z')
 LCPROJTYPE=$(echo "$UCPROJTYPE" | tr 'A-Z' 'a-z')
 TOOLCONF_VAR=$(echo "$PKGNAME" | sed 's|-|_|g' | tr 'a-z' 'A-Z')_TOOL_CONF_ROOT
-TOOLCONF_PATH="${!TOOLCONF_VAR}"
+TOOLCONF_PATH="${!TOOLCONF_VAR:-$CMSSW_TOOL_CONF_ROOT}"
 CMSSW_LIBS="biglib/$ARCHITECTURE lib/$ARCHITECTURE"
 
 # ---------------------------------------------------------------------------
@@ -61,9 +62,12 @@ for i in 1 2 3; do
   fi
 done
 
-sed -i '$a <flags CXXFLAGS="-Wno-error=format-overflow"/>' "$BUILDDIR/src/CoralBase/BuildFile.xml"
-#sed -i 's/<use   name="python3"\/>/<use   name="Python"\/>/' "$BUILDDIR/src/PyCoral/BuildFile.xml"
-sed -i 's/PyUnicode_GET_SIZE/PyUnicode_GET_LENGTH/g' "$BUILDDIR/src/PyCoral/src/Attribute.cpp"
+if [ "$PKGNAME" = "coral" ]; then
+    pushd $BUILDDIR
+    patch -p1 <$SOURCEDIR/$PATCH0
+    patch -p1 <$SOURCEDIR/$PATCH1
+    popd
+fi
 
 echo "$CONFIGTAG" > "$BUILDDIR/config/config_tag"
 
@@ -73,9 +77,7 @@ echo "$CONFIGTAG" > "$BUILDDIR/config/config_tag"
   -s "$SCRAMV1_VERSION" \
   -t "$TOOLCONF_PATH" \
   --keys SCRAM_COMPILER="$SCRAM_COMPILER" \
-  --keys ENABLE_LTO="${ENABLE_LTO:-0}" \
   --keys PROJECT_GIT_HASH="${GITCOMMIT:-$PKGVERSION}" \
-  --keys ENABLE_PGO=0
 
 sed -i -e 's| SCRAM_TARGETS=.*"| SCRAM_TARGETS=""|' "$BUILDDIR/config/Self.xml"
 
@@ -90,10 +92,10 @@ fi
 SCRAM_TARGET_DEFAULT="%(scram_target_default)s"
 RELEASE_USERCXXFLAGS="%(release_usercxxflags)s"
 RELEASE_USERLDFLAGS="%(release_userldflags)s"
-PACKAGE_VECTORIZATION="%(package_vectorization)s"
-if [-z $PACKAGE_VECTORIZATION] && [-n $SCRAM_TARGET_DEFAULT ]; then
-  export SCRAM_TARGET_DEFAULT="auto"
-fi
+##PACKAGE_VECTORIZATION="%(package_vectorization)s"
+##if [ -z "$PACKAGE_VECTORIZATION" ] && [ -n "$SCRAM_TARGET_DEFAULT" ]; then
+##  export SCRAM_TARGET_DEFAULT="auto"
+##fi
 
 if [ "$PKGNAME" != "coral" ] && [ "$PACKAGE_VECTORIZATION" != "0" ]; then
   if [ -e "$TOOLCONF_PATH/vectorized_packages.txt" ]; then
@@ -161,6 +163,10 @@ IGNORE_COMPILE_ERRORS="%(ignore_compile_errors)s"
 PGO_GENERATE="%(pgo_generate)s"
 
 [ "$NOLIBCHECKS" != "0" ] && { export SCRAM_NOLOADCHECK=true; export SCRAM_NOSYMCHECK=true; }
+
+# Set up SCRAM runtime environment (LD_LIBRARY_PATH, PATH, etc.) before build
+eval "$($SCRAMCMD runtime -sh)"
+export LD_LIBRARY_PATH
 
 $SCRAMCMD b -r echo_CXX </dev/null
 
@@ -268,9 +274,9 @@ if [ "$SUBPACKAGE_DEBUG" != "0" ]; then
     if [ -n "$ELF_BINS" ]; then
       [ $(echo $ELF_BINS | wc -w) -gt 1 ] && \
         dwz -m .debug/common-symbols.debug -M common-symbols.debug $ELF_BINS || true
-      echo "$ELF_BINS" | xargs -t -n1 -P${JOBS:-1} -I% sh -c \
-        'objcopy --compress-debug-sections --only-keep-debug % .debug/%.debug
-         objcopy --strip-debug --add-gnu-debuglink=.debug/%.debug %'
+      echo "$ELF_BINS" | xargs -t -n1 -P${JOBS:-1} -I%% sh -c \
+        'objcopy --compress-debug-sections --only-keep-debug %% .debug/%%.debug
+         objcopy --strip-debug --add-gnu-debuglink=.debug/%%.debug %%'
     fi
     popd
   done
@@ -335,12 +341,14 @@ done
 sed -i "s|$OLD_WORK_DIR|$WORK_DIR|g" "external/$SCRAM_ARCH/links.DB" 2>/dev/null || true
 [ -f compile_commands.json ] && sed -i "s|$OLD_WORK_DIR|$WORK_DIR|g" compile_commands.json
 
-UCPROJ=$(echo "$PKGNAME" | sed 's|-patch||' | tr 'a-z' 'A-Z')
+# Extract base project name: CMSSW_20_1_X -> CMSSW, coral -> CORAL, cmssw-patch -> CMSSW
+UCPROJ=$(echo "$PKGNAME" | sed -e 's|-patch||' -e 's|_[0-9].*||' | tr 'a-z' 'A-Z')
 LCPROJ=$(echo "$UCPROJ" | tr 'A-Z' 'a-z')
 SCRAMRC_DIR="$WORK_DIR/etc/scramrc"
-if [ ! -f "$SCRAMRC_DIR/${PKGNAME}.map" ]; then
+# Use lowercase project name for map filename (cmssw.map, coral.map)
+if [ ! -f "$SCRAMRC_DIR/${LCPROJ}.map" ]; then
   mkdir -p "$SCRAMRC_DIR"
-  echo "${UCPROJ}=\$SCRAM_ARCH/cms/${PKGNAME}/${UCPROJ}_*" > "$SCRAMRC_DIR/${PKGNAME}.map"
+  echo "${UCPROJ}=\$SCRAM_ARCH/cms/${PKGNAME}/${UCPROJ}_*" > "$SCRAMRC_DIR/${LCPROJ}.map"
 fi
 
 SITE_CFG="$WORK_DIR/etc/scramrc/site.cfg"

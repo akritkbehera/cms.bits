@@ -24,7 +24,7 @@ rm -rf ../build && mkdir ../build && cd ../build
 
 cmake $BUILDDIR \
 	-DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
-	-DCMAKE_BUILD_TYPE=$DCMAKE_BUILD_TYPE \
+	-DCMAKE_BUILD_TYPE=%(cms_build_type)s \
         -DCMAKE_PREFIX_PATH="${CURL_ROOT};${LIBUUID_ROOT};${SQLITE_ROOT}"
 
 make ${JOBS:+-j $JOBS}

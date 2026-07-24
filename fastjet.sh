@@ -8,9 +8,10 @@ sources:
   - git+https://github.com/%(github_user)s/fastjet.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
 patches:
   - fastjet-deprecated-warn.patch
+build_requires:
+  - autotools
 requires:
   - gcc
-  - autotools
   - Python
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
@@ -26,7 +27,7 @@ CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"
 CONFIG_SUB_URL="${CONFIG_BASE_URL}/config.sub"
 TMPDIR="$BUILDDIR"
 rm -f "$TMPDIR"/config.{sub,guess}
-rm -rf "$BUILDDIR/plugins/SISCone/siscone/config.{sub,guess}"
+rm -f "$BUILDDIR/plugins/SISCone/siscone"/config.{sub,guess}
 
 curl -L -k -o "$TMPDIR"/config.guess "$CONFIG_GUESS_URL"
 curl -L -k -o "$TMPDIR"/config.sub "$CONFIG_SUB_URL"
@@ -39,6 +40,11 @@ echo "arch_flags: $arch_flags"
 
 if [[ -n "$arch_flags" ]]; then
     export CXXFLAGS="$CXXFLAGS $arch_flags"
+fi
+
+# GCC >= 15 warns on template-body code accepted by older standards
+if [ "$(gcc -dumpversion | cut -d. -f1)" -ge 15 ]; then
+    export CXXFLAGS="$CXXFLAGS -Wno-template-body"
 fi
 
 PYTHON=$PYTHON_ROOT/bin/python$PYTHON_MAJOR_MINOR_VERSION \

@@ -1,6 +1,6 @@
 package: geant4
-version: "11.4.1"
-tag: 425b0689d08917d8908d69fb7873e79db001d2ba
+version: "11.4.2"
+tag: e931916106387e25ee606642444e62f924347193
 variables:
  github_user: cms-externals
  branch: cms/v%(version)s
@@ -26,12 +26,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR" 
 
-soext="so"
-if [[ "$(uname -s)" == "Darwin" ]]; then
-    soext="dylib"
-fi
-
-rm -rf $BUILDROOT/build && mkdir $BUILDROOT/build && cd $BUILDROOT/build
+rm -rf $BUILDDIR/build && mkdir $BUILDDIR/build && cd $BUILDDIR/build
 
 cmake_args=(
   -DCMAKE_CXX_COMPILER="g++"
@@ -39,8 +34,8 @@ cmake_args=(
   -DCMAKE_AR="$GCC_ROOT/bin/gcc-ar"
   -DCMAKE_RANLIB="$GCC_ROOT/bin/gcc-ranlib"
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"
-  -DCMAKE_CXX_STANDARD:STRING="$CXXSTD"
-  -DCMAKE_BUILD_TYPE="Release"
+  -DCMAKE_CXX_STANDARD:STRING="%(cms_cxx_std)s"
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s
   -DGEANT4_USE_GDML=ON
   -DGEANT4_BUILD_TLS_MODEL:STRING="global-dynamic"
   -DGEANT4_ENABLE_TESTING=OFF
@@ -56,7 +51,7 @@ cmake_args=(
   -DCMAKE_PREFIX_PATH="${GCC_ROOT};${CLHEP_ROOT};${EXPAT_ROOT};${GEANT4_DATA_ROOT};${XERCES_C_ROOT};${ZLIB_ROOT};${VECGEOM_ROOT}"
 )
 
-if [[ -n $VECGEOM_ROOT ]]; then
+if [[ -n $VECGEOM_REVISION ]]; then
   cmake_args+=(
     -DGEANT4_USE_USOLIDS="all"
     -DVecGeom_DIR="${VECGEOM_ROOT}/lib64/cmake/VecGeom"

@@ -18,7 +18,7 @@ CMS_CXX_STANDARD="${CXXSTD:-20}"
 nvcc_flags_stdcxx="-std=c++${CMS_CXX_STANDARD}"
 nvcc_flags_cuda_archs="$(echo $(for ARCH in %(cuda_arch)s; do echo "-gencode arch=compute_${ARCH},code=[sm_${ARCH},compute_${ARCH}]"; done)) -Wno-deprecated-gpu-targets"
 
-mkdir -p "$BUILDROOT/build"
+mkdir -p "$BUILDDIR/build"
 
 if $CUDA_ROOT/bin/nvcc $nvcc_flags_stdcxx \
        -O2 -g \
@@ -29,19 +29,19 @@ if $CUDA_ROOT/bin/nvcc $nvcc_flags_stdcxx \
        -L "$CUDA_ROOT/lib64/stubs" \
        --cudart static -ldl -lrt \
        --compiler-options '-Wall -pthread' \
-       -o "$BUILDROOT/build/cuda-compatible-runtime"
+       -o "$BUILDDIR/build/cuda-compatible-runtime"
 then
   true
 else
   # CUDA not supported by this architecture or compiler version — install stub
-  cat > "$BUILDROOT/build/cuda-compatible-runtime" << 'EOF_STUB'
+  cat > "$BUILDDIR/build/cuda-compatible-runtime" << EOF_STUB
 #!/bin/bash
 
 VERBOSE=false
 
 function usage() {
   cat << EOF_USAGE
-Usage: $0 [-h|-v]
+Usage: \$0 [-h|-v]
 
 Options:
   -h        Print a help message and exits.
@@ -49,8 +49,8 @@ Options:
 EOF_USAGE
 }
 
-for ARG in "$@"; do
-  case "$ARG" in
+for ARG in "\$@"; do
+  case "\$ARG" in
   -h)
     usage
     exit 0
@@ -59,7 +59,7 @@ for ARG in "$@"; do
     VERBOSE=true
     ;;
   *)
-    echo "$0: invalid option '$ARG'"
+    echo "\$0: invalid option '\$ARG'"
     echo
     usage
     exit 1
@@ -67,12 +67,12 @@ for ARG in "$@"; do
   esac
 done
 
-$VERBOSE && echo "CUDA ${CUDA_VERSION} is not compatible with GCC ${GCC_VERSION}"
+\$VERBOSE && echo "CUDA ${CUDA_VERSION} is not compatible with GCC ${GCC_VERSION}"
 exit 1
 EOF_STUB
-  chmod +x "$BUILDROOT/build/cuda-compatible-runtime"
+  chmod +x "$BUILDDIR/build/cuda-compatible-runtime"
 fi
 
 mkdir -p "$INSTALLROOT/test"
-cp "$BUILDROOT/build/cuda-compatible-runtime" "$INSTALLROOT/test/"
+cp "$BUILDDIR/build/cuda-compatible-runtime" "$INSTALLROOT/test/"
 

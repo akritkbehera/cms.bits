@@ -4,6 +4,7 @@ tag: v2.30.0
 source: https://github.com/intel/isa-l
 build_requires:
  - nasm
+ - autotools
 requires:
  - gcc
 ---

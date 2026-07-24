@@ -20,8 +20,3 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 make
 make install
-
-if [[ $(uname) == Darwin ]]; then
-  find "$INSTALLROOT/lib" -name "*.dylib" -exec \
-    install_name_tool -change '../lib/libHEPEvent.dylib' 'libHEPEvent.dylib' {} \;
-fi

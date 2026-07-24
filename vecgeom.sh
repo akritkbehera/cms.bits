@@ -1,5 +1,5 @@
 package: vecgeom
-version: "2.0.0"
+version: "2.1.0"
 variables:
  vecgeom_backend: Scalar
  tag: v%(version)s
@@ -26,6 +26,10 @@ patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 vecgeom_version=$(echo "$PKG_VERSION" | sed -e 's|^v||;s|-.*||')
 
+# Upstream (2.1.0) pins the version string in CMakeLists directly.
+grep -q 'set(VecGeom_VERSION\s*' "$BUILDDIR/CMakeLists.txt"
+sed -i -e "s|set(VecGeom_VERSION *.*|set(VecGeom_VERSION ${vecgeom_version})|" "$BUILDDIR/CMakeLists.txt"
+
 if [ "$(uname -m)" = "x86_64" ]; then
   if [[ "%(vecgeom_backend)s" == "Vc" ]]; then
     SEL_ARCH="$(echo "$selected_microarch" | sed 's|^-m||')"
@@ -41,7 +45,7 @@ cmake_args=(
   -DCMAKE_CXX_STANDARD:STRING="${CXXSTD:-20}"
   -DCMAKE_AR="$(which gcc-ar)"
   -DCMAKE_RANLIB="$(which gcc-ranlib)"
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s
   -DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG $BUILD_FLAGS"
   -DCMAKE_VERBOSE_MAKEFILE=TRUE
   -DBUILD_SHARED_LIBS=OFF
@@ -61,10 +65,10 @@ if [[ "%(vecgeom_backend)s" == "Vc" ]]; then
   cmake_args+=(-DVECGEOM_VECTOR="${VECGEOM_VECTOR_INST}")
 fi
 
-cmake -S "$BUILDDIR" -B "$BUILDROOT/build" "${cmake_args[@]}"
+cmake -S "$BUILDDIR" -B "$BUILDDIR/build" "${cmake_args[@]}"
 
-cmake --build "$BUILDROOT/build" ${JOBS:+--parallel $JOBS} --verbose
-cmake --install "$BUILDROOT/build"
+cmake --build "$BUILDDIR/build" ${JOBS:+--parallel $JOBS} --verbose
+cmake --install "$BUILDDIR/build"
 
 sed -i -e "s|set(VecCore_DIR .*|set(VecCore_DIR \"${INSTALLROOT}/lib64/cmake/VecCore\")|" \
   "$INSTALLROOT/lib64/cmake/VecGeom/VecGeomConfig.cmake"

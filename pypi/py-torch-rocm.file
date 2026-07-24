@@ -1,0 +1,125 @@
+sources:
+ - https://github.com/pytorch/pytorch/releases/download/v%(version)s/pytorch-v%(version)s.tar.gz
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/FindEigen3.cmake.file
+patches:
+ - pytorch-system-fmt.patch
+ - pytorch-hipblaslt-include.patch
+ # cmsdist Patch99: use the aotriton we built instead of downloading a prebuilt one.
+ - pytorch-aotriton-install.patch
+build_requires:
+ - CMake
+ - ninja
+ - py-packaging
+requires:
+ - eigen
+ - FFTW3
+ - fxdiv
+ - numactl
+ - openmpi
+ - protobuf
+ - psimd
+ - Python
+ - py-PyYAML
+ - OpenBLAS
+ - zlib
+ - fmt
+ - py-pybind11
+ - py-typing-extensions
+ - py-filelock
+ - py-fsspec
+ - py-Jinja2
+ - py-networkx
+ - py-sympy
+ - xz
+ - rocm-flags
+ - aotriton
+ - rocm-hip
+ - rocm-comgr
+ - rocr-runtime
+ - amdsmi
+ - rocrand
+ - miopen
+ - hiprand
+ - rocblas
+ - hipblas
+ - hipblas-common
+ - hipblaslt
+ - hipfft
+ - hipsparse
+ - rocprim
+ - hipcub
+ - rocthrust
+ - hipsolver
+ - rocsolver
+ - hipsparselt
+ - rocprofiler
+ - roctracer
+ - rccl
+ - rocm-core
+variables:
+  pypi_name: torch
+  pypi_source_name: torch-%(version)s.tar.gz
+---
+# cmsdist: pip/torch-rocm.file -> ## INCLUDE pip/torch (+ ROCm overrides).
+# Builds the "torch" pip distribution, so Pypi_name must be overridden (as for -cuda).
+Pypi_name="torch"
+
+# Shared base-torch hooks (PipPatchSource, PipPreBuild with CUDA/ROCM OFF, PipPostInstall).
+source "${BITS_CONFIG_DIR}/pypi/torch-common.file"
+
+# ROCm overrides. Replaces the base PipPreBuildPy (so keep the CMAKE_ROOT unset) and runs
+# after PipPreBuild, flipping USE_ROCM ON. torch looks for liblzma through pkg-config, which
+# the tree's xz does not ship, so a .pc file is generated for it here (as cmsdist does).
+PipPreBuildPy=$(cat <<'EOF'
+ unset CMAKE_ROOT
+ XZ_VERSION=$(xz --version | head -1 | awk '{print $NF}')
+ export USE_VENV=0
+ export AOTRITON_INSTALLED_PREFIX=$AOTRITON_ROOT
+ export PYTHONHOME=$PYTHON_ROOT
+ export PYTHON_EXECUTABLE=$(which python3)
+ export NUMPY_EXPERIMENTAL_DTYPE_API=1
+ export USE_ROCM=ON
+ export CMAKE_CXX_FLAGS="-I$ROCM_CORE_ROOT/include -I$HIPBLASLT_ROOT/include -I$HIPBLAS_COMMON_ROOT/include -I$ROCTRACER_ROOT/include"
+ # The .hip sources are compiled through CMAKE_HIP_FLAGS, not CMAKE_CXX_FLAGS, so the -I
+ # list above never reaches them -- hipblas.h then cannot find hipblas-common/hipblas-common.h.
+ # CPATH applies to every compile regardless of which flag list cmake uses.
+ export CPATH="$ROCM_CORE_ROOT/include:$HIPBLAS_COMMON_ROOT/include:$HIPBLAS_ROOT/include:$HIPBLASLT_ROOT/include:$ROCTRACER_ROOT/include${CPATH:+:${CPATH}}"
+ export HIP_DEVICE_LIB_PATH=${ROCM_LLVM_ROOT}/amdgcn/bitcode
+ export ROCM_PATH=${ROCM_HIP_ROOT}
+ export ROCM_SOURCE_DIR=${ROCM_HIP_ROOT}
+ # Bare gfx targets only. This tree's rocm_archs carries malformed entries
+ # (gfx90a:ramecc+, gfx942sramecc+ with no colon), which otherwise reach hipcc verbatim.
+ rocm_arch_clean=$(for a in $rocm_archs; do printf '%s ' "$(echo "$a" | sed 's/:.*//; s/s\?ramecc+$//')"; done | sed 's/ *$//')
+ export AMDGPU_TARGETS="$rocm_arch_clean"
+ export PYTORCH_ROCM_ARCH="$rocm_arch_clean"
+ # The ROCm cmake configs chain into each other via find_dependency (hip -> amd_comgr,
+ # hipblas -> hipblas-common, ...), so every ROCm root has to be findable, not just the
+ # ones torch names directly.
+ export CMAKE_PREFIX_PATH="${ROCM_COMGR_ROOT}:${ROCM_HIP_ROOT}:${ROCR_RUNTIME_ROOT}:${ROCM_CORE_ROOT}:${ROCM_LLVM_ROOT}:${HIPBLAS_COMMON_ROOT}:${HIPBLAS_ROOT}:${HIPBLASLT_ROOT}:${ROCBLAS_ROOT}:${MIOPEN_ROOT}:${ROCRAND_ROOT}:${HIPRAND_ROOT}:${HIPFFT_ROOT}:${HIPSPARSE_ROOT}:${HIPSPARSELT_ROOT}:${HIPSOLVER_ROOT}:${ROCSOLVER_ROOT}:${ROCPRIM_ROOT}:${HIPCUB_ROOT}:${ROCTHRUST_ROOT}:${ROCPROFILER_ROOT}:${ROCTRACER_ROOT}:${RCCL_ROOT}:${AMDSMI_ROOT}:${AOTRITON_ROOT}:${CMAKE_PREFIX_PATH}"
+ mkdir -p "$BUILDDIR/pkgconfig"
+ cat > "$BUILDDIR/pkgconfig/liblzma.pc" <<PC_EOF
+prefix=$XZ_ROOT
+exec_prefix=\${prefix}
+libdir=\${prefix}/lib
+includedir=\${prefix}/include
+
+Name: liblzma
+Description: XZ compression library
+Version: $XZ_VERSION
+Libs: -L\${libdir} -llzma
+Cflags: -I\${includedir}
+PC_EOF
+ export PKG_CONFIG_PATH="$BUILDDIR/pkgconfig:$PKG_CONFIG_PATH"
+ # cmsdist's $PIPFILE has no bits equivalent; the unpacked source is pytorch-v<version>,
+ # the same path torch-common.file uses for its patch step.
+ pushd "$BUILDDIR/py$Pypi_name-v$PKGVERSION"
+   python3 tools/amd_build/build_amd.py
+ popd
+EOF
+)
+
+# Rename torchrun so this package does not clash with the CPU/CUDA torch's bin/torchrun.
+PipPreInstall=$(cat <<'EOF'
+mv $INSTALLROOT/bin/torchrun $INSTALLROOT/bin/torchrun-rocm
+EOF
+)

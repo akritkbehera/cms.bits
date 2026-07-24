@@ -17,7 +17,6 @@ sources:
  - https://%(mirror)s/instantclient-sdk-%(selected_src)s.zip
  - https://%(mirror)s/instantclient-sqlplus-%(selected_src)s.zip
  - https://%(mirror)s/instantclient-tools-%(selected_src)s.zip
- - https://%(mirror)s/instantclient-tools-%(selected_src)s.zip
  - http://cmsrep.cern.ch/cmssw/download/oracle-mirror/x64/libocci.so.19.1.zip
 env:
   ORACLE_HOME: $ORACLE_ROOT

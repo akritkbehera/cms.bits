@@ -1,0 +1,34 @@
+build_requires:
+- CMake
+- ninja
+requires:
+- py-torch-cuda
+- cuda-flags
+- zlib
+# The pip:// source download uses the generator's pypi_name, which defaults to the package
+# name minus "py-" (= "torch-scatter-cuda") and 404s on PyPI. Override it to the real dist
+# name here (cmsdist's %define pip_name). package.py also emits `export Pypi_name` from this,
+# so it covers the build-time name too.
+variables:
+  pypi_name: torch-scatter
+  pypi_source_name: torch-scatter-%(version)s.tar.gz
+---
+# cmsdist: pip/torch-scatter-cuda.file -> ## INCLUDE cuda-flags (+ CUDA overrides)
+#                                      -> ## INCLUDE torch-scatter-common
+#                                      -> ## INCLUDE torch-extension-build
+# Pypi_name ("torch-scatter") comes from the variables: override in the frontmatter above.
+
+source "${BITS_CONFIG_DIR}/pypi/torch-scatter-common.file"
+source "${BITS_CONFIG_DIR}/pypi/torch-extension-build.file"
+
+# CUDA override. Runs after torch-extension-build's PipPreBuild (FORCE_CUDA=0), turning it on.
+# cuda_arch (from cuda-flags) -> dotted arch list; trailing space trimmed, no +PTX, per
+# cmsdist pip/torch-scatter-cuda's cuda_arch_float macro.
+PipPreBuildPy=$(cat <<'EOF'
+export TORCH_CUDA_ARCH_LIST="$(echo "$cuda_arch" | tr ' ' '\n' | sed -E 's|([0-9])$|.\1|' | tr '\n' ' ' | sed 's| *$||')"
+export FORCE_CUDA=1
+# nvcc otherwise defaults to C++17 and rejects torch's C++20 headers
+# (List_inl.h: "need 'typename'"). setup.py seeds its nvcc flags from $NVCC_FLAGS.
+export NVCC_FLAGS="-std=c++${CXXSTD}"
+EOF
+)

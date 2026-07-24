@@ -17,6 +17,7 @@ rm -f "$TMPDIR"/config.{sub,guess}
 
 curl -L -k -s -o "$TMPDIR"/config.guess "$CONFIG_GUESS_URL"
 curl -L -k -s -o "$TMPDIR"/config.sub "$CONFIG_SUB_URL"
+chmod +x "$TMPDIR"/config.{sub,guess}
 
 ./configure --prefix=$INSTALLROOT --disable-static
 

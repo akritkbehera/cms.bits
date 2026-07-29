@@ -1,6 +1,8 @@
-tag: 95c34a89349f361c7172a9884f48068fa089ebf1
+tag: 9788b6d760daf1a4b14c49b2eafcc53afc0a7156
 source: https://github.com/akritkbehera/scram-tools.file.git
 requires:
+  - tfaot-model-test-multi
+  - tfaot-model-test-simple
   - AXOL1TL
   - TOPO
   - CICADA
@@ -17,6 +19,7 @@ requires:
   - boost
   - bz2lib
   - cepgen
+  - xtd
   - clang-uml
   - classlib
   - clhep
@@ -173,7 +176,6 @@ requires:
   - tkonlinesw
   - oracle
   - icx
-  - demo
   - intel-vtune
   - ruff
   - rocm
@@ -184,3 +186,63 @@ requires:
   - xtensor
   - xtl
   - xgboost
+  - py-backports-zstd
+  - py-blinker
+  - py-choreographer
+  - py-colorlover
+  - py-dash
+  - py-dash-bootstrap-components
+  - py-dash-svg
+  - py-flask
+  - py-itsdangerous
+  - py-kaleido
+  - py-logistro
+  - py-mdit-py-plugins
+  - py-orjson
+  - py-plotext
+  - py-plotille
+  - py-plotly
+  - py-retrying
+  - py-simplejson
+  - py-textual
+  - py-textual-fspicker
+  - py-textual-plotext
+  - py-pytest-timeout
+  -  py-linkify-it-py
+  - py-uc-micro-py
+  - google-test
+  - actsdata
+  - geant4data
+  - L1TSC82ProngJetModel
+  - NNPuppiTauModel
+ # Ported from cmsdist pip/*.file (2026-07-21): packages that were being generated with no
+ # dependency/build declarations of their own.
+  - py-chardet
+  - py-click
+  - py-cloudpickle
+  - py-docstring-parser
+  - py-dunamai
+  - py-ipython-pygments-lexers
+  - py-lockfile
+  - py-portpicker
+  - py-rfc3986-validator
+  - py-versioneer
+  - py-safetensors
+  - py-poetry-dynamic-versioning
+  - py-simple-parsing
+  - py-repoze-lru
+  - py-future
+  - py-lz4
+  - py-rootpy
+  - py-hepdata-lib
+  - py-torchvision
+  - py-timm
+  - py-triton
+ # ROCm torch stack: aotriton is a new .spec-level port that py-torch-rocm needs.
+  - aotriton
+  - py-torch-rocm
+ # Remaining standalone cmsdist specs with no recipe (2026-07-23).
+  - qhull
+  - perfetto
+  - geant4-parfullcms
+

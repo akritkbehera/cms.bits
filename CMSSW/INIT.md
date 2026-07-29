@@ -32,10 +32,10 @@
 # │                         variables) are set by package.py at generation time.
 # ├── cmssw-tools.yaml   ← Static spec for cmssw-tools: the full requires list
 # │                         (~130 packages) plus source/tag for the tools repo.
-# ├── vars.yaml          ← Shared variables injected into every recipe via
+# ├── base/vars.yaml     ← Core shared variables injected into every recipe via
 # │                         %(varname)s substitution. Covers compiler flags,
-# │                         build targets, GPU config, PGO, etc.
-# ├── vars.conf          ← LEGACY. Superseded by vars.yaml. Do not edit.
+# │                         build targets, GPU config, PGO, Eigen/LTO, etc.
+# ├── flavor/{flavor}/vars.yaml ← Build-variant overrides (e.g. flavor/debug).
 # └── <release_queue>.file  ← Optional per-queue override. Created manually
 #                             when a specific queue needs different variables or
 #                             a different build body (e.g. 14_2.file).
@@ -78,7 +78,7 @@
 #         ▼
 #  package.py  (the generator)
 #    └── loads cmssw.yaml          (static spec)
-#    └── loads vars.yaml           (shared variables)
+#    └── loads base/ + flavor/ layers via ConfigLoader  (shared variables)
 #    └── reads scram-project-build.file  (build body)
 #    └── applies cmssw.file override if present
 #    └── prints YAML header + "---" + bash body to stdout
@@ -101,7 +101,7 @@
 #  variables:
 #    configtag: V09-09-03
 #    branch: CMSSW_14_2_X
-#    ... (all of vars.yaml)
+#    ... (all merged base/ + flavor/ variables)
 #  ---
 #  source $WORK_DIR/cmsset_default.sh
 #  <contents of scram-project-build.file with %(varname)s already live>
@@ -126,21 +126,21 @@
 #
 # Supported override files:
 #   CMSSW/cmssw.file        — applies to all CMSSW IBs
-#   CMSSW/cmssw-tools.file  — applies to cmssw-tools
 #   CMSSW/14_2.file         — applies only to the 14_2 release queue
 #                              (currently not wired up; add to packages.py if needed)
 #
 # =============================================================================
-# ARCH / VECTORIZATION / MICROARCH — REMOVED
+# OS / ARCH / VECTORIZATION / MICROARCH — REMOVED
 # =============================================================================
 #
-# Arch-based layered config, vectorization, and microarch handling have been
-# removed from this generator. There is no arch/ config layer, no -march /
-# vectorization plumbing, and packages.py no longer parses an arch from
-# $ARCHITECTURE (only the leading OS token, for the os/ layer).
+# OS-based and arch-based layered config, vectorization, and microarch handling
+# have been removed from this generator. There is a single supported OS (el9),
+# so its Eigen/LTO flags live directly in base/vars.yaml — there is no os/ or
+# arch/ config layer, no -march / vectorization plumbing, and packages.py no
+# longer reads $ARCHITECTURE at all.
 #
 # Two keys — package_vectorization and scram_target_default — are still kept
-# (empty) in base/vars.yaml and vars.yaml ONLY because the frozen build body
+# (empty) in base/vars.yaml ONLY because the frozen build body
 # ../scram-project-build.sh references them via %(...)s and BITS substitutes
 # recipe bodies in STRICT mode (an unknown %(x)s is fatal). Empty = disabled.
 # Do not delete those two keys unless that build body is also changed.
@@ -149,7 +149,7 @@
 # independent of this directory and is not wired into cmssw-tools here.
 #
 # =============================================================================
-# VARIABLES REFERENCE  (vars.yaml keys)
+# VARIABLES REFERENCE  (base/vars.yaml keys)
 # =============================================================================
 #
 # Key variables an AI agent is likely to need:
@@ -173,7 +173,7 @@
 # =============================================================================
 #
 # DO:
-#   - Edit vars.yaml to change build-wide defaults (compiler flags, targets, etc.)
+#   - Edit base/vars.yaml to change build-wide defaults (compiler flags, targets, etc.)
 #   - Edit cmssw.yaml / cmssw-tools.yaml to change requires lists or sources.
 #   - Create CMSSW/<release_queue>.file to override a specific queue without
 #     touching the defaults.
@@ -185,7 +185,6 @@
 # DO NOT:
 #   - Add static CMSSW_*.sh files — the whole point is they are generated.
 #   - Change PY_ variable prefixes to PY3_ — this breaks tool XML generation.
-#   - Modify vars.conf — it is a legacy file, vars.yaml is authoritative.
 #   - Add runtime calls to resolve_meta.py inside recipe bodies — inline the
 #     file content in package.py instead (the .file pattern).
 #   - Hard-code release queues anywhere — they are discovered from argv.

@@ -12,10 +12,6 @@ def getPackages(virtual_packages, configDir, *args):
     ib_time = os.environ.get("IB_TIME", "2300")
     date_time = "%s-%s" % (date, ib_time)
 
-  # Extract the OS token from $ARCHITECTURE (format: {os}_{arch}[_{compiler}])
-  arch_env = os.environ.get("ARCHITECTURE", "")
-  os_name = arch_env.split('_')[0] if arch_env else ''
-
   pattern = re.compile(r'^(CMSSW_(\d+_\d+)(_[A-Za-z][A-Za-z0-9_]*))$', re.IGNORECASE)
 
   found_queues = []
@@ -41,10 +37,9 @@ def getPackages(virtual_packages, configDir, *args):
       "version": full_version,
       "pkgdir":  configDir,
       "url":     ib_name + ".sh",
-      "command": 'PYTHONPATH=%s %s/package.py "cmssw" "%s" "%s" "%s" "%s" "%s" "%s" "%s"' % (
+      "command": 'PYTHONPATH=%s %s/package.py "cmssw" "%s" "%s" "%s" "%s" "%s" "%s"' % (
         dirname(sys.argv[0]), pkg_dir,
         ib_name, release_queue, suffix, date_time, branch,
-        os_name,
         flavor or '',
       ),
     }
@@ -60,9 +55,8 @@ def getPackages(virtual_packages, configDir, *args):
       "version": version,
       "pkgdir":  configDir,
       "url":     "cmssw-tools.sh",
-      "command": 'PYTHONPATH=%s %s/package.py "cmssw-tools" "%s" "%s"' % (
+      "command": 'PYTHONPATH=%s %s/package.py "cmssw-tools" "%s"' % (
         dirname(sys.argv[0]), pkg_dir, release_queue,
-        os_name,
       ),
     }
 

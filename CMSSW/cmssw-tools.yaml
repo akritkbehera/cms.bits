@@ -1,4 +1,4 @@
-tag: 9788b6d760daf1a4b14c49b2eafcc53afc0a7156
+tag: 839a4957df178a5453b888ce68fff6e1b33691fe
 source: https://github.com/akritkbehera/scram-tools.file.git
 requires:
   - tfaot-model-test-multi

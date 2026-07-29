@@ -16,7 +16,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 cp $SOURCEDIR/$SOURCE1 .
 cd openloops-2.1.2
 patch -p1 -i "$SOURCEDIR/$PATCH0"
-python pyol/bin/download_process.py $(cat $BUILDDIR/openloops-user.coll.file | tr '\n' ' ')
+python3 pyol/bin/download_process.py $(cat $BUILDDIR/openloops-user.coll.file | tr '\n' ' ')
 tar -czf %(process_src)s process_src proclib
 rm -rf process_src proclib
 mv %(process_src)s $INSTALLROOT/

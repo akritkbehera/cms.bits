@@ -14,7 +14,8 @@ package_family:
   cms:
     - coral
     - data-[A-Z][-a-z0-9]*
-    - cms-*
+    - cms*
     - crab*
+    - cmssw*
 auto_patch: false
 ---

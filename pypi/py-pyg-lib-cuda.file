@@ -1,7 +1,7 @@
 package: py-pyg-lib-cuda
 version: 0.6.0
 sources:
-- git+https://github.com/pyg-team/pyg-lib?obj=master/%(version)s&export=pyg-lib-%(version)s&submodules=1&output=/source.tar.gz
+- git+https://github.com/pyg-team/pyg-lib?obj=main/%(version)s&export=pyg-lib-%(version)s&submodules=1&output=/source.tar.gz
 patches:
 - pyg-lib.patch
 build_requires:

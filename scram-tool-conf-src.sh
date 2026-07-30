@@ -4,7 +4,7 @@ mkdir -p $INSTALLROOT/tools/selected $INSTALLROOT/tools/available
 
 skipreqtools="%(skipreqtools)s"
 
-for tool in $REQUIRES; do
+for tool in $FULL_REQUIRES; do
     echo ">> Copying tool files from: $tool"
     uctool="${tool^^}"
     uctool="${uctool//-/_}"

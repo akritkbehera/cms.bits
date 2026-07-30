@@ -34,7 +34,7 @@ gpu_backend_specific_packages: ""
 gpu_types:                     ""
 use_cuda:                      "1"
 use_rocm:                      "1"
-cuda_gcc_support:              "true"
+cuda_gcc_support:              "1"
 
 # --- Debug / profiling ---
 subpackageDebug:        "yes"

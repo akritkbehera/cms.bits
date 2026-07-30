@@ -1,8 +1,13 @@
+<<<<<<< Updated upstream
 tag: 9788b6d760daf1a4b14c49b2eafcc53afc0a7156
+=======
+tag: 0acdb44033677661e564317bea38911444297fe3
+>>>>>>> Stashed changes
 source: https://github.com/akritkbehera/scram-tools.file.git
 requires:
   - tfaot-model-test-multi
   - tfaot-model-test-simple
+  - py-pyg-lib
   - AXOL1TL
   - TOPO
   - CICADA
@@ -14,9 +19,9 @@ requires:
     # - cmssw-wm-tools
   - google-benchmark
   - catch2
+  - coral
   - starlight
   - alpgen
-  - boost
   - bz2lib
   - cepgen
   - xtd

@@ -104,3 +104,44 @@ requires:
   - data-RecoParticleFlow-PFTracking
   - data-SimTransport-HectorProducer
 ---
+# Port of cmsdist cmsswdata.spec -> ## INCLUDE cmsswdata (cmsdist/cmsswdata.file).
+# That %install writes etc/scram.d/cmsswdata.xml by walking %pkgreqs (the resolved
+# cms/data-*/<version> paths). bits has no %pkgreqs, but it exports a <PKG>_ROOT for every
+# dependency (name upper-cased, '-'->'_'), so we enumerate the DATA_*_ROOT vars and read each
+# package's real on-disk path from them. pack (Sub/Pkg) and version come straight from the
+# install dir, so casing and the local build suffix are exact -- same shape cmsdist produces.
+mkdir -p "$INSTALLROOT/etc/scram.d"
+XML="$INSTALLROOT/etc/scram.d/cmsswdata.xml"
+
+# Header + <client> open + the CMSSW_DATA_PATH environment (mirrors cmsswdata.file).
+{
+  echo "<tool name=\"cmsswdata\" version=\"%(version)s\" path=\"$INSTALLROOT\" revision=\"2\">"
+  echo "  <client>"
+  echo "    <environment name=\"CMSSW_DATA_PATH\" default=\"\$TOOL_BASE\"/>"
+} > "$XML"
+
+# Collect one CMSSW_DATA_PACKAGE flag (inside <client>) and one CMSSW_SEARCH_PATH runtime
+# (after </client>) per required data package. Sorted by package to match the cvmfs reference.
+flags="$(mktemp)"; paths="$(mktemp)"
+for var in $(compgen -v | grep -E '^DATA_.*_ROOT$'); do
+  root="${!var}"
+  case "$root" in */cms/data-*) ;; *) continue ;; esac
+  [ -d "$root" ] || continue
+  ver="$(basename "$root")"                               # e.g. V00-03-00-local1
+  pkgdir="$(basename "$(dirname "$root")")"               # e.g. data-Alignment-OfflineValidation
+  pack="$(echo "$pkgdir" | sed 's|^data-||;s|-|/|')"      # e.g. Alignment/OfflineValidation
+  printf '    <flags CMSSW_DATA_PACKAGE="%s=%s"/>\n' "$pack" "$ver" >> "$flags"
+  printf '  <runtime name="CMSSW_SEARCH_PATH" default="%s" type="path"/>\n' "$root" >> "$paths"
+done
+
+sort "$flags" >> "$XML"
+# Close <client>, then the aggregate CMSSW_DATA_PATH runtime, then the per-package search paths.
+{
+  echo "  </client>"
+  echo "  <runtime name=\"CMSSW_DATA_PATH\" value=\"\$TOOL_BASE\" type=\"path\"/>"
+} >> "$XML"
+sort "$paths" >> "$XML"
+echo "</tool>" >> "$XML"
+
+rm -f "$flags" "$paths"
+chmod a+r "$XML"

@@ -180,6 +180,7 @@ requires:
  - oracle-fake
  - xtensor
  - xtl
+ - xtd
  - xgboost
  - mille
  - pcre

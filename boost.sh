@@ -6,6 +6,8 @@ variables:
 sources:
   # Upstream switched from the cms-externals git fork to the official release tarballs.
   - https://archives.boost.io/release/%(version)s/source/boost_%(boost_underscore)s.tar.gz
+patches:
+  - boost-cms-fixes.patch
 requires:
   - gcc
   - Python
@@ -18,6 +20,8 @@ requires:
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
+
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 # Detect toolset
 if [[ "$(uname)" == "Darwin" ]]; then

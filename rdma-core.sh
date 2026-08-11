@@ -1,7 +1,7 @@
 package: rdma-core
-version: "%(tag_basename)s"
-tag: v57.0
-source: https://github.com/linux-rdma/rdma-core
+version: "57.0"
+sources:
+- https://github.com/linux-rdma/rdma-core/archive/refs/tags/v%(version)s.tar.gz
 patches:
  - rdma-core-VERBS_CONFIG_DIR.patch
 build_requires:
@@ -12,7 +12,9 @@ requires:
 prepend_path:
   LD_LIBRARY_PATH: $RDMA_CORE_ROOT/lib64
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 patch -p1 < "$SOURCEDIR/$PATCH0"
 

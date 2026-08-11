@@ -1,6 +1,6 @@
 package: coral-tools
 version: "v1"
-tag: cb06ad14f7ba04453ee45667de5648bd5fd38eaa
+tag: 0acdb44033677661e564317bea38911444297fe3
 source: https://github.com/akritkbehera/scram-tools.file.git
 variables:
   skipreqtools: jcompiler

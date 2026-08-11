@@ -205,6 +205,39 @@ if [ "${DUP_BIN}" != "" ] ; then
 fi
 set -x
 
+# =============================================================================
+# python3 / py3-* tool-name bridge
+# -----------------------------------------------------------------------------
+# CMSSW source BuildFiles reference the upstream cmsdist tool names -- `python3`
+# and `py3-<name>` -- but this tree names its interpreter `python` and its Python
+# packages `py-<name>`. Without a bridge every `<use name="py3-foo"/>` (and
+# boost_python / professor2's `<use name="python3"/>`) is reported as "Invalid
+# tool". Emit thin alias tool files that `<use>` the real tool so its flags/paths
+# are inherited and the upstream name resolves. Additive only: the underlying
+# py-* / python tools are left untouched.
+# python3 is a first-class tool upstream (external/python3), but here the interpreter package
+# is `Python` and emits a tool named `python`. Rather than a thin <use> alias (which would drag
+# in python's root_cxxdefaults and expose PYTHON_COMPILE instead of PYTHON3_COMPILE), derive a
+# real python3 tool from python.xml: same lib/include/PATH, just renamed -- matching the cvmfs
+# reference where python3 carries the interpreter's own flags directly.
+if [ -f "$INSTALLROOT/tools/selected/python.xml" ] && [ ! -f "$INSTALLROOT/tools/selected/python3.xml" ] ; then
+  sed -e 's/name="python"/name="python3"/' \
+      -e 's/PYTHON_COMPILE/PYTHON3_COMPILE/' \
+      "$INSTALLROOT/tools/selected/python.xml" > "$INSTALLROOT/tools/selected/python3.xml"
+fi
+
+for xml in "$INSTALLROOT"/tools/selected/py-*.xml ; do
+  [ -f "$xml" ] || continue
+  base=$(basename "$xml" .xml)            # e.g. py-pybind11
+  alias3="py3-${base#py-}"                # e.g. py3-pybind11
+  [ -f "$INSTALLROOT/tools/selected/${alias3}.xml" ] && continue
+  {
+    echo "<tool name=\"${alias3}\" version=\"1.0\" revision=\"1\">"
+    echo "  <use name=\"${base}\"/>"
+    echo "</tool>"
+  } > "$INSTALLROOT/tools/selected/${alias3}.xml"
+done
+
 # Handle CUDA-GCC compatibility
 cuda_gcc_support="%(cuda_gcc_support)s"
 if [ -e "$INSTALLROOT/tools/selected/cuda-gcc-support.xml" ] ; then

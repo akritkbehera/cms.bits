@@ -1,17 +1,19 @@
 package: utm
-version: "%(tag_basename)s"
-tag: "utm_0.14.1"
+version: "0.14.1"
 build_requires:
 - gmake
 requires:
 - xerces-c
 - boost
 - gcc
-source: https://gitlab.cern.ch/cms-l1t-utm/utm
+sources: 
+- https://gitlab.cern.ch/cms-l1t-utm/utm/-/archive/utm_%(version)s/utm-utm_%(version)s.tar.gz
 patches:
 - utm-boost190.patch
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 # Drops -lboost_system from the makefiles: boost has been header-only for it since 1.69.
 patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"

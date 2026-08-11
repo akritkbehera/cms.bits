@@ -1,7 +1,7 @@
 package: hipblas-common
 version: "7.2.4"
 sources:
-  - git+https://github.com/ROCm/rocm-libraries.git?obj=develop/rocm-%(version)s&export=rocm-libraries&submodules=1&output=/rocm-libraries.tar.gz
+  - git+https://github.com/ROCm/rocm-libraries.git?obj=develop&export=rocm-libraries&submodules=1&output=/rocm-libraries.tar.gz
 build_requires:
   - CMake
   - gmake

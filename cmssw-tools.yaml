@@ -90,6 +90,7 @@ requires:
   - libuuid
   - xerces-c
   - dcap
+  - dip
   - frontier_client
   - isal
   - XRootD
@@ -173,11 +174,8 @@ requires:
   - tkonlinesw
   - oracle
   - icx
+  - demo
   - intel-vtune
-  - tfaot-model-test-multi
-  - tfaot-model-test-simple
-  - coral
-  - NNPuppiTauModel
   - ruff
   - rocm
   - cmsmon-tools

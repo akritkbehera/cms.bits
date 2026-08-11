@@ -133,6 +133,27 @@ find "$INSTALLROOT/$SRCTREE" -type d -name cmt -exec rm -rf {} + 2>/dev/null || 
 grep -r -l -e "^#!.*perl.*" "$INSTALLROOT/$SRCTREE" 2>/dev/null | \
   xargs -r perl -p -i -e 's|^#!.*perl(.*)|#!/usr/bin/env perl$1|' || true
 
+# ---------------------------------------------------------------------------
+# Tool-name compatibility patch (upstream cmsdist names -> this tree's names)
+# ---------------------------------------------------------------------------
+# CMSSW BuildFiles reference the upstream SCRAM tool names `python3` and
+# `py3-<name>`, but this tree renamed its Python tools to `python` / `py-<name>`.
+# Rewrite the tool references in every XML so scram resolves them natively.
+# Matching is scoped to the name="..."/name='...' attribute VALUE so we do not
+# corrupt lib names or version strings:
+#   * py3-<x>  -> py-<x>      (prefix rewrite inside a name= value)
+#   * python3  -> python      ONLY when it is the entire value, so
+#                             <lib name="python3.12"/> is left untouched.
+# Patch 1: py3-* -> py-*
+# `grep -rl` exits 1 when nothing matches (e.g. coral, which has no py3-/python3 tool refs);
+# the trailing `|| true` keeps that non-match from aborting the build under set -e/pipefail.
+# `xargs -r` already skips sed entirely on empty input, so no file is touched when unmatched.
+{ grep -rlZ --include='*.xml' -E "name=[\"']py3-" "$INSTALLROOT/$SRCTREE" 2>/dev/null || true; } | \
+  xargs -0 -r sed -i -E "s/(name=[\"'])py3-/\1py-/g"
+# Patch 2: python3 -> python (whole-value only)
+{ grep -rlZ --include='*.xml' -E "name=[\"']python3[\"']" "$INSTALLROOT/$SRCTREE" 2>/dev/null || true; } | \
+  xargs -0 -r sed -i -E "s/(name=[\"'])python3([\"'])/\1python\2/g"
+
 $SCRAMCMD arch
 cd "$INSTALLROOT/$SRCTREE"
 

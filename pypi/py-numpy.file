@@ -33,7 +33,7 @@ PipPreBuild="export NPY_NUM_BUILD_JOBS=\${JOBS:+-j\$JOBS}"
 #PipPostBuildPy="rm -f $INSTALLROOT/bin/f2py" 
 PipPostBuild=$(cat <<'EOF'
 mkdir -p $INSTALLROOT/c-api
-numpy_core=$(ls -d $INSTALLROOT/lib/python*/site-packages/numpy/core | sed 's|$INSTALLROOT/|../|')
+numpy_core=$(ls -d $INSTALLROOT/lib/python*/site-packages/numpy/core | sed "s|$INSTALLROOT/|../|")
 ln -s ${numpy_core} $INSTALLROOT/c-api/core
 echo "#!/bin/bash" > $INSTALLROOT/bin/f2py
 echo "python3 -m numpy.f2py \$*" >> $INSTALLROOT/bin/f2py

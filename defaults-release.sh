@@ -13,7 +13,7 @@ package_family:
     - ROOT
     - SCRAMV1
   cms:
-    - coral
+    - coral*
     - data-[A-Z][-a-z0-9]*
     - cms*
     - crab*

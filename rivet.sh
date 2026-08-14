@@ -23,6 +23,10 @@ patches:
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
+#!include <compilation-flags.file>
+#!include <compilation-flags-lto.file>
+#!include <microarch-flags.file>
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"

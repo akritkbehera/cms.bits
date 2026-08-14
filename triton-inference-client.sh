@@ -72,7 +72,6 @@ cmake ../$PKGNAME/$PKGNAME-$PKGVERSION/src/c++ \
 
 make ${JOBS:+-j$JOBS} VERBOSE=1
 
-
 cd $BUILDDIR
 rm -rf ../buildpy ; mkdir ../buildpy ; cd ../buildpy
 cmake ../$PKGNAME/$PKGNAME-$PKGVERSION/src/python \
@@ -88,7 +87,7 @@ cmake ../$PKGNAME/$PKGNAME-$PKGVERSION/src/python \
   -DTRITON_COMMON_REPO_TAG="%(common_tag)s" \
   -DTRITON_ENABLE_GPU=${TRITON_ENABLE_GPU_VALUE} \
   -DTRITON_VERSION=${PKGVERSION} \
-  -DCMAKE_CXX_FLAGS="-Wno-error -Wno-error=sign-compare -Wno-error=deprecated-declarations -fPIC" \
+  -DCMAKE_CXX_FLAGS="-Wno-error -Wno-error=cpp -Wno-error=sign-compare -Wno-error=deprecated-declarations -fPIC" \
   -DFETCHCONTENT_SOURCE_DIR_REPO-COMMON=${COMMON_DIR} \
   -DCMAKE_PREFIX_PATH="${GRPC_ROOT};${ABSEIL_CPP_ROOT};${RE2_ROOT};${RAPIDJSON_ROOT}"
 

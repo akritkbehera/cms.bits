@@ -1,6 +1,6 @@
 package: nasm
 version: "%(tag_basename)s"
-tag: 2.14.02
+tag: "3.01"
 sources:
 - https://www.nasm.us/pub/nasm/releasebuilds/%(tag_basename)s/nasm-%(tag_basename)s.tar.gz
 requires:

@@ -187,3 +187,5 @@ requires:
   - xtensor
   - xtl
   - xgboost
+  - xtd
+  - dip

@@ -1,0 +1,11 @@
+[core]
+	repositoryformatversion = 1
+	filemode = true
+	bare = true
+[remote "origin"]
+	url = https://github.com/bitsorg/bits-providers
+	promisor = true
+	partialclonefilter = tree:0
+[remote "https://github.com/bitsorg/bits-providers"]
+	promisor = true
+	partialclonefilter = tree:0

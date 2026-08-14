@@ -1,6 +1,6 @@
 package: SCRAMV1
-version: V3_00_92
-tag: d324a51fc7b7ee32cf230189cde3a376977fc2bd
+version: V3_00_95
+tag: 21a9cd17bdeb37d0ad4a42b3bcbbc4597a65aa2a
 branch: SCRAMV3
 source: https://github.com/cms-sw/SCRAM
 architecture: "share"

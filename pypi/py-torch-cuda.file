@@ -33,12 +33,12 @@ requires:
  - py-sympy
  - cuda
  - cudnn
- - cuda-flags
 ---
 # cmsdist: pip/torch-cuda.file -> ## INCLUDE pip/torch (+ CUDA overrides).
 # Package is py-torch-cuda but it builds the "torch" pip distribution; set Pypi_name
 # explicitly, else the framework derives Pypi_name=torch-cuda and pip3 show / source dir
 # names break.
+#!include <cuda-flags.file>
 Pypi_name="torch"
 
 # Shared base-torch hooks (PipPatchSource, PipPreBuild with CUDA OFF, PipPostInstall, and a

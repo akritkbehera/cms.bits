@@ -1,4 +1,4 @@
-package: cmssw-tools
+package: cmssw-toolsa
 version: "v1"
 tag: afed73c88d5901aa3ced7d49aba5cc9196a7051f
 source: https://github.com/akritkbehera/scram-tools.file.git

@@ -12,6 +12,7 @@ mkdir -p $INSTALLROOT/tools/{available,selected}
 
 export PKGINSTROOT=$INSTALLROOT
 
+export CMS_CXX_STANDARD="${CXXSTD:-20}"
 bash $CORAL_TOOLS_ROOT/tools/selected.tmpl
 
 # Create python3.xml as alias to python.xml (boost_python uses python3)

@@ -16,6 +16,10 @@ requires:
 env:
   USE_VECGEOM: "1"
 ---
+#!include <compilation-flags.file>
+#!include <compilation-flags-lto.file>
+#!include <microarch-flags.file>
+
 export BUILD_FLAGS="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
 
 tar -xzf "$SOURCEDIR/$SOURCE0" \

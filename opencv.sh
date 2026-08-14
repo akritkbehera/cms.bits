@@ -21,6 +21,8 @@ requires:
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
+#!include <microarch-flags.file>
+
 # Eigen build flags (from the scram-tools eigen env)
 export CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64"
 if [ "$(uname -m)" = "aarch64" ]; then

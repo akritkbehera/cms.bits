@@ -1,0 +1,6 @@
+# Port of cmsdist's warning-flags.file. #!include this where cmsdist's real spec does
+# `## INCLUDE warning-flags`. warning_flags is always empty in real cmsdist too
+# (both branches of its enable_warnings toggle resolve to nothing) -- kept only for
+# parity with anything that references the variable name.
+enable_warnings="${enable_warnings:-0}"
+warning_flags=""

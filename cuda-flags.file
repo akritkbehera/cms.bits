@@ -1,0 +1,64 @@
+# Port of cmsdist's cuda-flags.file. #!include this where cmsdist's real spec does
+# `## INCLUDE cuda-flags`.
+
+# build support for Pascal (6.x), Volta (7.0), Turing (7.5), Ampere (8.x), Lovelace (8.9) and Hopper (9.0)
+cuda_arch="75 80 89 90 100 120"
+
+# LIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES style for listing the supported CUDA compute architectures
+omptarget_cuda_archs="$(echo "$cuda_arch" | sed 's/ /,/g')"
+
+# LLVM style for listing the supported CUDA compute architectures
+llvm_flags_cuda_archs=""
+for arch in $cuda_arch; do
+  llvm_flags_cuda_archs="${llvm_flags_cuda_archs}--offload-arch=sm_${arch} "
+done
+llvm_flags_cuda_archs="${llvm_flags_cuda_archs}-Wunknown-cuda-version"
+
+# C++ standard to use for building host and device code with nvcc
+nvcc_flags_stdcxx="-std=c++$CMS_CXX_STD"
+
+# generate optimised code
+nvcc_flags_opt="-O3"
+
+# generate debugging information for device code
+nvcc_flags_debug="--generate-line-info --source-in-ptx --display-error-number"
+
+# imply __host__, __device__ attributes in constexpr functions
+nvcc_flags_constexpr="--expt-relaxed-constexpr"
+
+# allow __host__, __device__ attributes in lambda declarations
+nvcc_flags_lambda="--extended-lambda"
+
+# parallel device code compilation, integrated with make:
+#   split-compile=0  automatically divide heavy translation units into multiple parallel
+#                    compilation units
+#   threads=0        use all available CPU cores for parallel compilation
+#   jobserver        integrate with make's jobserver, so the number of parallel jobs is
+#                    limited to the number of jobs make is allowed to run in parallel
+nvcc_flags_parallel_compile="--split-compile 0 --threads 0 --jobserver"
+
+# build support for the various compute architectures
+nvcc_flags_cuda_archs=""
+for arch in $cuda_arch; do
+  nvcc_flags_cuda_archs="${nvcc_flags_cuda_archs}-gencode arch=compute_${arch},code=[sm_${arch},compute_${arch}] "
+done
+nvcc_flags_cuda_archs="${nvcc_flags_cuda_archs}-Wno-deprecated-gpu-targets"
+
+# various cuda diag-suppress flags:
+#   3012: suppress volatile destination type for a compound assignment expression is deprecated
+#   3189: suppress "module" is parsed as an identifier rather than a keyword because the
+#         tokens that follow it do not match those of a preprocessor directive
+nvcc_flags_cuda_diag_suppress="-diag-suppress=3012 -diag-suppress=3189"
+
+# disable warnings about attributes on defaulted methods
+nvcc_flags_cudage_diag="-Xcudafe --diag_suppress=esa_on_defaulted_function_ignored"
+
+# override the version of GCC passed to cudafe++
+override_gnu_version="$(gcc -dumpfullversion | { IFS=.; read -r MAJOR MINOR PATCH; echo $(((MAJOR * 100 + MINOR) * 100)); })"
+nvcc_flags_gnu_version="-Xcudafe --gnu_version=$override_gnu_version"
+
+# link the CUDA runtime shared library
+nvcc_flags_cudart="--cudart shared"
+
+# collect all CUDA flags
+nvcc_cuda_flags="$nvcc_flags_stdcxx $nvcc_flags_opt $nvcc_flags_debug $nvcc_flags_constexpr $nvcc_flags_lambda $nvcc_flags_parallel_compile $nvcc_flags_cuda_archs $nvcc_flags_cuda_diag_suppress $nvcc_flags_cudage_diag $nvcc_flags_gnu_version $nvcc_flags_cudart"

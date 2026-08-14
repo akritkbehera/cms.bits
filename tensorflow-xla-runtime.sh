@@ -11,6 +11,9 @@ requires:
  - tensorflow
  - abseil-cpp
 ---
+#!include <compilation-flags.file>
+#!include <microarch-flags.file>
+
 case "$TENSORFLOW_VERSION" in
   $PKG_VERSION|${PKG_VERSION}-*) ;;
   *) echo "ERROR: Mismatch tensorflow-xla-runtime ($PKG_VERSION) and tensorflow ($TENSORFLOW_VERSION) versions."

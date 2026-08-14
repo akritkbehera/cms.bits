@@ -9,13 +9,14 @@ build_requires:
 requires:
  - Python
  - gcc
- - cuda-flags
- - rocm-flags
  - libfabric
  - ucx
  - hwloc
  - xpmem
 ---
+#!include <cuda-flags.file>
+#!include <rocm-flags.file>
+
 export PYTHONHOME=$PYTHON_ROOT
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

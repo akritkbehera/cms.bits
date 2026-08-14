@@ -1,6 +1,6 @@
 package: coral-tools
 version: "v1"
-tag: 0acdb44033677661e564317bea38911444297fe3
+tag: 69822c60dea6fb66528eb16430853a3a756fabd6
 source: https://github.com/akritkbehera/scram-tools.file.git
 variables:
   skipreqtools: jcompiler
@@ -61,7 +61,7 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 chmod +x "$BUILDDIR/bin/get_tools"
 chmod +x "$BUILDDIR/bin/fix_tool_variables"
 [ -f "$BUILDDIR/bin/get_vectorized_tools" ] && chmod +x "$BUILDDIR/bin/get_vectorized_tools"
-#!include  <microarch-flag.sh>
+#!include  <microarch-flags.file>
 #!include  <tool-conf-src.file>
 mkdir -p touch $INSTALLROOT/etc/profile.d
 touch $INSTALLROOT/etc/profile.d/post-relocate.sh

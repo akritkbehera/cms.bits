@@ -3,16 +3,17 @@ build_requires:
 - ninja
 requires:
 - py-torch-cuda
-- cuda-flags
 - zlib
 # The pip:// source download uses the generator's pypi_name, which defaults to the package
 # name minus "py-" (= "torch-sparse-cuda") and 404s on PyPI. Override it to the real dist
-# name here (cmsdist's %define pip_name). package.py also emits `export Pypi_name` from this,
+# name here (cmsdist's %%define pip_name). package.py also emits `export Pypi_name` from this,
 # so it covers the build-time name too.
 variables:
   pypi_name: torch-sparse
   pypi_source_name: torch-sparse-%(version)s.tar.gz
 ---
+#!include <microarch-flags.file>
+#!include <cuda-flags.file>
 # cmsdist: pip/torch-sparse-cuda.file -> ## INCLUDE cuda-flags (+ CUDA overrides)
 #                                     -> ## INCLUDE torch-sparse-common
 #                                     -> ## INCLUDE torch-extension-build

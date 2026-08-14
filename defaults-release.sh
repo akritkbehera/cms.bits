@@ -1,8 +1,9 @@
 package: defaults-release
 version: v1
 variables:
-  cms_cxx_std: 20
-  cms_build_type: Release
+  cms_cxx_std: "20"
+  cms_build_type: "Release"
+  override_microarch_name: ""
 env:
   CXXSTD: '20'
   DCMAKE_BUILD_TYPE: 'Release'
@@ -17,5 +18,6 @@ package_family:
     - cms*
     - crab*
     - cmssw*
+    - CMSSW*
 auto_patch: false
 ---

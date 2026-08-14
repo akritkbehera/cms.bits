@@ -110,7 +110,7 @@ if [ -d "${INSTALLROOT}"/bin ] ; then
     perl -p -i -e "s|^#!.*python.*|#!/usr/bin/env python3|;s| ${WORK_DIR}/.*python3 | python3 |" $s
   done
 fi
-[ "${RelocatePython}" = "" ] || perl -p -i -e "s|^#!.*python.*|#!/usr/bin/env python3|;s| %{cmsroot}/.*python3 | python3 |" ${RelocatePython}
+[ "${RelocatePython}" = "" ] || perl -p -i -e "s|^#!.*python.*|#!/usr/bin/env python3|;s| %%{cmsroot}/.*python3 | python3 |" ${RelocatePython}
 
 #Install Section
 runIt PipPreInstall

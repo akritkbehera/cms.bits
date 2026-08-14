@@ -6,6 +6,8 @@ requires:
  - gcc
  - FFTW3
 ---
+#!include <compilation-flags.file>
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"

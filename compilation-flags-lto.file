@@ -1,0 +1,8 @@
+# Port of cmsdist's compilation_flags_lto.file. LTO is enabled by default except on
+# ppc64le. #!include this where cmsdist's real spec does
+# `## INCLUDE compilation_flags_lto`.
+if [ "$(uname -m)" = "ppc64le" ]; then
+  lto_build_flags=""
+else
+  lto_build_flags="-flto=auto -fipa-icf -flto-odr-type-merging -fno-fat-lto-objects -Wodr"
+fi

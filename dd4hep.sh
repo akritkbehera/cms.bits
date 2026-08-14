@@ -17,6 +17,9 @@ requires:
  - geant4
  - json
 ---
+#!include <compilation-flags.file>
+#!include <compilation-flags-lto.file>
+
 export build_flags="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
 
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/

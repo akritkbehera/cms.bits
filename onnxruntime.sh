@@ -23,10 +23,11 @@ requires:
  - eigen
  - cuda
  - cudnn
- - cuda-flags
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
+#!include <cuda-flags.file>
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"

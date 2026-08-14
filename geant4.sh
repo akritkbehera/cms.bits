@@ -18,6 +18,9 @@ requires:
 - xerces-c
 - zlib
 ---
+#!include <compilation-flags.file>
+#!include <compilation-flags-lto.file>
+
 #eval "$setup_pgo"
 #setup_pgo_flags "$BUILDDIR" "$PKGNAME/$PKGHASH"
 export BUILD_FLAGS="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"

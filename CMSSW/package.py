@@ -137,7 +137,7 @@ if pkg_type == 'cmssw':
 
     spec, body = build_spec(
         yaml_file=join(pkg_dir, 'cmssw.yaml'),
-        body_file=join(dirname(pkg_dir), 'scram-project-build.sh'),
+        body_file=join(dirname(pkg_dir), 'scram-project-build.file'),
         override_file=join(pkg_dir, 'cmssw.file'),
         package=ib_name,
         version="%s_%s" % (ib_name, date_time),

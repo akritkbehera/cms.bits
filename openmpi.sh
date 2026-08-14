@@ -8,6 +8,7 @@ variables:
 build_requires:
  - autotools
  - flex
+ - Python
 requires:
  - gcc
  - libfabric

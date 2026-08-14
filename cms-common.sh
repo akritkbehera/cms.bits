@@ -1,6 +1,6 @@
 package: cms-common
-version: "1259"
-tag: fec24d23bd6c04dcdbebfe035ff63a22b299ee4a
+version: "1261"
+tag: 817620fac9a30385b05efb2dd0f668c90b7ec89f
 source: https://github.com/cms-sw/cms-common
 force_revision: ""
 ---

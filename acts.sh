@@ -31,11 +31,15 @@ requires:
   - bz2lib
   - zstd
   - xz
-  - cuda-flags
-  - rocm-flags
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/python"
 ---
+#!include <compilation-flags.file>
+#!include <compilation-flags-lto.file>
+#!include <microarch-flags.file>
+#!include <cuda-flags.file>
+#!include <rocm-flags.file>
+
 export build_test="1"
 
 # Eigen build flags (from the scram-tools eigen env / defaults)

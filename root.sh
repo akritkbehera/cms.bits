@@ -1,6 +1,6 @@
 package: ROOT
 version: 6.36.11
-tag: fd0da82cb47abe082dafec8b7e46c4339d206b95
+tag: 4fbe34700bb4936e9529d5f88fcc93d6cec115ff
 source: https://github.com/cms-sw/root
 env:
  ROOTSYS: $ROOT_ROOT
@@ -34,6 +34,8 @@ requires:
 - dcap
 - cuda
 ---
+#!include <compilation-flags.file>
+
 case "$(uname)" in
 Darwin)
   soext="dylib"
@@ -52,15 +54,6 @@ chmod +x $PKGBUILDDIR/graf2d/asimage/src/libAfterImage/config.{sub,guess}
 
 export CFLAGS=-D__ROOFIT_NOBANNER
 export CXXFLAGS=-D__ROOFIT_NOBANNER
-
-if [ -z "${arch_build_flags:-}" ]; then
-  case "$(uname -m)" in
-  ppc64le) arch_build_flags="-mcpu=power8 -mtune=power8 --param=l1-cache-size=64 --param=l1-cache-line-size=128 --param=l2-cache-size=512" ;;
-  aarch64) arch_build_flags="-march=armv8-a -mno-outline-atomics" ;;
-  x86_64) arch_build_flags="" ;;
-  *) arch_build_flags="" ;;
-  esac
-fi
 
 if [ -n "${arch_build_flags:-}" ]; then
   export CFLAGS="${CFLAGS} ${arch_build_flags}"

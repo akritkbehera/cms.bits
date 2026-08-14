@@ -52,6 +52,9 @@ requires:
  - grpc
  - flatbuffers
 ---
+#!include <compilation-flags.file>
+#!include <microarch-flags.file>
+
 export PYTHON_MAJOR_MINOR_VERSION="3.12"
 export CXXSTD=20
 export USER="builder"

@@ -9,11 +9,11 @@ build_requires:
   - ninja
 requires:
   - gcc
-  - rocm-flags
   - rocm-comgr
   - rocm-hip
   - rocr-runtime
   - xz
+  - aotriton-images
   - py-triton
   - py-filelock
   - py-iniconfig
@@ -26,6 +26,8 @@ requires:
   - py-pandas
   - py-PyYAML
 ---
+#!include <rocm-flags.file>
+
 # Port of cmsdist aotriton/spec. The upstream commit is pinned so the build does not try to
 # read it out of a .git dir that the exported tarball does not carry.
 aotriton_git_sha1=6e00ef3e335b45dfb49065259533b59c68995bfe
@@ -57,13 +59,11 @@ CMAKE_ARGS=(
   -G Ninja
   -DCMAKE_BUILD_TYPE=%(cms_build_type)s
   -DCMAKE_INSTALL_PREFIX:STRING="$INSTALLROOT"
+  -DAOTRITON_NOIMAGE_MODE=ON
   -DAOTRITON_TARGET_ARCH="$rocm_gpus_cmake"
   -DAOTRITON_NO_PYTHON=OFF
   -DAOTRITON_USE_TORCH=OFF
   -DAOTRITON_INHERIT_SYSTEM_SITE_TRITON=ON
-  -DLZMA_LIBRARY_DIRS="${XZ_ROOT}/lib"
-  -DLZMA_LIBRARIES="${XZ_ROOT}/lib/liblzma.so"
-  -DCMAKE_CXX_FLAGS="-I${XZ_ROOT}/include"
   -DCMAKE_PREFIX_PATH="${GCC_ROOT};${ROCM_HIP_ROOT};${ROCM_COMGR_ROOT};${ROCR_RUNTIME_ROOT};${XZ_ROOT};${PY_PYBIND11_ROOT};${PY_TRITON_ROOT}"
   -DCMAKE_VERBOSE_MAKEFILE=TRUE
 )
@@ -73,3 +73,5 @@ AOTRITON_GIT_TREESHA1=$aotriton_git_sha1 \
 
 ninja -v -C "$BUILDDIR/build" ${JOBS:+-j$JOBS}
 ninja -v -C "$BUILDDIR/build" ${JOBS:+-j$JOBS} install
+
+ln -s "$AOTRITON_IMAGES_ROOT/aotriton.images" "$INSTALLROOT/lib/aotriton.images"

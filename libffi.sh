@@ -13,6 +13,13 @@ prepend_path:
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
       "$SOURCEDIR"/ "$BUILDDIR"/
 
+# Refresh config.guess/config.sub so autoreconf recognizes newer host triples.
+CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
+rm -f "$BUILDDIR"/config.{sub,guess}
+curl -L -k -s -o "$BUILDDIR/config.guess" "$CONFIG_BASE_URL/config.guess"
+curl -L -k -s -o "$BUILDDIR/config.sub" "$CONFIG_BASE_URL/config.sub"
+chmod +x "$BUILDDIR"/config.{sub,guess}
+
 autoreconf -fiv
 
 CFLAGS="-Wno-deprecated-declarations" \

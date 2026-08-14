@@ -9,12 +9,13 @@ build_requires:
 - ninja
 requires:
 - py-torch-cuda
-- cuda-flags
 - zlib
 ---
 # cmsdist: pip/pyg-lib-cuda.file -> ## INCLUDE cuda-flags (+ CUDA overrides)
 #                                -> ## INCLUDE pyg-lib-common -> ## INCLUDE torch-extension-build
-# Package is py-pyg-lib-cuda but the PyPI distribution is "pyg-lib" (== cmsdist %define pip_name).
+# Package is py-pyg-lib-cuda but the PyPI distribution is "pyg-lib" (== cmsdist %%define pip_name).
+#!include <microarch-flags.file>
+#!include <cuda-flags.file>
 Pypi_name="pyg-lib"
 
 # cmsdist uses AdditionalPipPreBuildPy, which pyg-lib-common's PipPreBuildPy runs via inner

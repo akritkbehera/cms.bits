@@ -1,5 +1,5 @@
 package: rocm
-version: "7.2.4"
+version: "7.14"
 # Meta-package: upstream split monolithic ROCm into these components (port of rocm.spec).
 requires:
   - rocm-llvm
@@ -9,6 +9,7 @@ requires:
   - rocm-cmake
   - rocminfo
   - rocdbgapi
+  - rocgdb
   - rocprofiler
   - rocprofiler-register
   - rocprofiler-compute

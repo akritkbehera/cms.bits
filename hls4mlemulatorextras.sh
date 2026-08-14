@@ -1,5 +1,5 @@
 package: hls4mlemulatorextras
-version: 1.1.4
+version: 1.1.7
 build_requires:
  - gmake
 sources:

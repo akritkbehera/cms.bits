@@ -11,9 +11,11 @@ build_requires:
 requires:
  - py-torch
  - cuda
- - cuda-flags
  - gcc
 ---
+#!include <compilation-flags.file>
+#!include <cuda-flags.file>
+
 export build_flags="-Wall -Wextra -pedantic $arch_build_flags"
 export cuda_arch_float="$(echo "$cuda_arch" | tr ' ' '\n' | sed -E 's|([0-9])$|.\1|' | tr '\n' ' ')"
 

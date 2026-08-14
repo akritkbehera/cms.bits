@@ -1,7 +1,7 @@
 package: rocm-hip
-version: "7.2.4"
+version: "7.14"
 sources:
-  - https://github.com/ROCm/rocm-systems/archive/refs/tags/rocm-%(version)s.tar.gz
+  - git+https://github.com/ROCm/rocm-systems.git?obj=release/therock-%(version)s/HEAD&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
 build_requires:
   - CMake
   - gmake
@@ -21,7 +21,7 @@ env:
   HIP_PLATFORM: "amd"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
-SRC="$BUILDDIR/rocm-systems-rocm-%(version)s"
+SRC="$BUILDDIR/rocm-systems"
 
 cmake \
   -S "$SRC/projects/clr" \

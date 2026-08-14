@@ -1,8 +1,12 @@
 package: cmssw-tool-conf
 version: vCMS
+variables:
+ override_microarch_name: ""
 requires:
  - cmssw-tools
 ---
+#!include <tool-conf-flags.file>
+
 mkdir -p $INSTALLROOT/tools/{available,selected}
 
 rsync -a $CMSSW_TOOLS_ROOT/lib $INSTALLROOT/

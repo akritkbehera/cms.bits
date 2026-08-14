@@ -16,6 +16,9 @@ requires:
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
+#!include <compilation-flags.file>
+#!include <microarch-flags.file>
+
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
@@ -34,12 +37,12 @@ curl -L -k -o "$TMPDIR"/config.sub "$CONFIG_SUB_URL"
 chmod +x "$TMPDIR"/config.{sub,guess}
 cp "$TMPDIR"/config.{sub,guess} "$BUILDDIR"/plugins/SISCone/siscone/
 
-export CXXFLAGS="-O3 -Wall -ffast-math -ftree-vectorize -march=x86-64-v3"
+export CXXFLAGS="-O3 -Wall -ffast-math -ftree-vectorize ${selected_microarch}"
 echo "CXXFLAGS: $CXXFLAGS"
-echo "arch_flags: $arch_flags"
+echo "arch_build_flags: $arch_build_flags"
 
-if [[ -n "$arch_flags" ]]; then
-    export CXXFLAGS="$CXXFLAGS $arch_flags"
+if [[ -n "$arch_build_flags" ]]; then
+    export CXXFLAGS="$CXXFLAGS $arch_build_flags"
 fi
 
 # GCC >= 15 warns on template-body code accepted by older standards

@@ -1,10 +1,8 @@
 package: rocm-llvm
-version: "7.2.4"
+version: "7.14"
 sources:
-  - git+https://github.com/ROCm/llvm-project?obj=amd-staging/rocm-%(version)s&export=rocm-llvm-%(version)s&output=/source.tar.gz
-  - git+https://github.com/ROCm/rocm-systems.git?obj=release/rocm-rel-7.2/rocm-%(version)s&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
-patches:
-  - rocm-llvm-iterator-gcc14.patch
+  - git+https://github.com/ROCm/llvm-project?obj=release/therock-%(version)s/HEAD&export=rocm-llvm-%(version)s&output=/source.tar.gz
+  - git+https://github.com/ROCm/rocm-systems.git?obj=release/therock-%(version)s/HEAD&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
 build_requires:
   - CMake
   - ninja
@@ -23,7 +21,6 @@ env:
   HIP_CLANG_PATH: "$ROCM_LLVM_ROOT/lib/llvm/bin"
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" --strip-components=1 -C "$BUILDDIR"
-patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 mkdir -p "$BUILDDIR/rocm-systems"
 tar -xzf "$SOURCEDIR/${SOURCE1}" --strip-components=1 -C "$BUILDDIR/rocm-systems"

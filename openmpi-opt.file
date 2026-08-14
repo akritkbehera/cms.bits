@@ -1,0 +1,6 @@
+# Port of cmsdist's openmpi-opt.file. #!include this where cmsdist's real spec does
+# `## INCLUDE openmpi-opt`. Already inlined directly as openmpi.sh's own variables:
+# block (HFI_NO_BACKTRACE/IPATH_NO_BACKTRACE) -- this fragment exists for any other
+# consumer that wants the same defaults via #!include instead.
+HFI_NO_BACKTRACE="1"
+IPATH_NO_BACKTRACE="1"

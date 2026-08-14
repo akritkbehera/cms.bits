@@ -5,9 +5,10 @@ source: https://github.com/OpenMathLib/OpenBLAS
 requires:
  - gcc
 ---
+#!include <microarch-flags.file>
+
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 
-default_microarch_name=x86-64-v3
 ARCH="$(uname -m)"
 
 if [ "$ARCH" = "x86_64" ]; then
@@ -23,7 +24,7 @@ XTARGETS="${XTARGETS} x86-64-v2=NEHALEM"
 XTARGETS="${XTARGETS} x86-64-v3=HASWELL"
 XTARGETS="${XTARGETS} x86-64-v4=SKYLAKEX"
 
-STARGET=$(echo "x86-64-v3" | sed 's|^-m||;s|^arch=||')
+STARGET=$(echo "$default_microarch_name" | sed 's|^-m||;s|^arch=||')
 TARGET_ARCH=$(echo ${XTARGETS} | tr ' ' '\n' | grep "^${STARGET}=" | sed "s|^${STARGET}=||")
 
 if [ "${TARGET_ARCH}" = "" ] ; then

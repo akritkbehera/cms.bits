@@ -8,16 +8,9 @@ build_requires:
 requires:
 - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+#!include <compilation-flags.file>
 
-if [ -z "${arch_build_flags:-}" ]; then
-  case "$(uname -m)" in
-  ppc64le) arch_build_flags="-mcpu=power8 -mtune=power8 --param=l1-cache-size=64 --param=l1-cache-line-size=128 --param=l2-cache-size=512" ;;
-  aarch64) arch_build_flags="-march=armv8-a -mno-outline-atomics" ;;
-  x86_64) arch_build_flags="" ;;
-  *) arch_build_flags="" ;;
-  esac
-fi
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 
 CMAKE_ARGS=(
   -S "$BUILDDIR"

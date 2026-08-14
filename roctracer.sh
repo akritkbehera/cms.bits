@@ -1,7 +1,7 @@
 package: roctracer
-version: "7.2.4"
+version: "7.14"
 sources:
-  - git+https://github.com/ROCm/rocm-systems.git?obj=release/rocm-rel-7.2/rocm-%(version)s&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
+  - git+https://github.com/ROCm/rocm-systems.git?obj=release/therock-%(version)s/HEAD&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
 build_requires:
   - CMake
   - gmake
@@ -12,15 +12,6 @@ requires:
   - rocm-hip
   - rocm-comgr
 ---
-# ROCm (rocm-systems monorepo) package. Recipe-only; needs full ROCm toolchain to build.
-tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
-sed -i "s/add_subdirectory(test)/# add_subdirectory(test)/" "$BUILDDIR/rocm-systems/projects/roctracer/CMakeLists.txt"
-cmake \
-  -S "$BUILDDIR/rocm-systems/projects/roctracer" \
-  -B "$BUILDDIR/build" \
-  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_PREFIX_PATH="$ROCM_CORE_ROOT;$ROCR_RUNTIME_ROOT;$ROCM_LLVM_ROOT;$ROCM_HIP_ROOT;$ROCM_COMGR_ROOT" \
-  -DBUILD_TESTS=OFF
-make -C "$BUILDDIR/build" ${JOBS:+-j$JOBS} VERBOSE=1
-make -C "$BUILDDIR/build" install VERBOSE=1
+export ROCM_PRE_BUILD_HOOK='sed -i "s/add_subdirectory(test)/# add_subdirectory(test)/" "$BUILDDIR/rocm-systems/projects/roctracer/CMakeLists.txt"'
+export ROCM_CMAKE_EXTRA_ARGS='-DBUILD_TESTS=OFF'
+#!include <rocm-systems-build.sh>

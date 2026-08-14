@@ -6,9 +6,6 @@ variables:
   selected_src: "%%(%(platform_machine)s_src)s"
 sources:
  - https://go.dev/dl/go%(version)s.linux-%(selected_src)s.tar.gz
-env:
-  PYTHON_VERSION: 3.9.14
-  PYTHON_MAJOR_MINOR_VERSION: $(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

@@ -1,7 +1,7 @@
 package: rocm-cmake
-version: "7.2.4"
+version: "7.14"
 sources:
-  - https://github.com/ROCm/rocm-cmake/archive/refs/tags/rocm-%(version)s.tar.gz
+  - https://github.com/ROCm/rocm-cmake/archive/refs/tags/therock-%(version)s.tar.gz
 build_requires:
   - CMake
   - gmake

@@ -2,7 +2,8 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 chmod +x "$BUILDDIR/bin/get_tools"
 chmod +x "$BUILDDIR/bin/fix_tool_variables"
 [ -f "$BUILDDIR/bin/get_vectorized_tools" ] && chmod +x "$BUILDDIR/bin/get_vectorized_tools"
-
+#!include <toolflags.file>
+source $BUILDDIR/tool-env.file
 # =============================================================================
 # tool-conf-src.file - SCRAM tool configuration generator for bits
 # =============================================================================

@@ -1,7 +1,7 @@
 package: rocprofiler-register
-version: "7.2.4"
+version: "7.14"
 sources:
-  - git+https://github.com/ROCm/rocm-systems.git?obj=release/rocm-rel-7.2/rocm-%(version)s&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
+  - git+https://github.com/ROCm/rocm-systems.git?obj=release/therock-%(version)s/HEAD&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
 build_requires:
   - CMake
   - gmake
@@ -9,14 +9,9 @@ requires:
   - gcc
   - fmt
 ---
-# ROCm (rocm-systems monorepo) package. Recipe-only; needs full ROCm toolchain to build.
-tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
-cmake \
-  -S "$BUILDDIR/rocm-systems/projects/rocprofiler-register" \
-  -B "$BUILDDIR/build" \
-  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_PREFIX_PATH="$ROCM_CORE_ROOT;$ROCR_RUNTIME_ROOT;$ROCM_LLVM_ROOT;$ROCM_HIP_ROOT;$ROCM_COMGR_ROOT" \
-  -DCMAKE_CXX_STANDARD=%(cms_cxx_std)s -DCMAKE_VERBOSE_MAKEFILE=TRUE
-make -C "$BUILDDIR/build" ${JOBS:+-j$JOBS} VERBOSE=1
-make -C "$BUILDDIR/build" install VERBOSE=1
+export ROCM_PRE_BUILD_HOOK='
+sed -i -e "s|add_subdirectory(external)|find_package(fmt REQUIRED)\nadd_subdirectory(external)|" "$BUILDDIR/rocm-systems/projects/rocprofiler-register/CMakeLists.txt"
+sed -i -e "s|CMAKE_CXX_STANDARD  *17|CMAKE_CXX_STANDARD %(cms_cxx_std)s|" "$BUILDDIR/rocm-systems/projects/rocprofiler-register/cmake/rocprofiler_register_options.cmake"
+'
+export ROCM_CMAKE_EXTRA_ARGS='-DCMAKE_CXX_STANDARD=%(cms_cxx_std)s -DCMAKE_VERBOSE_MAKEFILE=TRUE -DROCPROFILER_REGISTER_BUILD_FMT=OFF -DCMAKE_PREFIX_PATH="${FMT_ROOT}"'
+#!include <rocm-systems-build.sh>

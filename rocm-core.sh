@@ -1,7 +1,7 @@
 package: rocm-core
-version: "7.2.4"
+version: "7.14"
 sources:
-  - git+https://github.com/ROCm/rocm-systems.git?obj=release/rocm-rel-7.2/rocm-%(version)s&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
+  - git+https://github.com/ROCm/rocm-systems.git?obj=release/therock-%(version)s/HEAD&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
 build_requires:
   - CMake
   - gmake
@@ -11,14 +11,5 @@ requires:
   - py-PyYAML
   - gcc
 ---
-tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
-
-cmake \
-  -S "$BUILDDIR/rocm-systems/projects/rocm-core" \
-  -B "$BUILDDIR/build" \
-  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DROCM_VERSION=%(version)s
-
-cmake --build "$BUILDDIR/build" ${JOBS:+--parallel $JOBS} --verbose
-cmake --install "$BUILDDIR/build" --verbose
+export ROCM_CMAKE_EXTRA_ARGS='-DROCM_VERSION="%(version)s.0"'
+#!include <rocm-systems-build.sh>

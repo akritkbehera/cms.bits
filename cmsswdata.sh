@@ -103,6 +103,14 @@ requires:
   - data-RecoHI-HiJetAlgos
   - data-RecoParticleFlow-PFTracking
   - data-SimTransport-HectorProducer
+  - data-RecoTracker-PixelLowPtUtilities
+  - data-L1Trigger-Phase2L1GMT
+  - data-L1TriggerScouting-OnlineProcessing
+  - data-HLTrigger-HLTfilters
+  - data-PhysicsTools-PyTorch
+  - data-PhysicsTools-PyTorchAlpaka
+  - data-PhysicsTools-PyTorchAlpakaTest
+  - data-RecoLocalCalo-HGCalRecProducers
 ---
 # Port of cmsdist cmsswdata.spec -> ## INCLUDE cmsswdata (cmsdist/cmsswdata.file).
 # That %install writes etc/scram.d/cmsswdata.xml by walking %pkgreqs (the resolved

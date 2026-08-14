@@ -1,0 +1,14 @@
+requires:
+- py-scipy 
+- xgboost
+---
+PipPatchSource='
+sed -i -e "s|^\(  *\)outfiles *= *super().install()|\1return super().install()|" setup.py && \
+sed -i -e "s|\('use-system-libxgboost': *\)0)|\11)|" setup.py
+'
+
+PipPostInstall='
+mkdir -p "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/xgboost/lib" && \
+cd "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/xgboost/lib" && \
+ln -s "$INSTALLROOT/xgboost/${XGBOOST_VERSION}/lib64/libxgboost.so" .
+'

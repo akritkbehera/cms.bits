@@ -1,0 +1,14 @@
+sources:
+ - pip://keras/%(version)s?pip_options=--no-deps%%20--no-binary%%3D:none,arch%%3Dx86_64:&output=/keras-%(version)s.tar.gz
+requires:
+ - py-PyYAML
+ - py-six
+ - py-h5py
+ - py-keras-applications
+ - py-keras-preprocessing
+ - py-absl-py 
+ - py-ml_dtypes 
+ - py-namex 
+ - py-optree 
+ - py-rich
+---

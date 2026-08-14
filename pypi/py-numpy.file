@@ -1,0 +1,42 @@
+package: py-numpy
+build_requires:
+ - py-meson-python
+requires:
+ - py-cython
+ - zlib
+ - OpenBLAS
+patches:
+ - numpy-f2py-main.patch
+sources:
+ - https://github.com/numpy/numpy/releases/download/v%(version)s/numpy-%(version)s.tar.gz
+ ---
+PipInstallOptions="$PWD/numpy-*"
+
+PipPatchSource="cat > site.cfg <<EOF
+[default]
+include_dirs = $OPENBLAS_ROOT/include
+library_dirs = $OPENBLAS_ROOT/lib
+[openblas]
+openblas_libs = openblas
+library_dirs = $OPENBLAS_ROOT/lib
+[lapack]
+lapack_libs = openblas
+library_dirs = $OPENBLAS_ROOT/lib
+[atlas]
+atlas_libs = openblas
+atlas_dirs = $OPENBLAS_ROOT/lib
+[build]
+fcompiler=gnu95
+EOF"
+
+PipPreBuild="export NPY_NUM_BUILD_JOBS=\${JOBS:+-j\$JOBS}"
+#PipPostBuildPy="rm -f $INSTALLROOT/bin/f2py" 
+PipPostBuild=$(cat <<'EOF'
+mkdir -p $INSTALLROOT/c-api
+numpy_core=$(ls -d $INSTALLROOT/lib/python*/site-packages/numpy/core | sed "s|$INSTALLROOT/|../|")
+ln -s ${numpy_core} $INSTALLROOT/c-api/core
+echo "#!/bin/bash" > $INSTALLROOT/bin/f2py
+echo "python3 -m numpy.f2py \$*" >> $INSTALLROOT/bin/f2py
+chmod +x $INSTALLROOT/bin/f2py
+EOF
+)

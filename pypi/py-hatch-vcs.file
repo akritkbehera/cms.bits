@@ -1,0 +1,4 @@
+build_requires:
+- py-hatchling
+- py-setuptools-scm
+---

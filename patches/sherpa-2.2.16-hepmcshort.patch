@@ -1,0 +1,50 @@
+diff --git a/SHERPA/Main/Sherpa.C b/SHERPA/Main/Sherpa.C
+index 0a16d23..ecb58e0 100644
+--- a/SHERPA/Main/Sherpa.C
++++ b/SHERPA/Main/Sherpa.C
+@@ -300,21 +300,23 @@ bool Sherpa::GenerateOneEvent(bool reset)
+ }
+ 
+ #ifdef USING__HEPMC2
+-void Sherpa::FillHepMCEvent(HepMC::GenEvent& event)
++void Sherpa::FillHepMCEvent(HepMC::GenEvent& event, bool shortHepMC)
+ {
+   if (p_hepmc2==NULL) p_hepmc2 = new SHERPA::HepMC2_Interface();
+   ATOOLS::Blob_List* blobs=GetEventHandler()->GetBlobs();
+-  p_hepmc2->Sherpa2HepMC(blobs, event, blobs->Weight());
++  if (shortHepMC) p_hepmc2->Sherpa2ShortHepMC(blobs, event, blobs->Weight());
++  else p_hepmc2->Sherpa2HepMC(blobs, event, blobs->Weight());
+   p_hepmc2->AddCrossSection(event, TotalXS(), TotalErr());
+ }
+ #endif
+ 
+ #ifdef USING__HEPMC3
+-void Sherpa::FillHepMCEvent(HepMC3::GenEvent& event)
++void Sherpa::FillHepMCEvent(HepMC3::GenEvent& event, bool shortHepMC)
+ {
+   if (p_hepmc3==NULL) p_hepmc3 = new SHERPA::HepMC3_Interface();
+   ATOOLS::Blob_List* blobs=GetEventHandler()->GetBlobs();
+-  p_hepmc3->Sherpa2HepMC(blobs, event);
++  if (shortHepMC) p_hepmc3->Sherpa2ShortHepMC(blobs, event);
++  else p_hepmc3->Sherpa2HepMC(blobs, event);
+   p_hepmc3->AddCrossSection(event, TotalXS(), TotalErr());
+ }
+ #endif
+diff --git a/SHERPA/Main/Sherpa.H b/SHERPA/Main/Sherpa.H
+index 599178b..d654d2c 100644
+--- a/SHERPA/Main/Sherpa.H
++++ b/SHERPA/Main/Sherpa.H
+@@ -54,10 +54,10 @@ namespace SHERPA {
+ 
+     bool GenerateOneEvent(bool reset=true);
+ #ifdef USING__HEPMC2
+-    void FillHepMCEvent(HepMC::GenEvent& event);
++    void FillHepMCEvent(HepMC::GenEvent& event, bool shortHepMC=false);
+ #endif
+ #ifdef USING__HEPMC3
+-    void FillHepMCEvent(HepMC3::GenEvent& event);
++    void FillHepMCEvent(HepMC3::GenEvent& event, bool shortHepMC=false);
+ #endif
+ 
+     double TotalXS();
+

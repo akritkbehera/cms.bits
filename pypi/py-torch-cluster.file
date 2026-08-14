@@ -1,0 +1,15 @@
+build_requires:
+- CMake
+- ninja
+requires:
+- py-torch
+- zlib
+---
+# cmsdist: pip/torch-cluster.file -> ## INCLUDE torch-cluster-common
+#                                 -> ## INCLUDE torch-extension-build
+# bits has no ## INCLUDE, so we source the two shared fragments here. BITS_CONFIG_DIR
+# (== cms.bits) is exported by build.sh; the body runs before build-with-pip's runIt calls,
+# so the hook vars they define (enable_cpp_api, PipPatchSource, PipPreBuild, PipPostBuild)
+# are in place by build time.
+source "${BITS_CONFIG_DIR}/pypi/torch-cluster-common.file"
+source "${BITS_CONFIG_DIR}/pypi/torch-extension-build.file"

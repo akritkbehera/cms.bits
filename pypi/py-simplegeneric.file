@@ -1,0 +1,4 @@
+sources:
+ - pip://simplegeneric/0.8.1?pip_options=--python-version=312+--abi=cp312+--no-deps+--no-binary=:all:&pip=pip3&output=/simplegeneric-0.8.1.zip
+---
+PipUnpackCommand="unzip ${SOURCEDIR}/${SOURCE0}"

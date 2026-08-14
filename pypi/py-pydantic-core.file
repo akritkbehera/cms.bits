@@ -1,0 +1,6 @@
+build_requires:
+- py-maturin
+requires:
+- py-typing-extensions
+---
+PipPreBuild='export CARGO_HOME="$BUILDDIR/.cargo";'

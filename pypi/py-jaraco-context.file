@@ -1,0 +1,6 @@
+build_requires:
+- setuptools
+- py-setuptools-scm
+requires:
+- py-backports-tarfile
+---

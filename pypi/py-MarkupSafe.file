@@ -1,0 +1,4 @@
+package: py-MarkupSafe
+sources:
+- https://pypi.io/packages/source/m/markupsafe/markupsafe-%(version)s.tar.gz
+---

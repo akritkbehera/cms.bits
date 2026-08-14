@@ -1,0 +1,6 @@
+requires:
+- py-jupyter-client
+- py-nbformat
+- py-nest-asyncio
+- py-traitlets
+---

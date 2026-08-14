@@ -1,0 +1,9 @@
+requires:
+ - openldap
+ - py-pyasn1-modules
+---
+function PipPatchSource (){
+  sed -i -e "s|\\[_ldap\\]|[_ldap]\\ninclude_dirs = ${PYTHON3_ROOT}/include ${OPENLDAP_ROOT}/include|" setup.cfg
+  sed -i -e "s|\\[_ldap\\]|[_ldap]\\nlibrary_dirs = ${PYTHON3_ROOT}/lib ${OPENLDAP_ROOT}/lib|" setup.cfg
+  sed -i -e "s|HAVE_SASL||" setup.cfg
+}

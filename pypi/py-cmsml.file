@@ -1,0 +1,6 @@
+requires: 
+- py-six 
+- py-tabulate 
+- py-pytest 
+- py-pytest-xdist
+---

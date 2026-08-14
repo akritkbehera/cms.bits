@@ -1,0 +1,14 @@
+build_requires:
+- py-hatchling
+- py-hatch-vcs
+requires:
+- py-awkward
+- py-pandas
+- py-boost-histogram
+- py-hist
+- py-dask
+- py-dask-awkward
+- py-awkward-pandas
+- py-cramjam
+- py-xxhash
+---

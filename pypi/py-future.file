@@ -1,0 +1,7 @@
+---
+# future installs unsuffixed scripts (futurize, pasteurize) that would clash; cmsdist
+# renames them with a trailing 3.
+PipPostBuildPy=$(cat <<'POSTBUILD_EOF'
+for x in $(ls "$INSTALLROOT"/bin/*) ; do mv "$x" "${x}3"; done
+POSTBUILD_EOF
+)

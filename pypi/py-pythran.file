@@ -1,0 +1,6 @@
+requires:
+ - py-beniget 
+ - py-gast 
+ - py-numpy 
+ - py-ply
+---

@@ -1,0 +1,5 @@
+requires: 
+- py-flit-core 
+- py-setuptools-scm
+- py-tomli
+---

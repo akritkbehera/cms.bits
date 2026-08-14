@@ -1,0 +1,6 @@
+requires:
+- py-packaging
+- py-deprecation
+- py-tomlkit
+- py-hatchling
+---

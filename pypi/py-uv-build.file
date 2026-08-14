@@ -1,0 +1,14 @@
+build_requires:
+- py-maturin
+- rust
+requires:
+- py-puccinialin
+- py-tomli
+- bz2lib
+---
+PipPreBuild=$(cat <<'PREBUILD_EOF'
+export CARGO_HOME=$BUILDDIR/cargo_home
+export MATURIN_CACHE_DIR=$BUILDDIR/cargo_home/maturin
+export RUSTFLAGS="-L native=${BZ2LIB_ROOT}/lib"
+PREBUILD_EOF
+)

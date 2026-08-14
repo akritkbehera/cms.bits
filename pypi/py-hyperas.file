@@ -1,0 +1,7 @@
+requires:
+- py-jupyter
+- py-keras
+- py-hyperopt
+sources:
+- pip://hyperas/%(version)s
+---

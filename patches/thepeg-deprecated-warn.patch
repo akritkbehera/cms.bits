@@ -1,0 +1,44 @@
+diff --git a/Config/std.h b/Config/std.h
+index 485d51e..b5f80f5 100644
+--- a/Config/std.h
++++ b/Config/std.h
+@@ -47,13 +47,15 @@ namespace std {
+  * sets.
+  */
+ template <>
+-struct less<const type_info *> :
+-    public binary_function<const type_info *, const type_info *, bool> 
++struct less<const type_info *>
+ {
+   /**
+    * This is the function called when comparing two pointers to
+    * type_info.
+    */
++  typedef type_info first_argument_type;
++  typedef type_info second_argument_type;
++  typedef bool result_type;
+   bool operator()(const type_info * x, const type_info * y) const {
+     return x->before(*y); }
+ };
+diff --git a/Vectors/LorentzVector.h b/Vectors/LorentzVector.h
+index 7399255..7468e0c 100644
+--- a/Vectors/LorentzVector.h
++++ b/Vectors/LorentzVector.h
+@@ -726,7 +726,7 @@ template <typename Value>
+ inline LorentzVector<Value>
+ lightConeDir(Value plus, Value minus,
+ 	     Value x = Value(), Value y = Value()) {
+-  LorentzVector<Value> r(x, y, Direction<0>::dir()*0.5*(plus - minus),
++  LorentzVector<Value> r(x, y, static_cast<int>(Direction<0>::dir())*0.5*(plus - minus),
+ 		  0.5*(plus + minus));
+   return r;
+ }
+@@ -737,7 +737,7 @@ lightConeDir(Value plus, Value minus,
+ template <typename Value>
+ inline LorentzVector<Value>
+ lightConeDir(Value plus, Value minus, Transverse<Value> pt) {
+-  LorentzVector<Value> r(pt.x(), pt.y(), Direction<0>::dir()*0.5*(plus - minus),
++  LorentzVector<Value> r(pt.x(), pt.y(), static_cast<int>(Direction<0>::dir())*0.5*(plus - minus),
+ 		  0.5*(plus + minus));
+   return r;
+ 

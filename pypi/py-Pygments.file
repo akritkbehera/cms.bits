@@ -1,0 +1,8 @@
+requires:
+- py-hatchling
+patches:
+- Pygments-cpp-extension-fix.patch
+sources:
+- https://pypi.io/packages/source/p/pygments/pygments-%(version)s.tar.gz
+---
+PipPostBuild="mv $INSTALLROOT/bin/pygmentize $INSTALLROOT/bin/pygmentize3"

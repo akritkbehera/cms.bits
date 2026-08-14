@@ -1,0 +1,7 @@
+requires:
+- rust
+- py-setuptools-scm
+- py-semantic-version
+- py-toml
+- py-typing-extensions
+---

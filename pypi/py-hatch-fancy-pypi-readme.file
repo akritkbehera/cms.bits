@@ -1,0 +1,4 @@
+package: py-hatch-fancy-pypi-readme
+build_requires:
+- py-hatchling
+---

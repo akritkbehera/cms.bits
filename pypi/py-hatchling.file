@@ -1,0 +1,9 @@
+requires: 
+- py-pathspec 
+- py-tomli 
+- py-pluggy 
+- py-editables 
+- py-trove-classifiers
+- py-calver
+- py-packaging
+---

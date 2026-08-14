@@ -1,0 +1,7 @@
+package: py-GitPython
+requires:
+- py-gitdb
+- py-typing-extensions
+sources:
+- https://pypi.io/packages/source/g/gitpython/gitpython-%(version)s.tar.gz
+---

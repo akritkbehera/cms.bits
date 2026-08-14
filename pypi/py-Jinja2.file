@@ -1,0 +1,6 @@
+package: py-Jinja2
+requires:
+- py-MarkupSafe
+sources:
+- https://pypi.io/packages/source/j/jinja2/jinja2-%(version)s.tar.gz
+---

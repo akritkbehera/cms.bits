@@ -1,0 +1,9 @@
+requires:
+- py-setuptools-scm
+- py-importlib-metadata
+- py-secretstorage
+- py-jeepney
+- py-jaraco-classes
+- py-jaraco-functools
+- py-jaraco-context
+---

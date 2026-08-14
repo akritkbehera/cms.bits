@@ -1,0 +1,11 @@
+requires:
+- lz4
+- py-future
+- py-pkgconfig
+- py-setuptools-scm
+---
+PipPreBuildPy=$(cat <<'PREBUILD_EOF'
+export LDFLAGS="-L${LZ4_ROOT}/lib"
+export CFLAGS="-I${LZ4_ROOT}/include"
+PREBUILD_EOF
+)

@@ -1,0 +1,9 @@
+requires:
+- py-astroid
+- py-toml
+- py-dill
+- py-astroid
+- py-six
+- py-isort
+- py-mccabe
+---

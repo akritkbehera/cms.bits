@@ -1,0 +1,3 @@
+# Port of cmsdist's vecgeom-opt.file. #!include this where cmsdist's real spec does
+# `## INCLUDE vecgeom-opt`.
+enable_vecgeom="${enable_vecgeom:-1}"

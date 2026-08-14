@@ -1,0 +1,418 @@
+### FILE scram-project-build
+## NO_AUTO_DEPENDENCY
+## INCLUDE toolflags
+# FIXME: support building all platforms together like scram does?
+# FIXME: automatic sub-packages for "doc" etc? 
+%define cmssw_libs biglib/%{cmsplatf} lib/%{cmsplatf}
+%define scram_home_suffix %(echo %{directpkgreqs} | grep -q /SCRAMV1/V2_ && echo /src || true)
+%define scram_script_prefix %(echo %{directpkgreqs} | grep -q /SCRAMV1/V2_ && echo .pl || echo .py)
+
+%if "%{?pgo_generate}"
+%undefine runGlimpse
+%undefine saveDeps
+%undefine subpackageDebug
+%endif
+
+Requires: SCRAMV1
+BuildRequires: gcc
+
+# Biglib enable/disable
+%if "%{?enable_biglib:set}" != "set"
+%define enable_biglib 1
+%endif
+
+# For non-linux archs disable subpackageDebug otherwise add dwz.file build dependencies.
+%if "%{?subpackageDebug:set}" == "set"
+%ifos linux
+BuildRequires: dwz
+%else
+%undefine subpackageDebug
+%endif
+%endif
+
+%define initenv	        %initenv_direct
+%define scramcmd        $SCRAMV1_ROOT/bin/scram --arch %cmsplatf
+%define srctree		src
+
+%if "%{?buildtarget:set}" != "set"
+%define buildtarget	release-build
+%endif
+
+%if "%{?scram_compiler:set}" != "set"
+%define scram_compiler          gcc
+%endif
+
+%define bootstrapfile   config/bootsrc.xml
+
+%if "%{?subpackageDebug:set}" == "set"
+# note: do not change the order of the -fdebug-prefix-map options, they seem to be use in reverse order
+%define extraOptions USER_CXXFLAGS='-fdebug-prefix-map=%{cmsroot}=%{installroot} -fdebug-prefix-map=%{instroot}=%{installroot} -g %{?usercxxflags}'
+%else
+%if "%{?usercxxflags:set}" == "set"
+%define extraOptions USER_CXXFLAGS='%{usercxxflags}'
+%else
+%define extraOptions %{nil}
+%endif
+%endif
+
+%if "%{?configtag:set}" != "set"
+%define configtag       V09-08-10
+%endif
+
+%if "%{?buildarch:set}" != "set"
+%define buildarch	:
+%endif
+
+%if "%{?ucprojtype:set}" != "set"
+%define ucprojtype      %(echo %{n} | sed -e "s|-patch||" | tr 'a-z' 'A-Z')
+%endif
+%define lcprojtype      %(echo %ucprojtype | tr 'A-Z' 'a-z')
+%if "%{?toolconf:set}" != "set"
+%define toolconf        %(echo %{n} | sed "s|-|_|g" | tr 'a-z' 'A-Z')_TOOL_CONF_ROOT
+%endif
+
+%define source0 git+https://github.com/cms-sw/cmssw-config.git?obj=master/%{configtag}&export=config&output=/cmssw-config-%{configtag}.tgz
+
+Source0: %source0
+Source1: %source1
+
+# IMPORTANT: notice that the only reason
+# why we specify sources like this is that
+# we need the associated %%setup macro in the %%prep 
+# section.
+# In case you need to have a generic file copied
+# from CMSDIST, simply put whatever "SourceX: file" you
+# need in the spec which is importing this fragment.
+# DO NOT add any special hook which does not have a 
+# corresponding %%setup macro.
+%if "%{?additionalSrc0:set}" == "set"
+Source2: %{additionalSrc0}&output=/src1.tar.gz
+%endif
+
+%if "%{?additionalSrc1:set}" == "set"
+Source3: %{additionalSrc1}&output=/src2.tar.gz
+%endif
+
+%prep
+rm -rf config %{srctree} poison
+
+%setup -T -b 0 -n config
+%setup -D -T -b 1 -n %{srctree}
+
+%if "%{?additionalSrc0:set}" == "set"
+%setup -D -T -b 2 -n %{srctree}
+%endif
+
+%if "%{?additionalSrc1:set}" == "set"
+%setup -D -T -b 3 -n %{srctree}
+%endif
+
+%{?PatchReleaseAdditionalPackages:%PatchReleaseAdditionalPackages}
+
+cd %_builddir
+echo %{configtag} > %_builddir/config/config_tag
+%_builddir/config/updateConfig.py -p %{ucprojtype} -v %v -s $SCRAMV1_VERSION -t ${%{toolconf}} \
+  --keys SCRAM_COMPILER=%{scram_compiler} \
+  --keys ENABLE_LTO=%{enable_lto} \
+%if "%{?gitcommit:set}" == "set"
+  --keys PROJECT_GIT_HASH=%{gitcommit} \
+%else
+  --keys PROJECT_GIT_HASH=%{realversion} \
+%endif
+%if "%{?pgo_build_flags}"
+  --keys ENABLE_PGO=1
+%else
+  --keys ENABLE_PGO=0
+%endif
+
+sed -i -e 's| SCRAM_TARGETS=.*"| SCRAM_TARGETS=""|' %_builddir/config/Self.xml
+if [ "%{n}" != "coral" ]; then
+  sed -i -e 's|</tool>| <runtime name="SCRAM_DEFAULT_MICROARCH" value="%{default_microarch_name}"/>\n</tool>|' %_builddir/config/Self.xml
+fi
+%if "%{package_vectorization}"
+%if "%{?scram_target_default:set}" != "set"
+%define scram_target_default auto
+%endif
+%endif
+if [ "%{n}" != "coral" ]; then
+  if [ -e ${%{toolconf}}/vectorized_packages.txt ] ; then
+    sed -i -e 's| SCRAM_TARGETS=.*"| SCRAM_TARGETS="%{package_vectorization}"|' %_builddir/config/Self.xml
+    sed -i -e 's|</tool>| <runtime name="SCRAM_MIN_SUPPORTED_MICROARCH" value="%{default_microarch_name}"/>\n</tool>|' %_builddir/config/Self.xml
+    sed -i -e 's|</tool>| <runtime name="SCRAM_TARGET" value="%{scram_target_default}"/>\n <runtime name="USER_TARGETS_ALL" value="1"/>\n</tool>|' %_builddir/config/Self.xml
+  fi
+fi
+
+%if "%{?release_usercxxflags:set}" == "set"
+echo '<flags CXXFLAGS="%{release_usercxxflags}"/>' >> %_builddir/config/BuildFile.xml
+%endif
+%if "%{?release_userldflags:set}" == "set"
+echo '<flags LDFLAGS="%{release_userldflags}"/>' >> %_builddir/config/BuildFile.xml
+%endif
+
+
+%{?PartialBootstrapPatch:%PartialBootstrapPatch}
+%{?patchsrc:%patchsrc}
+%{expand:%(for i in {2..20..1} ; do echo %%{?patchsrc$i:%%patchsrc$i}; done)}
+
+rm -rf %i
+mkdir -p $(dirname %i)
+%{?buildarch:%buildarch}
+%scramcmd project -d $(dirname %i) -b %{bootstrapfile}
+%if "%{?pgo_build_flags}"
+sed -i -e 's|@LOCALTOP@|%{i}|' %i/config/toolbox/%{cmsplatf}/tools/selected/gcc-cxxcompiler.xml
+%endif
+
+%build
+
+# Remove cmt stuff that brings unwanted dependencies:
+rm -rf `find %{i}/%{srctree} -type d -name cmt`
+grep -r -l -e "^#!.*perl.*" %{i}/%{srctree} | xargs perl -p -i -e "s|^#!.*perl(.*)|#!/usr/bin/env perl\$1|"
+
+%scramcmd arch
+cd %i/%{srctree}
+%if "%{enable_biglib}" == "0"
+%scramcmd build disable-biglib || true
+%endif
+%if "%{?extra_tools:set}" == "set"
+for t in %{extra_tools}; do %scramcmd setup $t; done
+%endif
+%if "%{?remove_tools:set}" == "set"
+for t in %{remove_tools}; do  %scramcmd tool remove $t; done
+%endif
+echo -e '<tool name="cmssw-config" version="%{configtag}" revision="1">\n</tool>' > %{i}/config/toolbox/%{cmsplatf}/tools/selected/cmssw-config.xml
+%scramcmd setup cmssw-config
+%{?buildarch:%buildarch}
+
+export BUILD_LOG=yes
+export SCRAM_NOPLUGINREFRESH=yes
+
+# We clean everything before doing anything else.
+%scramcmd b clean
+
+if [ $(uname) = Darwin ]; then
+  # %scramcmd doesn't know the rpath variable on darwin...
+  %scramcmd b echo_null # ensure lib, bin exist
+  eval `%scramcmd runtime -sh`
+  export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
+fi
+
+%if "%{?nolibchecks:set}" == "set"
+export SCRAM_NOLOADCHECK=true
+export SCRAM_NOSYMCHECK=true
+%endif
+
+%{?preBuildCommand:%preBuildCommand}
+
+%scramcmd b -r echo_CXX </dev/null
+
+%{?PatchReleasePythonSymlinks:%PatchReleasePythonSymlinks}
+
+%if "%{?prebuildtarget:set}" == "set"
+%scramcmd b --verbose -f %{prebuildtarget} </dev/null
+%endif
+
+%if "%{?pgo_generate:set}" != "set"
+case %{n} in (cmssw|cmssw-patch) %scramcmd b -f -k %{makeprocesses} llvm-ccdb </dev/null || true ;; esac
+%endif
+if grep 'name="SCRAM_TARGET"' %{i}/config/Self.xml ; then
+  touch %{i}/.SCRAM/%{cmsplatf}/multi-targets
+fi
+%scramcmd b --verbose -f %{compileOptions} %{extraOptions} %{makeprocesses} %{buildtarget} </dev/null || { touch ../build-errors && %scramcmd b -f outputlog && [ "%{?ignore_compile_errors:set}" == "set" ]; }
+
+%if "%{?additionalBuildTarget0:set}" == "set"
+%scramcmd b --verbose -f %{additionalBuildTarget0} < /dev/null
+%endif
+
+%if "%{?postbuildtarget:set}" == "set"
+%scramcmd b --verbose -f %{postbuildtarget} </dev/null
+%endif
+
+# Move the debug logs into the builddir, so that they do not get packaged.
+LOG_WEB_DIR=%cmsroot/WEB/build-logs/%{cmsplatf}/%{v}
+rm -rf ${LOG_WEB_DIR}
+mkdir -p ${LOG_WEB_DIR}/logs/src
+if [ -d %{i}/tmp/%{cmsplatf}/cache/log/src ]; then
+  pushd %{i}/tmp/%{cmsplatf}/cache/log/src
+    tar czf ${LOG_WEB_DIR}/logs/src/src-logs.tgz ./
+  popd
+fi
+
+%if "%{?saveDeps:set}" == "set"
+mkdir -p %i/etc/dependencies
+SCRAM_TOOL_HOME=$SCRAMV1_ROOT%{scram_home_suffix} %i/config/SCRAM/findDependencies%{scram_script_prefix} -rel %i -arch %cmsplatf
+%{?PatchReleaseDependencyInfo:%PatchReleaseDependencyInfo}
+gzip -f %i/etc/dependencies/*.out
+%endif
+
+
+eval `%scramcmd run -sh`
+for cmd in edmPluginRefresh ; do
+  cmdpath=`which $cmd 2> /dev/null || echo ""`
+  if [ "X$cmdpath" != X ] ; then
+    for lib in %{cmssw_libs} ; do
+      if [ -d %i/$lib ] ; then
+        rm -f %i/$lib/.edmplugincache
+        $cmd %i/$lib
+%if "%{package_vectorization}"
+        for arch in %{package_vectorization} ; do
+          arch_dir=%i/$lib/scram_${arch}
+          [ -d ${arch_dir} ] || continue
+          rm -f ${arch_dir}/.edmplugincache
+          if [ -e %i/$lib/.edmplugincache ] ; then
+            cp %i/$lib/.edmplugincache ${arch_dir}/.edmplugincache
+          fi
+        done
+%endif
+      fi
+    done
+  fi
+done
+
+%install
+# FIXME: not having it set seems to cause a bunch of
+# issues on macosx, because various tools actually use it and are unable 
+# to autodetect. Temporary until we get proper support.
+SCRAM_ARCH=%cmsplatf ; export SCRAM_ARCH
+cd %i
+%{?buildarch:%buildarch}
+
+%scramcmd install -f
+rm -rf external/%cmsplatf; SCRAM_TOOL_HOME=$SCRAMV1_ROOT%{scram_home_suffix}  ./config/SCRAM/linkexternal%{scram_script_prefix} --arch %cmsplatf
+
+%{?PartialReleasePackageList:%PartialReleasePackageList}
+%{?PatchReleaseSourceSymlinks:%PatchReleaseSourceSymlinks}
+
+%if "%{?runGlimpse:set}" == "set"
+%scramcmd b --verbose -f gindices </dev/null
+%endif
+
+%{?RelocatePatchReleaseSymlinks:%RelocatePatchReleaseSymlinks}
+
+tar czf %{srctree}.tar.gz %{srctree}
+rm -fR %{srctree} tmp
+
+# Handle debug symbols. We always have a debug subpackage for debug symbols so
+# no point in complicating the standard builds with this.
+%if "%{?subpackageDebug:set}" == "set"
+touch %i/.SCRAM/%cmsplatf/subpackage-debug
+if [ "%{n}" == "coral" ]; then
+  ELF_DIRS="%i/%cmsplatf/lib %i/%cmsplatf/tests/bin"
+  DROP_SYMBOLS_DIRS=""
+else
+  ELF_DIRS="%i/lib/%cmsplatf %i/biglib/%cmsplatf %i/bin/%cmsplatf %i/test/%cmsplatf"
+  DROP_SYMBOLS_DIRS="%i/objs/%cmsplatf"
+fi
+
+# optimise the debug symbols, compress them, and split them into separate file
+for DIR in $ELF_DIRS $DROP_SYMBOLS_DIRS; do
+  pushd $DIR
+  mkdir -p .debug
+  # ELF binaries
+  ELF_BINS=$(file * | grep ELF | cut -d':' -f1)
+  if [ ! -z "$ELF_BINS" ]; then
+    if [ $(echo $ELF_BINS | wc -w) -gt 1 ] ; then
+      dwz -m .debug/common-symbols.debug -M common-symbols.debug $ELF_BINS || true
+    fi
+    echo "$ELF_BINS" | xargs -t -n1 -P%{compiling_processes} -I% sh -c 'objcopy --compress-debug-sections --only-keep-debug % .debug/%.debug; objcopy --strip-debug --add-gnu-debuglink=.debug/%.debug %'
+  fi
+  popd
+done
+
+for DIR in $DROP_SYMBOLS_DIRS; do
+  rm -rf $DIR/.debug
+done
+
+# split the debug symbols out of the main binaries, into separate files
+rm -f %_builddir/files.debug %_builddir/files
+touch %_builddir/files.debug %_builddir/files
+for DIR in $ELF_DIRS; do
+  DIR=`echo $DIR | sed 's|^%i/|%{installroot}/%{pkgrel}/|'`
+  echo "%exclude $DIR/.debug"   >> %_builddir/files
+  echo "$DIR/.debug"            >> %_builddir/files.debug
+done
+%endif
+
+######################################################
+#Do the symlink relocation as a last step in install
+for L in `find external/%cmsplatf -type l`; do
+  lnk=`readlink -n $L 2>&1`
+  case $lnk in
+     %{cmsroot}/*)
+       rl=`echo $L | sed -e 's|[^/]*/|../|g;' | xargs dirname`
+       al=`echo $lnk | sed -e "s|^%{cmsroot}/|../../../../$rl/|"`
+       rm -f $L
+       ln -sf  $al $L
+       ;;
+   esac
+done
+find external/%cmsplatf -type l | xargs ls -l
+%{?PatchReleaseSymlinkRelocate:%PatchReleaseSymlinkRelocate}
+echo "%{cmsroot}" > %{i}/config/scram_basedir
+
+%post
+export SCRAM_ARCH=%cmsplatf
+cd $RPM_INSTALL_PREFIX/%pkgrel
+if [ -e %{srctree}.tar.gz ] ; then
+  tar xzf %{srctree}.tar.gz
+  rm -fR  %{srctree}.tar.gz
+fi
+scramver=`cat config/scram_version`
+SCRAMV1_ROOT=$RPM_INSTALL_PREFIX/%cmsplatf/lcg/SCRAMV1/$scramver
+
+if [ -d python ]; then %{relocateCmsFiles} $(find python -maxdepth 1 -type f); fi
+./config/SCRAM/projectAreaRename%{scram_script_prefix} %{instroot} $CMS_INSTALL_PREFIX  %cmsplatf
+./config/SCRAM/projectAreaRename%{scram_script_prefix} %{cmsroot}  $CMS_INSTALL_PREFIX  %cmsplatf
+%{?buildarch:%buildarch}
+
+xlibs="%{cmssw_libs}"
+%if "%{package_vectorization}"
+for dir in %{cmssw_libs} ; do
+  for arch in %{package_vectorization} ; do
+    xlibs="{xlibs} ${dir}/scram_${arch}"
+  done
+done
+%endif
+for lib in ${xlibs} ; do
+  if [ -f $lib/.edmplugincache ] ; then
+    find  $lib -name "*.edmplugin" -type f -exec touch {} \;
+    touch $lib/.edmplugincache
+  fi
+done
+
+%{?PatchReleaseFilesRelocate:%PatchReleaseFilesRelocate}
+%{?PartialReleaseFilesRelocate:%PartialReleaseFilesRelocate}
+[ -f $RPM_INSTALL_PREFIX/etc/scramrc/%{pkgname}.map ] || (mkdir -p $RPM_INSTALL_PREFIX/etc/scramrc && echo '%{ucprojtype}=$SCRAM_ARCH/%{pkgcategory}/%{pkgname}/%{ucprojtype}_*' > $RPM_INSTALL_PREFIX/etc/scramrc/%{pkgname}.map)
+
+%if "%{?runGlimpse:set}" == "set"
+  %{relocateConfig}.glimpse_full/.glimpse_filenames
+%endif
+
+#Relocate compile_commands.json if exists
+if [ -f compile_commands.json ] ; then
+  %{relocateConfig}compile_commands.json
+fi
+%{relocateConfig}external/%cmsplatf/links.DB
+
+#Run site specific updates
+if [ -e $RPM_INSTALL_PREFIX/etc/scramrc/site.cfg ] ; then
+  #Enable/Disable multi-targets if configured via site configuration
+  if [ -e .SCRAM/%{cmsplatf}/multi-targets ] ; then
+    site_scram_target=$(grep '^\s*scram-target\s*=' $RPM_INSTALL_PREFIX/etc/scramrc/site.cfg | sed 's| ||g;s|.*=||')
+    if [ "${site_scram_target}" != "" ] && [ "${site_scram_target}" != "none" ] && [ "${site_scram_target}" != "%{scram_target_default}" ] ; then
+      sed -i -e "/=\"SCRAM_TARGET\"/s/\"%{scram_target_default}\"/\"${site_scram_target}\"/" config/Self.xml
+      $RPM_INSTALL_PREFIX/common/scram setup self
+    fi
+  fi
+  #Run post install site specific scripts
+  #scram: For all scram based projects e.g. coral, cmssw, cmssw-patch, fwlite etc.
+  #cmssw: For both full or patch release e.g. cmssw and cmssw-patch
+  for type in scram %{lcprojtype} ; do
+    script=$(grep "^\s*${type}-post-install-script\s*=" $RPM_INSTALL_PREFIX/etc/scramrc/site.cfg | sed 's| ||g;s|.*=||')
+    if [ "${script}" != "" ] && [ -e "${script}" ] && [ -x "${script}" ] ; then
+      ${script} %{cmsplatf}
+    fi
+  done
+fi
+
+%postun
+rm -fR $RPM_INSTALL_PREFIX/%pkgrel

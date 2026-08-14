@@ -1,0 +1,5 @@
+package: py-attrs
+requires:
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+---

@@ -1,0 +1,9 @@
+build_requires:
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+requires:
+- py-typing-extensions
+- py-annotated-types
+- py-pydantic-core
+- py-typing-inspection
+---

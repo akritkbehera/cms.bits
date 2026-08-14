@@ -1,0 +1,9 @@
+build_requires:
+- py-hatchling
+- py-hatch-vcs
+requires:
+- py-exceptiongroup
+- py-packaging
+- py-pathspec
+- py-tomli
+---

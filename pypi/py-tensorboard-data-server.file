@@ -1,0 +1,9 @@
+sources:
+ - https://github.com/tensorflow/tensorboard/archive/refs/tags/data-server-v%(version)s.tar.gz
+---
+PipPatchSource="pushd .. ; \
+  mkdir data-server ; \
+  mv tensorboard-data-server-v$PKGVERSION/tensorboard/data/server/pip_package/* data-server/ ; \
+  rm -rf tensorboard-data-server-v$PKGVERSION ; \
+  mv data-server tensorboard-data-server-v$PKGVERSION ; \
+  popd"

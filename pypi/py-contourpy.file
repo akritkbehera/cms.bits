@@ -1,0 +1,6 @@
+requires:
+- py-pybind11
+- py-numpy
+- py-meson-python
+- py-meson
+---

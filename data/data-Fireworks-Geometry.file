@@ -1,0 +1,5 @@
+sources:
+ - https://github.com/cms-data/Fireworks-Geometry/archive/refs/tags/%(version)s.tar.gz 
+ - http://cmsrep.cern.ch/cmssw/download/Fireworks-Geometry/20200401/cmsGeom2026.root?no-cmssdt-cache=1&output=/cmsGeom2026.root
+---
+PostPrep="cp ${SOURCEDIR}/cmsGeom2026.root ."

@@ -1,0 +1,7 @@
+package: py-Bottleneck
+requires:
+- py-numpy
+- py-versioneer
+sources:
+- https://pypi.io/packages/source/b/bottleneck/bottleneck-%(version)s.tar.gz
+---

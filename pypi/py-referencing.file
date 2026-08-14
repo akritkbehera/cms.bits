@@ -1,0 +1,7 @@
+build_requires:
+- py-hatchling
+- py-hatch-vcs
+requires:
+- py-attrs
+- py-rpds-py
+---

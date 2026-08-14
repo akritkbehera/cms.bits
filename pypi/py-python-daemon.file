@@ -1,0 +1,6 @@
+requires:
+ - py-docutils
+ - py-lockfile
+ - py-changelog-chug
+ - py-semver
+---

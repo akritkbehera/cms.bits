@@ -1,0 +1,8 @@
+requires:
+- py-typing-extensions
+- py-lazy-object-proxy
+- py-six
+- py-wrapt
+- py-singledispatch
+- py-pytest-runner
+---

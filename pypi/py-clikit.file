@@ -1,0 +1,6 @@
+requires:
+- py-poetry-core
+- py-crashtest
+- py-pastel
+- py-pylev
+---

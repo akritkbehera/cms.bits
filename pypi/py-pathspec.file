@@ -1,0 +1,4 @@
+package: py-pathspec
+requires:
+- py-flit-core
+---

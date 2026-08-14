@@ -1,0 +1,30 @@
+From bcd09d6c007ff0c699f02338f8f8ff803387b512 Mon Sep 17 00:00:00 2001
+From: Christian Maurer <c.maurer@gmx.at>
+Date: Thu, 25 Nov 2021 14:19:42 +0100
+Subject: [PATCH] Fix deprecated inheritance of std::iterator
+
+---
+ include/grpcpp/impl/codegen/security/auth_context.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/include/grpcpp/impl/codegen/security/auth_context.h b/include/grpcpp/impl/codegen/security/auth_context.h
+index d834ec16a2e3e..c67e1cff43c2f 100644
+--- a/include/grpcpp/impl/codegen/security/auth_context.h
++++ b/include/grpcpp/impl/codegen/security/auth_context.h
+@@ -36,9 +36,14 @@ class SecureAuthContext;
+ 
+ typedef std::pair<string_ref, string_ref> AuthProperty;
+ 
+-class AuthPropertyIterator
+-    : public std::iterator<std::input_iterator_tag, const AuthProperty> {
++class AuthPropertyIterator {
+  public:
++  using iterator_category = std::forward_iterator_tag;
++  using value_type = const AuthProperty;
++  using pointer = void;
++  using reference = void;
++  using difference_type = std::ptrdiff_t;
++
+   ~AuthPropertyIterator();
+   AuthPropertyIterator& operator++();
+   AuthPropertyIterator operator++(int);

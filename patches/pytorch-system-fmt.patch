@@ -1,0 +1,45 @@
+diff --git a/c10/CMakeLists.txt b/c10/CMakeLists.txt
+index bd138d220..7f717b290 100644
+--- a/c10/CMakeLists.txt
++++ b/c10/CMakeLists.txt
+@@ -91,6 +91,7 @@ if(NOT BUILD_LIBTORCHLESS)
+     target_link_libraries(c10 PUBLIC glog::glog)
+   endif()
+ 
++  find_package(fmt REQUIRED)
+   target_link_libraries(c10 PUBLIC headeronly)
+   target_link_libraries(c10 PRIVATE fmt::fmt-header-only)
+   target_link_libraries(c10 PRIVATE nlohmann)
+diff --git a/caffe2/CMakeLists.txt b/caffe2/CMakeLists.txt
+index e4a0454ec..c6522a77c 100644
+--- a/caffe2/CMakeLists.txt
++++ b/caffe2/CMakeLists.txt
+@@ -38,6 +38,7 @@ else()
+   message(FATAL_ERROR "Unknown ATen parallel backend: ${ATEN_THREADING}")
+ endif()
+ 
++find_package(fmt REQUIRED)
+ # ---[ Declare source file lists
+ 
+ # ---[ ATen build
+diff --git a/torch/CMakeLists.txt b/torch/CMakeLists.txt
+index 23aa88ddc..5e68d71c4 100644
+--- a/torch/CMakeLists.txt
++++ b/torch/CMakeLists.txt
+@@ -75,6 +75,7 @@ set(TORCH_PYTHON_INCLUDE_DIRECTORIES
+     )
+ 
+ list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES ${LIBSHM_SRCDIR})
++list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES ${FMT_INCLUDE_DIRS})
+ 
+ set(TORCH_PYTHON_LINK_LIBRARIES
+     Python::Module
+@@ -83,7 +84,7 @@ set(TORCH_PYTHON_LINK_LIBRARIES
+     nlohmann
+     moodycamel
+     shm
+-    fmt::fmt-header-only
++    fmt::fmt
+     ATEN_CPU_FILES_GEN_LIB)
+ 
+ if(USE_ASAN AND TARGET Sanitizer::address)

@@ -1,0 +1,5 @@
+requires:
+- libxml2
+- libxslt
+- zlib
+---

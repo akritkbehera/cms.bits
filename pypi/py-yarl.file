@@ -1,0 +1,9 @@
+package: py-yarl
+requires:
+- py-multidict
+- py-idna
+- py-tomli
+- py-expandvars
+- py-cython
+- py-propcache
+---

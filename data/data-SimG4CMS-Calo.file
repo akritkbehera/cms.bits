@@ -1,0 +1,4 @@
+sources:
+ - http://cmsrep.cern.ch/cmssw/download/data/%(package)s-%(version)s.tar.gz
+---
+EXPORT_DIR="${PKGNAME}-${PKGVERSION}"

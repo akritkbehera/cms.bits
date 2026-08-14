@@ -1,0 +1,11 @@
+build_requires:
+- py-hatchling
+requires:
+- py-jsonschema
+- py-python-json-logger
+- py-PyYAML
+- py-traitlets
+- py-rfc3339-validator
+- py-rfc3986-validator
+- py-referencing
+---

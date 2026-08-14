@@ -1,0 +1,7 @@
+requires:
+- py-numpy
+- py-matplotlib
+- py-scipy
+- py-ipywidgets
+- py-scikit-build-core
+---

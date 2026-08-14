@@ -1,0 +1,15 @@
+build_requires:
+- pip
+- setuptools
+- py-wheel
+requires:
+- py-PyYAML
+- py-cmsml
+variables:
+ github_user: cms-externals
+ tag: bd45d653370360db8118efcad77246b0c61e560a
+ branch: master
+sources:
+- git+https://github.com/%(github_user)s/cms-tfaot.git?obj=%(branch)s/%(tag)s&export=cms-tfaot-%(version)s&output=/cms-tfaot-%(version)s-%(tag)s.tgz
+---
+PipPostInstall='mkdir -p $INSTALLROOT/share; cp -r $BUILDDIR/cms-tfaot-*/test_models $INSTALLROOT/share/'

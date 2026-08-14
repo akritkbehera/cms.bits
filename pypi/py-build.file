@@ -1,0 +1,9 @@
+build_requires:
+- py-flit-core
+- py-pyproject-hooks
+requires:
+- py-packaging
+- py-tomli
+- py-importlib-metadata
+- py-tomli
+---

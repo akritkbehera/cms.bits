@@ -1,0 +1,8 @@
+requires:
+- py-funcsigs
+- py-six
+- py-singledispatch
+- py-llvmlite
+- py-numpy
+- python3
+---

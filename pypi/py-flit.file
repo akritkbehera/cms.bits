@@ -1,0 +1,8 @@
+requires:
+- py-docutils
+- py-flit-core
+- py-pytoml
+- py-requests
+- py-tomli
+- py-tomli-w
+---

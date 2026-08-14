@@ -1,0 +1,7 @@
+requires:
+- py-ipykernel
+- py-notebook-shim
+- py-jupyter-packaging
+- py-jupyter-server
+- py-babel
+---

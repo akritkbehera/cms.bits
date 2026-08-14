@@ -1,0 +1,8 @@
+build_requires:
+- py-setuptools-scm
+requires:
+- py-idna
+- py-sniffio
+- py-exceptiongroup
+- py-typing-extensions
+---

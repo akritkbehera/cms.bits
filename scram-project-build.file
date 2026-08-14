@@ -1,0 +1,529 @@
+#!/bin/bash
+# scram-project-build.sh
+# Template script — do not execute directly.
+# Variables substituted by resolve_meta.py before execution.
+
+# ===========================================================================
+# Logging library — colored, Jenkins-friendly (requires AnsiColor plugin)
+# Colors default ON (Jenkins console is not a TTY, so no -t check).
+# Disable with NO_COLOR=1.
+# ===========================================================================
+if [ -z "${NO_COLOR}" ]; then
+  C_RESET=$'\033[0m';  C_BOLD=$'\033[1m';  C_DIM=$'\033[2m'
+  C_RED=$'\033[1;31m'; C_GREEN=$'\033[1;32m'; C_YELLOW=$'\033[1;33m'
+  C_BLUE=$'\033[1;34m'; C_MAGENTA=$'\033[1;35m'; C_CYAN=$'\033[1;36m'
+else
+  C_RESET=''; C_BOLD=''; C_DIM=''
+  C_RED=''; C_GREEN=''; C_YELLOW=''; C_BLUE=''; C_MAGENTA=''; C_CYAN=''
+fi
+
+_ts() { date '+%%H:%%M:%%S'; }
+
+log_info()  { echo "${C_CYAN}[$(_ts)][INFO]${C_RESET} $*"; }
+log_ok()    { echo "${C_GREEN}[$(_ts)][ OK ]${C_RESET} $*"; }
+log_warn()  { echo "${C_YELLOW}[$(_ts)][WARN]${C_RESET} $*"; }
+log_err()   { echo "${C_RED}[$(_ts)][FAIL]${C_RESET} $*" >&2; }
+log_cmd()   { echo "${C_DIM}[$(_ts)][ \$ ]${C_RESET} ${C_BOLD}$*${C_RESET}"; }
+log_skip()  { echo "${C_DIM}[$(_ts)][SKIP]${C_RESET} $*"; }
+
+# Section banners with per-block timing
+_BLOCK_NAME=""; _BLOCK_T0=0; _SCRIPT_T0=$(date +%%s)
+log_section() {
+  # Close out previous block timer, if any
+  [ -n "$_BLOCK_NAME" ] && \
+    log_ok "Block '${_BLOCK_NAME}' finished in $(( $(date +%%s) - _BLOCK_T0 ))s"
+  _BLOCK_NAME="$*"; _BLOCK_T0=$(date +%%s)
+  echo ""
+  echo "${C_MAGENTA}${C_BOLD}=================================================================${C_RESET}"
+  echo "${C_MAGENTA}${C_BOLD}==[$(_ts)]== $* ${C_RESET}"
+  echo "${C_MAGENTA}${C_BOLD}=================================================================${C_RESET}"
+}
+_log_summary() {
+  rc=$?
+  [ -n "$_BLOCK_NAME" ] && \
+    log_ok "Block '${_BLOCK_NAME}' finished in $(( $(date +%%s) - _BLOCK_T0 ))s"
+  total=$(( $(date +%%s) - _SCRIPT_T0 ))
+  echo ""
+  if [ $rc -eq 0 ]; then
+    log_ok "scram-project-build.sh completed for ${PKGNAME:-?} (${ARCHITECTURE:-?}) in ${total}s"
+  else
+    log_err "scram-project-build.sh FAILED (rc=$rc) in block '${_BLOCK_NAME}' after ${total}s"
+  fi
+}
+trap _log_summary EXIT
+
+# Echo + run helper for the commands worth surfacing in the Jenkins log
+run() { log_cmd "$*"; "$@"; }
+
+# Parallelism knobs
+NPROC=${JOBS:-$(nproc 2>/dev/null || echo 4)}
+# Compression: prefer pigz for multi-core tar/gzip
+if command -v pigz >/dev/null 2>&1; then
+  COMPRESS_PROG="pigz -p $NPROC"
+else
+  COMPRESS_PROG="gzip"
+  log_warn "pigz not found — falling back to single-threaded gzip"
+fi
+
+log_section "Block 1: Configuration"
+
+# ---------------------------------------------------------------------------
+# Block 1: Configurable — substituted by calling package
+# ---------------------------------------------------------------------------
+CONFIGTAG="%(configtag)s"
+BUILDTARGET="%(buildtarget)s"
+SCRAM_COMPILER="%(scram_compiler)s"
+ENABLE_BIGLIB="%(enable_biglib)s"
+SRCTREE="%(srctree)s"
+BOOTSTRAPFILE="%(bootstrapfile)s"
+SUBPACKAGE_DEBUG="%(subpackageDebug)s"
+PACKAGE_VECTORIZATION="%(package_vectorization)s"
+USERCXXFLAGS="%(usercxxflags)s"
+
+# Derived — computed at runtime from environment
+SCRAMV1_VERSION=$(basename "$SCRAMV1_ROOT")
+SCRAMCMD="$SCRAMV1_ROOT/bin/scram -v --arch $ARCHITECTURE"
+SCRAM_SCRIPT_PREFIX=".py"
+# Extract base project type: CMSSW_20_1_X -> CMSSW, coral -> CORAL
+UCPROJTYPE=$(echo "$PKGNAME" | sed -e 's|-patch||' -e 's|_[0-9].*||' | tr 'a-z' 'A-Z')
+LCPROJTYPE=$(echo "$UCPROJTYPE" | tr 'A-Z' 'a-z')
+TOOLCONF_VAR=$(echo "$PKGNAME" | sed 's|-|_|g' | tr 'a-z' 'A-Z')_TOOL_CONF_ROOT
+TOOLCONF_PATH="${!TOOLCONF_VAR:-$CMSSW_TOOL_CONF_ROOT}"
+CMSSW_LIBS="biglib/$ARCHITECTURE lib/$ARCHITECTURE"
+
+log_info "Package        : ${C_BOLD}$PKGNAME $PKGVERSION${PKGREVISION:+-$PKGREVISION}${C_RESET}"
+log_info "Architecture   : $ARCHITECTURE"
+log_info "Project type   : $UCPROJTYPE / $LCPROJTYPE"
+log_info "SCRAM          : $SCRAMV1_VERSION"
+log_info "Toolconf       : $TOOLCONF_PATH (via \$$TOOLCONF_VAR)"
+log_info "Build target   : ${BUILDTARGET:-<default>}"
+log_info "Compiler       : ${SCRAM_COMPILER:-<default>}"
+log_info "Parallel jobs  : $NPROC   Compressor: $COMPRESS_PROG"
+
+# ---------------------------------------------------------------------------
+# Block 2: extraOptions — three cases from spec
+#   1. subpackageDebug on  → fdebug-prefix-map both cmsroot and instroot + -g
+#   2. usercxxflags set    → pass through as USER_CXXFLAGS
+#   3. neither             → empty
+# cmsroot  = $WORK_DIR
+# instroot = $WORK_DIR/$ARCHITECTURE
+# ---------------------------------------------------------------------------
+if [ "$SUBPACKAGE_DEBUG" != "0" ]; then
+    EXTRA_CXXFLAGS="-fdebug-prefix-map=$WORK_DIR=$INSTALLROOT -fdebug-prefix-map=$WORK_DIR/$ARCHITECTURE=$INSTALLROOT -g${USERCXXFLAGS:+ $USERCXXFLAGS}"
+    log_info "subpackage-debug enabled → EXTRA_CXXFLAGS=$EXTRA_CXXFLAGS"
+elif [ -n "$USERCXXFLAGS" ]; then
+    EXTRA_CXXFLAGS="$USERCXXFLAGS"
+    log_info "User CXXFLAGS passthrough → $EXTRA_CXXFLAGS"
+else
+    EXTRA_CXXFLAGS=""
+fi
+
+log_section "Block 3: PREP — config + source setup"
+
+#rm -rf "$BUILDDIR/poison"
+
+if [ ! -f "$BUILDDIR/config/updateConfig.py" ]; then
+  log_info "Extracting config tarball (SOURCE0=${SOURCE0})"
+  mkdir -p "$BUILDDIR/config"
+  tar -xzf "$SOURCEDIR/${SOURCE0}" --strip-components=1 -C "$BUILDDIR/config"
+else
+  log_skip "config already extracted"
+fi
+
+# Parallel extraction of SOURCE1..3 (independent tarballs → same src tree)
+_extract_pids=()
+for i in 1 2 3; do
+  src_var="SOURCE$i"
+  if [ -n "${!src_var}" ] && [ -f "$SOURCEDIR/${!src_var}" ]; then
+    mkdir -p "$BUILDDIR/src"
+    log_info "Extracting ${src_var}=${!src_var} (parallel)"
+    tar -xzf "$SOURCEDIR/${!src_var}" --strip-components=1 -C "$BUILDDIR/src" &
+    _extract_pids+=($!)
+  fi
+done
+_extract_rc=0
+for pid in "${_extract_pids[@]}"; do wait "$pid" || _extract_rc=1; done
+if [ $_extract_rc -ne 0 ]; then
+  log_err "Source tarball extraction failed"
+  exit 1
+fi
+[ ${#_extract_pids[@]} -gt 0 ] && log_ok "Extracted ${#_extract_pids[@]} source tarball(s)"
+
+if [ "$PKGNAME" = "coral" ]; then
+    log_info "Applying CORAL patches"
+    pushd $BUILDDIR
+    run patch -p1 <$SOURCEDIR/$PATCH0
+    run patch -p1 <$SOURCEDIR/$PATCH1
+    popd
+fi
+
+echo "$CONFIGTAG" > "$BUILDDIR/config/config_tag"
+log_info "Config tag: $CONFIGTAG"
+
+run "$BUILDDIR/config/updateConfig.py" \
+  -p "$UCPROJTYPE" \
+  -v "${PKGVERSION}${PKGREVISION:+-$PKGREVISION}" \
+  -s "$SCRAMV1_VERSION" \
+  -t "$TOOLCONF_PATH" \
+  --keys SCRAM_COMPILER="$SCRAM_COMPILER" \
+  --keys PROJECT_GIT_HASH="${GITCOMMIT:-$PKGVERSION}" \
+
+sed -i -e 's| SCRAM_TARGETS=.*"| SCRAM_TARGETS=""|' "$BUILDDIR/config/Self.xml"
+
+if [ "$PKGNAME" != "coral" ]; then
+  sed -i -e "s|</tool>| <runtime name=\"SCRAM_DEFAULT_MICROARCH\" value=\"$DEFAULT_MICROARCH_NAME\"/>\n</tool>|" \
+    "$BUILDDIR/config/Self.xml"
+fi
+
+log_section "Block 4: Vectorization + SCRAM bootstrap"
+
+SCRAM_TARGET_DEFAULT="%(scram_target_default)s"
+RELEASE_USERCXXFLAGS="%(release_usercxxflags)s"
+RELEASE_USERLDFLAGS="%(release_userldflags)s"
+##PACKAGE_VECTORIZATION="%(package_vectorization)s"
+##if [ -z "$PACKAGE_VECTORIZATION" ] && [ -n "$SCRAM_TARGET_DEFAULT" ]; then
+##  export SCRAM_TARGET_DEFAULT="auto"
+##fi
+
+if [ "$PKGNAME" != "coral" ] && [ "$PACKAGE_VECTORIZATION" != "0" ]; then
+  if [ -e "$TOOLCONF_PATH/vectorized_packages.txt" ]; then
+    log_info "Vectorization targets: $PACKAGE_VECTORIZATION (default: $SCRAM_TARGET_DEFAULT)"
+    sed -i -e "s| SCRAM_TARGETS=.*\"| SCRAM_TARGETS=\"$PACKAGE_VECTORIZATION\"|" \
+      "$BUILDDIR/config/Self.xml"
+    sed -i -e "s|</tool>| <runtime name=\"SCRAM_MIN_SUPPORTED_MICROARCH\" value=\"$DEFAULT_MICROARCH_NAME\"/>\n</tool>|" \
+      "$BUILDDIR/config/Self.xml"
+    sed -i -e "s|</tool>| <runtime name=\"SCRAM_TARGET\" value=\"$SCRAM_TARGET_DEFAULT\"/>\n <runtime name=\"USER_TARGETS_ALL\" value=\"1\"/>\n</tool>|" \
+      "$BUILDDIR/config/Self.xml"
+  else
+    log_skip "No vectorized_packages.txt in toolconf — vectorization not applied"
+  fi
+fi
+
+[ -n "$RELEASE_USERCXXFLAGS" ] && \
+  echo "<flags CXXFLAGS=\"$RELEASE_USERCXXFLAGS\"/>" >> "$BUILDDIR/config/BuildFile.xml"
+[ -n "$RELEASE_USERLDFLAGS" ] && \
+  echo "<flags LDFLAGS=\"$RELEASE_USERLDFLAGS\"/>" >> "$BUILDDIR/config/BuildFile.xml"
+
+# Legacy RPM macros removed - patches are now applied via bits recipe 'patches:' field
+
+run $SCRAMCMD project -d "$(dirname "$INSTALLROOT")" -b "$BUILDDIR/$BOOTSTRAPFILE"
+echo "$(basename "$SCRAMV1_ROOT")" > "$INSTALLROOT/config/scram_version"
+log_ok "SCRAM project area bootstrapped at $INSTALLROOT"
+
+# Populate src tree — scram bootstrap does not copy sources automatically
+#if [ -d "$BUILDDIR/$SRCTREE" ]; then
+#  rsync -a "$BUILDDIR/$SRCTREE/" "$INSTALLROOT/$SRCTREE/"
+#fi
+
+log_section "Block 5: BUILD — pre-compile cleanup + tool setup"
+
+EXTRA_TOOLS="%(extra_tools)s"
+REMOVE_TOOLS="%(remove_tools)s"
+
+log_info "Removing cmt directories"
+find "$INSTALLROOT/$SRCTREE" -type d -name cmt -exec rm -rf {} + 2>/dev/null || true
+
+log_info "Rewriting perl shebangs (parallel, $NPROC jobs)"
+grep -r -l -e "^#!.*perl.*" "$INSTALLROOT/$SRCTREE" 2>/dev/null | \
+  xargs -r -P "$NPROC" -n 50 perl -p -i -e 's|^#!.*perl(.*)|#!/usr/bin/env perl$1|' || true
+
+run $SCRAMCMD arch
+cd "$INSTALLROOT/$SRCTREE"
+
+[ "$ENABLE_BIGLIB" = "0" ] && { log_info "biglib disabled"; $SCRAMCMD build disable-biglib || true; }
+
+for t in $EXTRA_TOOLS;  do log_info "scram setup $t";       $SCRAMCMD setup "$t";       done
+for t in $REMOVE_TOOLS; do log_info "scram tool remove $t"; $SCRAMCMD tool remove "$t"; done
+
+cat > "$INSTALLROOT/config/toolbox/$ARCHITECTURE/tools/selected/cmssw-config.xml" <<EOF
+<tool name="cmssw-config" version="$CONFIGTAG" revision="1">
+</tool>
+EOF
+run $SCRAMCMD setup cmssw-config
+
+export BUILD_LOG=yes
+export SCRAM_NOPLUGINREFRESH=yes
+run $SCRAMCMD b clean
+
+log_section "Block 6: BUILD — compile"
+
+COMPILE_OPTIONS="%(compile_options)s"
+NOLIBCHECKS="%(nolibchecks)s"
+PREBUILDTARGET="%(prebuildtarget)s"
+ADDITIONAL_BUILD_TARGET="%(additionalBuildTarget0)s"
+POSTBUILDTARGET="%(postbuildtarget)s"
+IGNORE_COMPILE_ERRORS="%(ignore_compile_errors)s"
+PGO_GENERATE="%(pgo_generate)s"
+
+[ "$NOLIBCHECKS" != "0" ] && { export SCRAM_NOLOADCHECK=true; export SCRAM_NOSYMCHECK=true; log_info "Library load/symbol checks disabled"; }
+
+# Set up SCRAM runtime environment (LD_LIBRARY_PATH, PATH, etc.) before build
+eval "$($SCRAMCMD runtime -sh)"
+export LD_LIBRARY_PATH
+
+$SCRAMCMD b -r echo_CXX </dev/null
+
+if [ -n "$PREBUILDTARGET" ]; then
+  log_info "Pre-build target: $PREBUILDTARGET"
+  run $SCRAMCMD b --verbose -f "$PREBUILDTARGET" </dev/null
+fi
+
+# llvm-ccdb only for cmssw/cmssw-patch, skipped during PGO generate phase
+if [ "$PGO_GENERATE" = "0" ]; then
+  case "$PKGNAME" in cmssw|cmssw-patch)
+    log_info "Generating llvm compilation database (llvm-ccdb)"
+    $SCRAMCMD b -f -k ${JOBS:+-j $JOBS} llvm-ccdb </dev/null || true ;;
+  esac
+fi
+
+grep -q 'name="SCRAM_TARGET"' "$INSTALLROOT/config/Self.xml" && \
+  touch "$INSTALLROOT/.SCRAM/$ARCHITECTURE/multi-targets"
+
+SCRAM_B_EXTRA=()
+[ -n "$EXTRA_CXXFLAGS" ] && SCRAM_B_EXTRA=("USER_CXXFLAGS=$EXTRA_CXXFLAGS")
+
+log_info "Main build: target='${BUILDTARGET}' jobs=${JOBS:-<default>} opts='$COMPILE_OPTIONS'"
+_COMPILE_T0=$(date +%%s)
+$SCRAMCMD b --verbose -f $COMPILE_OPTIONS "${SCRAM_B_EXTRA[@]}" ${JOBS:+-j $JOBS} "$BUILDTARGET" </dev/null || {
+  log_err "Compilation reported errors after $(( $(date +%%s) - _COMPILE_T0 ))s"
+  touch "$BUILDDIR/build-errors"
+  $SCRAMCMD b -f outputlog || true
+  if [ "$IGNORE_COMPILE_ERRORS" != "0" ]; then
+    log_warn "IGNORE_COMPILE_ERRORS set — continuing despite build errors"
+  else
+    exit 1
+  fi
+}
+log_ok "Compile phase done in $(( $(date +%%s) - _COMPILE_T0 ))s"
+
+if [ -n "$ADDITIONAL_BUILD_TARGET" ]; then
+  log_info "Additional build target: $ADDITIONAL_BUILD_TARGET"
+  run $SCRAMCMD b --verbose -f "$ADDITIONAL_BUILD_TARGET" </dev/null
+fi
+if [ -n "$POSTBUILDTARGET" ]; then
+  log_info "Post-build target: $POSTBUILDTARGET"
+  run $SCRAMCMD b --verbose -f "$POSTBUILDTARGET" </dev/null
+fi
+
+# Move logs out so they don't get packaged
+LOG_WEB_DIR="$WORK_DIR/WEB/build-logs/$ARCHITECTURE/$PKGVERSION"
+rm -rf "$LOG_WEB_DIR"
+mkdir -p "$LOG_WEB_DIR/logs/src"
+if [ -d "$INSTALLROOT/tmp/$ARCHITECTURE/cache/log/src" ]; then
+  log_info "Archiving build logs → $LOG_WEB_DIR ($COMPRESS_PROG)"
+  tar cf "$LOG_WEB_DIR/logs/src/src-logs.tgz" --use-compress-program="$COMPRESS_PROG" \
+    -C "$INSTALLROOT/tmp/$ARCHITECTURE/cache/log/src" ./
+fi
+
+log_section "Block 7: saveDeps + edmPluginRefresh"
+
+SAVEDEPS="%(saveDeps)s"
+
+if [ "$SAVEDEPS" != "0" ]; then
+  log_info "Computing dependencies (findDependencies.py)"
+  mkdir -p "$INSTALLROOT/etc/dependencies"
+  SCRAM_TOOL_HOME="$SCRAMV1_ROOT" \
+    "$INSTALLROOT/config/SCRAM/findDependencies.py" \
+    -rel "$INSTALLROOT" -arch "$ARCHITECTURE"
+  # Parallel per-file gzip of dependency outputs
+  printf '%%s\0' "$INSTALLROOT/etc/dependencies/"*.out 2>/dev/null | \
+    xargs -0 -r -P "$NPROC" -n 1 gzip -f
+  log_ok "Dependencies saved"
+else
+  log_skip "saveDeps disabled"
+fi
+
+eval "$(USER_SCRAM_RUNTIME_TYPE=BUILD $SCRAMCMD run -sh)"
+
+cmdpath=$(command -v edmPluginRefresh 2>/dev/null || true)
+if [ -n "$cmdpath" ]; then
+  # Parallel plugin refresh across lib dirs (biglib + lib); the vectorized
+  # cache copy stays inside each lib's subshell so ordering is preserved.
+  _refresh_pids=()
+  for lib in $CMSSW_LIBS; do
+    [ -d "$INSTALLROOT/$lib" ] || { log_skip "no $lib"; continue; }
+    (
+      log_info "edmPluginRefresh: $lib"
+      rm -f "$INSTALLROOT/$lib/.edmplugincache"
+      edmPluginRefresh "$INSTALLROOT/$lib"
+      if [ "$PACKAGE_VECTORIZATION" != "0" ]; then
+        for arch in $PACKAGE_VECTORIZATION; do
+          arch_dir="$INSTALLROOT/$lib/scram_${arch}"
+          [ -d "$arch_dir" ] || continue
+          rm -f "$arch_dir/.edmplugincache"
+          [ -e "$INSTALLROOT/$lib/.edmplugincache" ] && \
+            cp "$INSTALLROOT/$lib/.edmplugincache" "$arch_dir/.edmplugincache"
+        done
+      fi
+      log_ok "edmPluginRefresh done: $lib"
+    ) &
+    _refresh_pids+=($!)
+  done
+  _refresh_rc=0
+  for pid in "${_refresh_pids[@]}"; do wait "$pid" || _refresh_rc=1; done
+  [ $_refresh_rc -ne 0 ] && log_err "edmPluginRefresh failed" && exit 1
+else
+  log_skip "edmPluginRefresh not in PATH"
+fi
+
+log_section "Block 8: INSTALL"
+
+RUNGLIMPSE="%(runGlimpse)s"
+
+export SCRAM_ARCH="$ARCHITECTURE"
+cd "$INSTALLROOT"
+
+run $SCRAMCMD install -f
+
+rm -rf "external/$ARCHITECTURE"
+log_info "Linking externals"
+SCRAM_TOOL_HOME="$SCRAMV1_ROOT" \
+  ./config/SCRAM/linkexternal${SCRAM_SCRIPT_PREFIX} --arch "$ARCHITECTURE"
+
+[ "$RUNGLIMPSE" != "0" ] && { log_info "Building glimpse indices"; $SCRAMCMD b --verbose -f gindices </dev/null; }
+
+log_info "Compressing $SRCTREE → ${SRCTREE}.tar.gz ($COMPRESS_PROG)"
+tar cf "${SRCTREE}.tar.gz" --use-compress-program="$COMPRESS_PROG" "$SRCTREE"
+rm -rf "$SRCTREE" tmp
+
+if [ "$SUBPACKAGE_DEBUG" != "0" ]; then
+  log_info "Splitting debug symbols (subpackage-debug)"
+  touch "$INSTALLROOT/.SCRAM/$ARCHITECTURE/subpackage-debug"
+
+  if [ "$PKGNAME" = "coral" ]; then
+    ELF_DIRS="$INSTALLROOT/$ARCHITECTURE/lib $INSTALLROOT/$ARCHITECTURE/tests/bin"
+    DROP_SYMBOLS_DIRS=""
+  else
+    ELF_DIRS="$INSTALLROOT/lib/$ARCHITECTURE $INSTALLROOT/biglib/$ARCHITECTURE $INSTALLROOT/bin/$ARCHITECTURE $INSTALLROOT/test/$ARCHITECTURE"
+    DROP_SYMBOLS_DIRS="$INSTALLROOT/objs/$ARCHITECTURE"
+  fi
+
+  # Parallelize across directories; split JOBS between the dir-level and the
+  # inner objcopy xargs so we don't oversubscribe the box.
+  _NDIRS=0
+  for DIR in $ELF_DIRS $DROP_SYMBOLS_DIRS; do [ -d "$DIR" ] && _NDIRS=$((_NDIRS+1)); done
+  _INNER_JOBS=$(( NPROC / (_NDIRS > 0 ? _NDIRS : 1) ))
+  [ "$_INNER_JOBS" -lt 1 ] && _INNER_JOBS=1
+
+  _dbg_pids=()
+  for DIR in $ELF_DIRS $DROP_SYMBOLS_DIRS; do
+    [ -d "$DIR" ] || continue
+    (
+      cd "$DIR"
+      log_info "Debug split: $DIR (inner jobs: $_INNER_JOBS)"
+      mkdir -p .debug
+      ELF_BINS=$(file * 2>/dev/null | grep ELF | cut -d':' -f1 || true)
+      if [ -n "$ELF_BINS" ]; then
+        [ $(echo $ELF_BINS | wc -w) -gt 1 ] && \
+          dwz -m .debug/common-symbols.debug -M common-symbols.debug $ELF_BINS || true
+        echo "$ELF_BINS" | xargs -t -n1 -P$_INNER_JOBS -I%% sh -c \
+          'objcopy --compress-debug-sections --only-keep-debug %% .debug/%%.debug
+           objcopy --strip-debug --add-gnu-debuglink=.debug/%%.debug %%'
+      fi
+      log_ok "Debug split done: $DIR"
+    ) &
+    _dbg_pids+=($!)
+  done
+  _dbg_rc=0
+  for pid in "${_dbg_pids[@]}"; do wait "$pid" || _dbg_rc=1; done
+  [ $_dbg_rc -ne 0 ] && log_err "Debug symbol splitting failed" && exit 1
+
+  for DIR in $DROP_SYMBOLS_DIRS; do
+    rm -rf "$DIR/.debug"
+  done
+fi
+
+log_section "Block 9: Symlink relocation + stored runtime values"
+
+# Parallel symlink rewrite: exported function + xargs -P
+_relocate_symlink() {
+  L="$1"
+  lnk=$(readlink -n "$L" 2>&1 || true)
+  case "$lnk" in
+    "$WORK_DIR"/*)
+      rl=$(echo "$L" | sed -e 's|[^/]*/|../|g' | xargs dirname)
+      al=$(echo "$lnk" | sed -e "s|^$WORK_DIR/|../../../../$rl/|")
+      rm -f "$L"
+      ln -sf "$al" "$L"
+      ;;
+  esac
+}
+export -f _relocate_symlink
+export WORK_DIR
+
+_NLINKS=$(find "external/$ARCHITECTURE" -type l 2>/dev/null | wc -l)
+log_info "Relocating $_NLINKS symlinks (parallel, $NPROC jobs)"
+find "external/$ARCHITECTURE" -type l -print0 2>/dev/null | \
+  xargs -0 -r -P "$NPROC" -n 1 bash -c '_relocate_symlink "$0"'
+
+find "external/$ARCHITECTURE" -type l 2>/dev/null | xargs ls -l || true
+
+echo "$WORK_DIR"             > "$INSTALLROOT/config/scram_basedir"
+echo "$SCRAM_TARGET_DEFAULT" > "$INSTALLROOT/.SCRAM/$ARCHITECTURE/scram_target_default"
+
+log_section "Block 10: Post-relocate script"
+
+mkdir -p "$INSTALLROOT/etc/profile.d"
+cat > "$INSTALLROOT/etc/profile.d/post-relocate.sh" << 'POSTRELOCATE_EOF'
+#!/bin/bash
+PKG_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$PKG_ROOT"
+export SCRAM_ARCH="$ARCHITECTURE"
+
+if [ -e src.tar.gz ]; then
+  tar xzf src.tar.gz
+  rm -f src.tar.gz
+fi
+
+OLD_WORK_DIR=$(cat config/scram_basedir)
+
+# Only rename paths from OLD_WORK_DIR to WORK_DIR (for cross-machine relocation)
+# Do NOT strip architecture from paths - external tools need the full arch path
+./config/SCRAM/projectAreaRename.py "$OLD_WORK_DIR" "$WORK_DIR" "$SCRAM_ARCH"
+
+for lib in biglib/$SCRAM_ARCH lib/$SCRAM_ARCH; do
+  [ -f "$lib/.edmplugincache" ] || continue
+  # Batched touch ({} +) instead of one process per file
+  find "$lib" -name "*.edmplugin" -type f -exec touch {} +
+  touch "$lib/.edmplugincache"
+  for arch_dir in "$lib"/scram_*/; do
+    [ -f "$arch_dir/.edmplugincache" ] || continue
+    find "$arch_dir" -name "*.edmplugin" -type f -exec touch {} +
+    touch "$arch_dir/.edmplugincache"
+  done
+done
+
+sed -i "s|$OLD_WORK_DIR|$WORK_DIR|g" "external/$SCRAM_ARCH/links.DB" 2>/dev/null || true
+[ -f compile_commands.json ] && sed -i "s|$OLD_WORK_DIR|$WORK_DIR|g" compile_commands.json
+
+# Extract base project name: CMSSW_20_1_X -> CMSSW, coral -> CORAL, cmssw-patch -> CMSSW
+UCPROJ=$(echo "$PKGNAME" | sed -e 's|-patch||' -e 's|_[0-9].*||' | tr 'a-z' 'A-Z')
+LCPROJ=$(echo "$UCPROJ" | tr 'A-Z' 'a-z')
+SCRAMRC_DIR="$WORK_DIR/etc/scramrc"
+# Use lowercase project name for map filename (cmssw.map, coral.map)
+if [ ! -f "$SCRAMRC_DIR/${LCPROJ}.map" ]; then
+  mkdir -p "$SCRAMRC_DIR"
+  echo "${UCPROJ}=\$SCRAM_ARCH/cms/${PKGNAME}/${UCPROJ}_*" > "$SCRAMRC_DIR/${LCPROJ}.map"
+fi
+
+SITE_CFG="$WORK_DIR/etc/scramrc/site.cfg"
+if [ -e "$SITE_CFG" ]; then
+  if [ -e ".SCRAM/$SCRAM_ARCH/multi-targets" ]; then
+    SCRAM_TARGET_DEFAULT=$(cat ".SCRAM/$SCRAM_ARCH/scram_target_default" 2>/dev/null || echo "auto")
+    site_target=$(grep '^\s*scram-target\s*=' "$SITE_CFG" | sed 's| ||g;s|.*=||')
+    if [ -n "$site_target" ] && [ "$site_target" != "none" ] && [ "$site_target" != "$SCRAM_TARGET_DEFAULT" ]; then
+      sed -i -e "/=\"SCRAM_TARGET\"/s/\"$SCRAM_TARGET_DEFAULT\"/\"$site_target\"/" config/Self.xml
+      "$WORK_DIR/common/scram" setup self
+    fi
+  fi
+  for type in scram "$LCPROJ"; do
+    script=$(grep "^\s*${type}-post-install-script\s*=" "$SITE_CFG" | sed 's| ||g;s|.*=||')
+    if [ -n "$script" ] && [ -x "$script" ]; then
+      "$script" "$SCRAM_ARCH"
+    fi
+  done
+fi
+POSTRELOCATE_EOF
+
+chmod +x "$INSTALLROOT/etc/profile.d/post-relocate.sh"
+log_ok "post-relocate.sh installed"

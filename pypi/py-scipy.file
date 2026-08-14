@@ -1,0 +1,21 @@
+requires:
+- py-numpy
+- py-cython
+- py-pybind11
+- py-pythran
+- py-meson-python
+- OpenBLAS
+build_requires:
+- CMake 
+- ninja
+---
+PipPreBuild=$(cat <<'EOF'
+export NPY_NUM_BUILD_JOBS=${JOBS:+-j $JOBS}
+export FFLAGS="${FFLAGS_OPT} -fallow-argument-mismatch -fPIC"
+EOF
+)
+
+PipPostBuild=$(cat <<'EOF'
+find $INSTALLROOT -name 'libsf_error_state*.so*' -exec ls -l {} \;
+EOF
+)

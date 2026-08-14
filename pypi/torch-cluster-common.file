@@ -1,0 +1,24 @@
+# Shared build fragment for py-torch-cluster (and py-torch-cluster-cuda).
+# Port of cmsdist pip/files/torch-cluster-common.file.
+# Composes with the torch-extension-build fragment (see the trailing note) and, like it,
+# relies on cpp-standard for $CXXSTD (== cmsdist %{cms_cxx_standard}).
+
+# cmsdist: %define enable_cpp_api yes  (consumed by torch-extension-build's PipPostBuild)
+enable_cpp_api=yes
+
+# cmsdist: %define patchsrc — runs in the unpacked source root ($PYPI_SRC) via runIt.
+# Pin CMake C++ standard to $CXXSTD, force the ninja generator, and append -std=c++$CXXSTD
+# to the extension's cxx flags. The bare greps are guards: they abort (set -e) if upstream
+# no longer contains the expected strings.
+PipPatchSource=$(cat <<'EOF'
+grep -q 'CMAKE_CXX_STANDARD 14' CMakeLists.txt
+sed -i -e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXSTD}|" CMakeLists.txt
+grep -q 'use_ninja=False' setup.py
+sed -i -e 's|use_ninja=False|use_ninja=True|' setup.py
+grep "'cxx': \['-O2'\]" setup.py
+sed -i -e "s|'cxx': \['-O2'\]|'cxx': ['-O2', '-std=c++${CXXSTD}']|" setup.py
+EOF
+)
+
+# cmsdist: ## INCLUDE pip/files/torch-extension-build
+# -> compose with torch-extension-build.file (PipPreBuild + PipPostBuild). Include wiring TBD.

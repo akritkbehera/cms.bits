@@ -1,0 +1,11 @@
+sources:
+- https://github.com/HEPData/hepdata_lib/archive/refs/tags/v%(version)s.tar.gz
+requires:
+- ROOT
+- py-pytest
+- py-pytest-cov
+- py-PyYAML
+- py-future
+- py-pylint
+- py-hepdata-validator
+---

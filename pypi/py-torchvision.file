@@ -1,0 +1,51 @@
+sources:
+- https://github.com/pytorch/vision/archive/refs/tags/v%(version)s.tar.gz
+requires:
+- py-torch
+- libpng
+- py-pybind11
+- py-packaging
+# Declared as runtime deps in torchvision's own metadata.
+- py-numpy
+- py-pillow
+---
+# Older torchvision setup.py imported pkg_resources at module level, which setuptools 82 no
+# longer ships. 0.28 dropped that import, so patch it only if present (re-implementing the
+# three names on importlib.metadata/packaging) and no-op otherwise.
+PipPatchSource=$(cat <<'PATCH_EOF'
+python3 - <<'PY'
+p = "setup.py"
+s = open(p).read()
+old = "from pkg_resources import DistributionNotFound, get_distribution, parse_version"
+if old in s:
+    new = (
+        "from packaging.version import parse as parse_version\n"
+        "from importlib.metadata import PackageNotFoundError as DistributionNotFound, version as _pkg_version\n"
+        "from types import SimpleNamespace\n"
+        "def get_distribution(_name):\n"
+        "    return SimpleNamespace(version=_pkg_version(_name),\n"
+        "                           parsed_version=parse_version(_pkg_version(_name)))"
+    )
+    open(p, "w").write(s.replace(old, new))
+PY
+PATCH_EOF
+)
+
+# CPU-only image backend: PNG on, everything else off (matches cmsdist).
+PipPreBuild=$(cat <<'PREBUILD_EOF'
+export CXXFLAGS="-I${PY_PYBIND11_ROOT}/include"
+# The extension objects are compiled by torch's cpp_extension via ninja, which builds its
+# own flag list and ignores CXXFLAGS -- hence torch/csrc/Exceptions.h failing to find
+# pybind11/pybind11.h. CPATH is honoured by the compiler regardless (same approach as
+# torch-extension-build.file).
+export CPATH="${PY_PYBIND11_ROOT}/include${CPATH:+:${CPATH}}"
+export MAX_JOBS=$JOBS
+export FORCE_CUDA=0
+export TORCHVISION_USE_PNG=1
+export TORCHVISION_USE_JPEG=0
+export TORCHVISION_USE_WEBP=0
+export TORCHVISION_USE_NVJPEG=0
+export TORCHVISION_USE_VIDEO_CODEC=0
+export TORCHVISION_USE_FFMPEG=0
+PREBUILD_EOF
+)

@@ -1,0 +1,5 @@
+build_requires:
+- py-flit-core
+requires:
+- py-scikit-build-core
+---

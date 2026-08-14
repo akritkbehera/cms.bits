@@ -1,0 +1,6 @@
+package: py-cffi
+requires:
+ - libffi
+ - py-pycparser
+---
+PipPatchSource="sed -i -e \"s|/usr/include/ffi|${LIBFFI_ROOT}/include|\" setup.py"

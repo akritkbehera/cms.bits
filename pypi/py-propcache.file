@@ -1,0 +1,5 @@
+package: py-propcache
+requires:
+- py-expandvars
+- py-cython
+---

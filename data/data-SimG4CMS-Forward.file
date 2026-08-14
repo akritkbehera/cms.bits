@@ -1,0 +1,4 @@
+sources:
+ - http://cmsrep.cern.ch/cmssw/download/data/SimG4CMS-Forward.tar.gz?no-cmssdt-cache=1&output=/SimG4CMS-Forward.tar.gz
+---
+EXPORT_DIR="SimG4CMS-Forward"

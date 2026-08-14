@@ -1,0 +1,13 @@
+package: py-aiohttp
+requires:
+- py-attrs 
+- py-chardet 
+- py-multidict 
+- py-yarl 
+- py-async-timeout 
+- py-typing-extensions 
+- py-aiosignal 
+- py-charset-normalizer 
+- py-frozenlist 
+- py-aiohappyeyeballs
+---

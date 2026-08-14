@@ -1,0 +1,9 @@
+requires:
+- py-six
+- py-numpy
+- py-scipy
+- py-protobuf
+- py-onnx
+- py-scikit-learn
+- py-onnxconverter-common
+---

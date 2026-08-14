@@ -1,0 +1,95 @@
+package: coral-tool-conf
+version: vCMS2
+requires:
+ - coral-tools
+ - compilation_flags_lto
+ - compilation_flags
+ - cuda-flags
+ - microarch-flag
+ - SCRAMV1
+ - hwloc
+ - pcre
+ - Python
+ - gcc
+ - expat
+ - boost
+ - frontier-client
+ - sqlite
+ - libuuid
+ - zlib
+ - bz2lib
+ - xerces-c
+---
+mkdir -p "$INSTALLROOT/tools/selected" "$INSTALLROOT/tools/available"
+for dep in $REQUIRES; do
+  UPPER_DEP=${dep^^}
+  UPPER_DEP=${UPPER_DEP//-/_}
+  VERSION_VAR="${UPPER_DEP}_VERSION"
+  REVISION_VAR="${UPPER_DEP}_REVISION"
+  VERSION=${!VERSION_VAR}
+  REVISION=${!REVISION_VAR}
+  
+  libpath="$BITS_WORK_DIR/$ARCHITECTURE/$dep/$VERSION-$REVISION/lib"
+  
+  if [[ -d "$libpath" ]]; then
+    echo ">>> Copying $dep/lib -> $INSTALLROOT/lib"
+      rsync -a  "$libpath/" "$INSTALLROOT/lib/" || {
+      echo "ERROR: Failed to copy $dep/lib" >&2
+    }
+  else
+    echo "  Skipping $dep — no lib at $libpath"
+  fi
+done
+
+mkdir -p "$INSTALLROOT/tools/selected"
+mkdir -p "$INSTALLROOT/tools/available"
+
+awk -v out_dir="$INSTALLROOT/tools/selected" '
+/^cat << EOF_TOOLFILE >>/ {
+  match($0, />[[:space:]]*(.*)$/, arr)
+  out = arr[1]
+  n = split(out, path_parts, "/")
+  filename = path_parts[n]
+  buffer = ""
+  next
+}
+/^EOF_TOOLFILE$/ {
+  if (filename != "") {
+    file = out_dir "/" filename
+    print buffer > file
+    close(file)
+    buffer = ""
+    filename = ""
+  }
+  next
+}
+filename != "" {
+  buffer = (buffer == "" ? $0 : buffer "\n" $0)
+}
+' "$CORAL_TOOLS_ROOT/tools/selected.tmpl"
+
+awk -v out_dir="$INSTALLROOT/tools/available" '
+/^cat << EOF_TOOLFILE >>/ {
+  match($0, />[[:space:]]*(.*)$/, arr)
+  out = arr[1]
+  n = split(out, path_parts, "/")
+  filename = path_parts[n]
+  buffer = ""
+  next
+}
+/^EOF_TOOLFILE$/ {
+  if (filename != "") {
+    file = out_dir "/" filename
+    print buffer > file
+    close(file)
+    buffer = ""
+    filename = ""
+  }
+  next
+}
+filename != "" {
+  buffer = (buffer == "" ? $0 : buffer "\n" $0)
+}
+' "$CORAL_TOOLS_ROOT/tools/available.tmpl"
+
+

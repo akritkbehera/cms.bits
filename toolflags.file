@@ -1,0 +1,9 @@
+#!include <compilation-flags.file>
+#!include <compilation-flags-lto.file>
+#!include <microarch-flags.file>
+#!include <cuda-flags.file>
+#!include <rocm-flags.file>
+#!include <warning-flags.file>
+#!include <vecgeom-opt.file>
+#!include <frame_pointer-opt.file>
+#!include <openmpi-opt.file>

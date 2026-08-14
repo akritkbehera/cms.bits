@@ -1,0 +1,7 @@
+build_requires:
+- py-flit-core
+requires:
+- py-python-dateutil
+- py-types-python-dateutil
+- py-tzdata
+---

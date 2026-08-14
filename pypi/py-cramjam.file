@@ -1,0 +1,6 @@
+build_requires:
+- py-maturin
+requires:
+- bz2lib
+---
+PipPreBuild='export CARGO_HOME="$BUILDDIR/.cargo"; export RUSTFLAGS="-L native=${BZ2LIB_ROOT}/lib"'

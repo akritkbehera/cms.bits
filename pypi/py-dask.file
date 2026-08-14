@@ -1,0 +1,13 @@
+build_requires:
+- py-versioneer
+requires:
+- py-click
+- py-cloudpickle
+- py-fsspec
+- py-packaging
+- py-partd
+- py-PyYAML
+- py-toolz
+- py-importlib-metadata
+- py-numpy
+---

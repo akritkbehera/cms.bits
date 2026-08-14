@@ -1,0 +1,6 @@
+build_requires:
+- py-hatchling
+- py-hatch-vcs
+requires:
+- py-referencing
+---

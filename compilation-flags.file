@@ -1,0 +1,14 @@
+# Port of cmsdist's compilation_flags.file. Special per-architecture build flags:
+# empty on x86_64, tuning flags on aarch64/ppc64le. #!include this where cmsdist's
+# real spec does `## INCLUDE compilation_flags`.
+case "$(uname -m)" in
+  aarch64)
+    arch_build_flags="-march=armv8-a -mno-outline-atomics"
+    ;;
+  ppc64le)
+    arch_build_flags="-mcpu=power8 -mtune=power8 --param=l1-cache-size=64 --param=l1-cache-line-size=128 --param=l2-cache-size=512"
+    ;;
+  *)
+    arch_build_flags=""
+    ;;
+esac

@@ -1,0 +1,8 @@
+build_requires:
+- py-setuptools-scm
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+- py-hatch-vcs
+requires:
+- py-numpy
+---

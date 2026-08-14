@@ -1,0 +1,11 @@
+build_requires:
+ - py-scikit-build 
+ - CMake 
+ - ninja
+requires:
+ - c-blosc
+---
+PipPreBuild="export CMAKE_ARGS='
+  -DUSE_SYSTEM_BLOSC=ON
+  -DCMAKE_PREFIX_PATH=${PY_SCIKIT_BUILD_ROOT};${CMAKE_ROOT};${NINJA_ROOT};${C_BLOSC_ROOT}
+'"

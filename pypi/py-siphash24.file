@@ -1,0 +1,5 @@
+build_requires:
+ - py-meson-python
+ - py-meson
+ - py-cython
+---

@@ -1,0 +1,3 @@
+patches:
+ - cx_Oracle-pkg_resources.patch
+---

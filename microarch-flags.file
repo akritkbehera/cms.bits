@@ -1,0 +1,25 @@
+# Port of cmsdist's microarch_flags.file. x86-64-v3 (AVX2-level) baseline on
+# x86_64; no microarch tuning on other architectures. override_microarch_name
+# (defaults-release.sh's own variables:, empty by default, and overridable
+# per-consumer via that consumer's own variables: block) lets a build override
+# the selected microarch, same as cmsdist's %%{?override_microarch_name} escape
+# hatch -- override_microarch itself is formed from it, the same way
+# default_microarch is formed from default_microarch_name. #!include this
+# where cmsdist's real spec does `## INCLUDE microarch_flags`.
+if [ "$(uname -m)" = "x86_64" ]; then
+  default_microarch_name="x86-64-v3"
+else
+  default_microarch_name=""
+fi
+default_microarch="${default_microarch_name:+-march=$default_microarch_name}"
+
+override_microarch_name="%(override_microarch_name)s"
+override_microarch="${override_microarch_name:+-march=$override_microarch_name}"
+
+if [ -z "$override_microarch_name" ]; then
+  selected_microarch_name="$default_microarch_name"
+  selected_microarch="$default_microarch"
+else
+  selected_microarch_name="$override_microarch_name"
+  selected_microarch="$override_microarch"
+fi

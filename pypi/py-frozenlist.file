@@ -1,0 +1,5 @@
+requires: 
+- py-expandvars
+- py-tomli
+- py-cython
+---

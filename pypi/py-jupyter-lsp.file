@@ -1,0 +1,6 @@
+build_requires:
+- setuptools
+requires:
+- py-importlib-metadata
+- py-jupyter-server
+---

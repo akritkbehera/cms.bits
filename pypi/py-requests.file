@@ -1,0 +1,8 @@
+requires:
+- py-urllib3
+- py-chardet
+- py-idna
+- py-certifi
+- py-charset-normalizer
+- py-pysocks
+---

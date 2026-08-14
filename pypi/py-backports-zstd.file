@@ -1,0 +1,13 @@
+requires:
+- zstd
+variables:
+  pypi_name: backports.zstd
+  pypi_source_name: backports.zstd-%(version)s.tar.gz
+---
+# Build against the tree's zstd rather than a vendored copy.
+PipBuildOptions='--config-settings=--build-option=--system-zstd'
+PipPreBuild=$(cat <<'PREBUILD_EOF'
+export CPPFLAGS="-I${ZSTD_ROOT}/include"
+export LDFLAGS="-L${ZSTD_ROOT}/lib"
+PREBUILD_EOF
+)

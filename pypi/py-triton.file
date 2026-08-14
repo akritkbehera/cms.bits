@@ -1,0 +1,32 @@
+sources:
+- https://github.com/triton-lang/triton/releases/download/v%(version)s/triton-%(version)s.tar.gz
+build_requires:
+- py-pybind11
+- ninja
+requires:
+- json
+- zlib
+- zstd
+- libxml2
+- cuda
+---
+# Triton does not support llvm 21, so it is built against its own bundled llvm rather than
+# the tree's (cmsdist keeps the external-llvm wiring commented out for the same reason).
+PipPreBuild=$(cat <<'PREBUILD_EOF'
+export TRITON_CACHE_DIR=${TMPDIR:-/tmp}
+export TRITON_HOME=${TMPDIR:-/tmp}
+export MAX_JOBS=$JOBS
+export TRITON_BUILD_PYTHON_MODULE=ON
+export TRITON_BUILD_UT=OFF
+export TRITON_BUILD_WITH_CLANG_LLD=OFF
+export TRITON_BUILD_WITH_ASAN=OFF
+export TRITON_BUILD_WITH_CCACHE=OFF
+export TRITON_BUILD_PROTON=OFF
+export TRITON_PARALLEL_LINK_JOBS=$JOBS
+export JSON_SYSPATH=${JSON_ROOT}
+export TRITON_APPEND_CMAKE_ARGS="-DCMAKE_PREFIX_PATH='${JSON_ROOT};${ZLIB_ROOT};${ZSTD_ROOT};${LIBXML2_ROOT};${PY_PYBIND11_ROOT};${CUDA_ROOT}'"
+export TRITON_NVDISASM_PATH=$CUDA_ROOT/bin/nvdisasm
+export TRITON_CUOBJDUMP_PATH=$CUDA_ROOT/bin/cuobjdump
+export TRITON_PTXAS_PATH=${CUDA_ROOT}/bin/ptxas
+PREBUILD_EOF
+)

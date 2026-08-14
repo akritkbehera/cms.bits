@@ -1,0 +1,11 @@
+build_requires:
+- rust
+requires:
+- py-maturin
+---
+# safetensors is a Rust extension; give cargo a writable home inside the build dir.
+PipPreBuild=$(cat <<'PREBUILD_EOF'
+export CARGO_HOME=$BUILDDIR/cargo_home
+export MATURIN_CACHE_DIR=$BUILDDIR/cargo_home/maturin
+PREBUILD_EOF
+)

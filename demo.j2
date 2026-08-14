@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+{% set spec = specs['demo'] %}
+
+# Basic package info
+export PACKAGE="{{ spec.package }}"
+export VERSION="{{ spec.version }}"
+
+# Variables from the spec (rendered as provided)
+{% for name, value in spec.variables.items() -%}
+export {{ name }}="{{ value }}"
+{%- endfor %}
+
+# Simple usage example
+echo "Building $PACKAGE (version $VERSION)"
+echo "Repository: $repository"
+echo "RHEL major: $rhel_version"
+echo "Arch: $arch"

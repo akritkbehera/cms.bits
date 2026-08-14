@@ -1,0 +1,7 @@
+requires:
+- py-jupyter-core
+- py-python-dateutil
+- py-pyzmq
+- py-tornado
+- py-traitlets
+---

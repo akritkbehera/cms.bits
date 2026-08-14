@@ -1,0 +1,9 @@
+# Debug build flavor settings
+
+# --- Disable optimizations ---
+enable_lto:           "0"
+subpackageDebug:      "yes"
+enable_frame_pointer: "1"
+
+# --- Debug-specific flags ---
+usercxxflags: "-O0 -g3"

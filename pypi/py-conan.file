@@ -1,0 +1,20 @@
+requires:
+- py-python-dateutil
+- py-requests
+- py-PyJWT
+- py-tqdm
+- py-PyYAML
+- py-Jinja2
+- py-Pygments
+- py-patch-ng
+- py-pluginbase
+- py-fasteners
+- py-patch-ng
+- py-pluginbase
+- py-node-semver
+- py-distro
+- py-future
+- py-deprecation
+- py-bottle
+- py-colorama
+---

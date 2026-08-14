@@ -1,0 +1,4 @@
+package: py-PyYAML
+sources: 
+- https://pypi.io/packages/source/p/pyyaml/pyyaml-%(version)s.tar.gz
+---

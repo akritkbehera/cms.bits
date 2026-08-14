@@ -1,0 +1,3 @@
+# Port of cmsdist's frame_pointer-opt.file. #!include this where cmsdist's real spec
+# does `## INCLUDE frame_pointer-opt`.
+enable_frame_pointer="${enable_frame_pointer:-0}"

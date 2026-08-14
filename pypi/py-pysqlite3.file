@@ -1,0 +1,4 @@
+requires:
+ - sqlite
+---
+PipPatchSource="sed -i -e \"s|^include_dirs *=.*|include_dirs=$SQLITE_ROOT/include|;s|^library_dirs *=.*|library_dirs=$SQLITE_ROOT/lib|\" setup.cfg"

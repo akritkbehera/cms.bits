@@ -1,0 +1,7 @@
+requires:
+ - py-meson
+ - py-pyproject-metadata
+ - py-tomli
+ - py-typing-extensions
+ - ninja
+---

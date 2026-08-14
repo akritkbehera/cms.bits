@@ -1,0 +1,15 @@
+requires:
+ - py-joblib
+ - py-numpy
+ - py-tqdm
+---
+PipPostBuild='
+mkdir -p "$INSTALLROOT/bin.tmp"
+for f in "$INSTALLROOT"/bin/*; do
+  if [ -f "$f" ]; then
+    mv "$f" "$INSTALLROOT/bin.tmp/$(basename "$f")3"
+  fi
+done
+rm -rf "$INSTALLROOT/bin"
+mv "$INSTALLROOT/bin.tmp" "$INSTALLROOT/bin"
+'

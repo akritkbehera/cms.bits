@@ -1,0 +1,9 @@
+build_requires:
+- py-hatchling
+- py-hatch-fancy-pypi-readme
+requires:
+- py-tornado
+- py-python-daemon
+- py-python-dateutil
+- py-tenacity
+---

@@ -1,0 +1,6 @@
+requires:
+ - py-poetry-core
+ - py-tomlkit
+patches:
+ - poetry-cyclic-deps.patch
+---

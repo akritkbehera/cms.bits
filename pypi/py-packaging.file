@@ -1,0 +1,4 @@
+name: py-packaging
+build_requires:
+ - py-flit-core
+---

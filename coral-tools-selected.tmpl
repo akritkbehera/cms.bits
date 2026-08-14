@@ -1,0 +1,886 @@
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/python.xml
+<tool name="python" version="3.12.4" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/Python/3.12.4-local1" revision="3">
+  <lib name="python3.12"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include/python3.12"/>
+    <environment name="PYTHON_COMPILE" default="$TOOL_BASE/lib/python3.12/compileall.py"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+  <use name="sockets"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/zlib.xml
+<tool name="zlib" version="1.2.13" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/zlib/1.2.13-local1" revision="3">
+  <lib name="z"/>
+  <client>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/bz2lib.xml
+<tool name="bz2lib" version="1.0.8" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/bz2lib/1.0.8-1" revision="3">
+  <info url="http://sources.redhat.com/bzip2/"/>
+  <lib name="bz2"/>
+  <client>
+    <environment name="LIBDIR"       default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE"      default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/expat.xml
+<tool name="expat" version="R_2_4_8" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/expat/R_2_4_8-1" revision="3">
+  <lib name="expat"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+    <environment name="BINDIR" default="$TOOL_BASE/bin"/>
+  </client>
+  <runtime name="PATH" value="$BINDIR" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/xz.xml
+  <tool name="xz" version="5.2.5" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/xz/5.2.5-1" revision="3">
+    <info url="http://tukaani.org/xz/"/>
+    <lib name="lzma"/>
+    <client>
+      <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+      <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+    </client>
+    <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+    <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+    <use name="root_cxxdefaults"/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/db6.xml
+<tool name="db6" version="6.2.32" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/db6/6.2.32-1" revision="3">
+  <lib name="db"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+    <environment name="BINDIR" default="$TOOL_BASE/bin"/>
+  </client>
+  <runtime name="PATH" value="$BINDIR" type="path"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/libuuid.xml
+<tool name="libuuid" version="2.34" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/libuuid/2.34-1" revision="3">
+  <lib name="uuid"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib64"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+  <use name="sockets"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/gdbm.xml
+<tool name="gdbm" version="1.10" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gdbm/1.10-1" revision="3">
+  <lib name="gdbm"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/sqlite.xml
+<tool name="sqlite" version="3.36.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/sqlite/3.36.0-local1" revision="3">
+  <lib name="sqlite3"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="BINDIR" default="$TOOL_BASE/bin"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="PATH" value="$BINDIR" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/libffi.xml
+<tool name="libffi" version="v3.4.2" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/libffi/v3.4.2-1" revision="3">
+  <lib name="ffi"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib64"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/curl.xml
+<tool name="curl" version="8.13.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/curl/8.13.0-local1" revision="3">
+  <lib name="curl"/>
+  <client>
+    <environment name="INCLUDE"      default="$TOOL_BASE/include"/>
+    <environment name="LIBDIR"       default="$TOOL_BASE/lib"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/numactl.xml
+<tool name="numactl" version="2.0.14" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/numactl/2.0.14-1" revision="3">
+  <lib name="numa"/>
+  <client>
+    <environment name="INCLUDE"      default="$TOOL_BASE/include"/>
+    <environment name="LIBDIR"       default="$TOOL_BASE/lib"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="MANPATH" value="$TOOL_BASE/share/man" type="path"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/fmt.xml
+<tool name="fmt" version="10.2.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/fmt/10.2.1-local1" revision="3">
+  <info url="https://github.com/fmtlib/fmt"/>
+  <lib name="fmt"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/gcc-atomic.xml
+  <tool name="gcc-atomic" version="14.3.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" revision="2">
+    <lib name="atomic"/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/zstd.xml
+<tool name="zstd" version="1.5.7" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/zstd/1.5.7-local1" revision="3">
+  <info url="http://https://facebook.github.io/zstd"/>
+  <lib name="zstd"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-cublas.xml
+<tool name="cuda-cublas" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/cublas/index.html"/>
+  <use name="cuda"/>
+  <lib name="cublas"/>
+  <lib name="cublasLt"/>
+  <!--
+    Set the cuBLAS workspace configuration to 8 * 16 KiB.
+    This reduces the amount of GPU memory used by cuBLAS, especially within PyTorch,
+    and ensures reproducibility of the cuBLAS results.
+  -->
+  <runtime name="CUBLAS_WORKSPACE_CONFIG" value=":16:8"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/rocm-rccl.xml
+<tool name="rocm-rccl" version="6.4.3" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/rocm/6.4.3-local1" revision="2">
+  <info url="https://rocm.docs.amd.com/projects/rccl/en/docs-6.4.3/"/>
+  <use name="rocm"/>
+  <lib name="rccl"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/gcc-ccompiler.xml
+  <tool name="gcc-ccompiler" version="14.3.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" type="compiler" revision="2">
+    <client>
+#if %(use_system_gcc)s
+      <environment name="CC" value="gcc"/>
+#else
+      <environment name="CC" value="$TOOL_BASE/bin/gcc"/>
+#endif
+    </client>
+    <flags CSHAREDOBJECTFLAGS="-fPIC    "/>
+    <flags CFLAGS="-O3 -pthread    "/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/xpmem.xml
+<tool name="xpmem" version="v2.6.3" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/xpmem/v2.6.3-1" revision="3">
+  <lib name="xpmem"/>
+  <client>
+    <environment name="INCLUDE"    default="$TOOL_BASE/include"/>
+    <environment name="LIBDIR"     default="$TOOL_BASE/lib"/>
+  </client>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/gdrcopy.xml
+<tool name="gdrcopy" version="v2.4.4" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gdrcopy/v2.4.4-local1" revision="3">
+  <lib name="gdrapi"/>
+  <client>
+    <environment name="INCLUDE"      default="$TOOL_BASE/include"/>
+    <environment name="LIBDIR"       default="$TOOL_BASE/lib64"/>
+  </client>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/gcc-cxxcompiler.xml
+  <tool name="gcc-cxxcompiler" version="14.3.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" type="compiler" revision="2">
+    <client>
+#if %(use_system_gcc)s
+      <environment name="CXX" value="c++"/>
+#else
+      <environment name="CXX" value="$TOOL_BASE/bin/c++"/>
+#endif
+    </client>
+    <flags CPPDEFINES="GNU_GCC _GNU_SOURCE    "/>
+    <flags CXXSHAREDOBJECTFLAGS="-fPIC    "/>
+    <flags CXXFLAGS="-O3 -pthread -pipe -Werror=main -Werror=pointer-arith"/>
+#if %(enable_frame_pointer)s
+    <flags CXXFLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"/>
+#endif
+    <flags CXXFLAGS="-Werror=overlength-strings -Wno-vla -Werror=overflow   -std=c++20 -ftree-vectorize -Werror=array-bounds -Werror=format-contains-nul -Werror=type-limits -fvisibility-inlines-hidden -fno-math-errno --param vect-max-version-for-alias-checks=50 -Xassembler --compress-debug-sections -Wno-error=array-bounds -Warray-bounds -fuse-ld=bfd "/>
+    <flags CXXFLAGS="-felide-constructors -fmessage-length=0"/>
+    <flags CXXFLAGS="-Wall -Wno-non-template-friend -Wno-long-long -Wreturn-type"/>
+    <flags CXXFLAGS="-Wextra -Wpessimizing-move -Wclass-memaccess"/>
+    <flags CXXFLAGS="-Wno-cast-function-type -Wno-unused-but-set-parameter -Wno-ignored-qualifiers -Wno-unused-parameter"/>
+    <flags CXXFLAGS="-Wunused -Wparentheses -Werror=return-type"/>
+    <flags CXXFLAGS="-Werror=unused-value"/>
+    <flags CXXFLAGS="-Werror=unused-result"/>
+    <flags CXXFLAGS="-Werror=unused-label"/>
+    <flags CXXFLAGS="-Werror=address -Werror=format -Werror=sign-compare"/>
+    <flags CXXFLAGS="-Werror=write-strings -Werror=delete-non-virtual-dtor"/>
+    <flags CXXFLAGS="-Werror=strict-aliasing"/>
+    <flags CXXFLAGS="-Werror=narrowing"/>
+    <flags CXXFLAGS="-Werror=unused-but-set-variable -Werror=reorder"/>
+    <flags CXXFLAGS="-Werror=unused-variable -Werror=conversion-null"/>
+    <flags CXXFLAGS="-Werror=return-local-addr -Wnon-virtual-dtor"/>
+    <flags CXXFLAGS="-Werror=switch -fdiagnostics-show-option"/>
+    <flags CXXFLAGS="-Wno-unused-local-typedefs -Wno-attributes -Wno-psabi"/>
+    <flags CXXFLAGS=""/>
+    <flags LTO_FLAGS=""/>
+    <flags PGO_FLAGS="-fprofile-prefix-path=$(LOCALTOP) -fprofile-update=prefer-atomic -fprofile-correction"/>
+    <flags LDFLAGS="-Wl,-E -Wl,--hash-style=gnu -Wl,--as-needed -Wl,-z,noexecstack   "/>
+    <flags CXXSHAREDFLAGS="-shared -Wl,-E   "/>
+    <flags LD_UNIT="-r -z muldefs   "/>
+    <runtime name="SCRAM_CXX11_ABI" value="1"/>
+#if %(use_system_gcc)s
+#else
+    <runtime name="LD_LIBRARY_PATH" value="$TOOL_BASE/lib64" type="path"/>
+    <runtime name="LD_LIBRARY_PATH" value="$TOOL_BASE/lib" type="path"/>
+    <runtime name="COMPILER_PATH" value="$TOOL_BASE"/>
+    <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+    <runtime name="GPROFNG_SYSCONFDIR" value="$TOOL_BASE/etc"/>
+    <ifrelease name="ASAN">
+      <runtime name="GCC_RUNTIME_ASAN" value="$TOOL_BASE/lib64/libasan.so" type="path"/>
+    <elif name="LSAN"/>
+      <runtime name="GCC_RUNTIME_LSAN" value="$TOOL_BASE/lib64/libasan.so" type="path"/>
+    <elif name="UBSAN"/>
+      <runtime name="GCC_RUNTIME_UBSAN" value="$TOOL_BASE/lib64/libubsan.so" type="path"/>
+    <elif name="TSAN"/>
+      <runtime name="GCC_RUNTIME_TSAN" value="$TOOL_BASE/lib64/libtsan.so" type="path"/>
+    </ifrelease>
+#endif
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/rocm-rocprofiler-sdk.xml
+<tool name="rocm-rocprofiler-sdk" version="6.4.3" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/rocm/6.4.3-local1" revision="2">
+  <info url="https://rocm.docs.amd.com/projects/rocprofiler-sdk/en/latest/index.html"/>
+  <use name="rocm"/>
+  <lib name="rocprofiler-sdk-roctx"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/libibumad.xml
+<tool name="libibumad" version="v57.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/rdma-core/v57.0-local1" revision="2">
+  <info url="https://github.com/linux-rdma/rdma-core/blob/master/README.md"/>
+  <use name="rdma-core"/>
+  <lib name="ibumad"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-cufft.xml
+<tool name="cuda-cufft" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/cufft/index.html"/>
+  <use name="cuda"/>
+  <lib name="cufft"/>
+  <lib name="cufftw"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/libpciaccess.xml
+<tool name="libpciaccess" version="libpciaccess_0.16" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/libpciaccess/libpciaccess_0.16-local1" revision="3">
+  <lib name="libpciaccess"/>
+  <client>
+    <environment name="LIBDIR"            default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE"           default="$TOOL_BASE/include"/>
+  </client>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/libxml2.xml
+<tool name="libxml2" version="v2.9.10" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/libxml2/v2.9.10-local1" revision="3">
+  <info url="http://xmlsoft.org/"/>
+  <lib name="xml2"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include/libxml2"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/hwloc.xml
+<tool name="hwloc" version="2.12.2" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/hwloc/2.12.2-local1" revision="3">
+  <lib name="hwloc"/>
+  <client>
+    <environment name="INCLUDE"     default="$TOOL_BASE/include/hwloc"/>
+    <environment name="LIBDIR"      default="$TOOL_BASE/lib"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+#if %(use_cuda)s || %(use_rocm)s
+  <runtime name="HWLOC_PLUGINS_PATH" value="$TOOL_BASE/lib/hwloc" type="path"/>
+#endif
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/rocm-rocrand.xml
+<tool name="rocm-rocrand" version="6.4.3" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/rocm/6.4.3-local1" revision="2">
+  <info url="https://rocm.docs.amd.com/projects/rocRAND/en/docs-6.4.3/"/>
+  <use name="rocm"/>
+  <lib name="hiprand"/>
+  <lib name="rocrand"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/gcc-f77compiler.xml
+  <tool name="gcc-f77compiler" version="14.3.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" type="compiler" revision="2">
+    <lib name="gfortran"/>
+    <lib name="m"/>
+    <client>
+#ifdef GCC_ROOT
+      <environment name="FC" default="$TOOL_BASE/bin/gfortran"/>
+#else
+      <environment name="FC" default="gfortran"/>
+#endif
+    </client>
+    <flags FFLAGS="-fno-second-underscore -Wunused -Wuninitialized -O3 -cpp   "/>
+    <flags FFLAGS="-std=legacy -Wno-unused-variable"/>
+    <flags FOPTIMISEDFLAGS="-O3    "/>
+    <flags FSHAREDOBJECTFLAGS="-fPIC    "/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/libibverbs.xml
+<tool name="libibverbs" version="v57.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/rdma-core/v57.0-local1" revision="2">
+  <info url="https://github.com/linux-rdma/rdma-core/blob/master/README.md"/>
+  <use name="rdma-core"/>
+  <lib name="ibverbs"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/libfabric.xml
+<tool name="libfabric" version="2.1.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/libfabric/2.1.0-local1" revision="3">
+  <lib name="fabric"/>
+  <client>
+    <environment name="LIBDIR"         default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE"        default="$TOOL_BASE/include"/>
+  </client>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-curand.xml
+<tool name="cuda-curand" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/curand/index.html"/>
+  <use name="cuda"/>
+  <lib name="curand"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/ucx.xml
+<tool name="ucx" version="1.18.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/ucx/1.18.1-local1" revision="4">
+  <lib name="ucp"/>
+  <lib name="uct"/>
+  <lib name="ucs"/>
+  <lib name="ucm"/>
+  <client>
+    <environment name="INCLUDE"  default="$TOOL_BASE/include"/>
+    <environment name="LIBDIR"   default="$TOOL_BASE/lib"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="UCX_HANDLE_ERRORS" value="none"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/pacparser.xml
+<tool name="pacparser" version="1.4.5" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/pacparser/1.4.5-local1" revision="3">
+  <info url="http://code.google.com/p/pacparser/"/>
+  <lib name="pacparser"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/openmpi.xml
+<tool name="openmpi" version="5.0.9" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/openmpi/5.0.9-local1" revision="5">
+  <lib name="mpi"/>
+  <client>
+    <environment name="LIBDIR"       default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE"      default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="OPAL_PREFIX" value="$TOOL_BASE"/>
+  <runtime name="PMIX_PREFIX" value="$TOOL_BASE"/>
+  <runtime name="OMPI_MCA_accelerator" value="null"/>
+#if %(HFI_NO_BACKTRACE)s
+  <runtime name="HFI_NO_BACKTRACE" value="%(HFI_NO_BACKTRACE)s"/>
+#endif
+#if %(IPATH_NO_BACKTRACE)s
+  <runtime name="IPATH_NO_BACKTRACE" value="%(IPATH_NO_BACKTRACE)s"/>
+#endif
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/librdmacm.xml
+<tool name="librdmacm" version="v57.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/rdma-core/v57.0-local1" revision="2">
+  <info url="https://github.com/linux-rdma/rdma-core/blob/master/README.md"/>
+  <use name="rdma-core"/>
+  <use name="libibverbs"/>
+  <lib name="rdmacm"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/rocm.xml
+<tool name="rocm" version="6.4.3" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/rocm/6.4.3-local1" revision="8">
+  <info url="https://rocm.docs.amd.com/en/docs-6.4.3/"/>
+  <lib name="amdhip64"/>
+  <lib name="hsa-runtime64"/>
+  <lib name="rocm_smi64"/>
+  <client>
+    <environment name="HIPCC"     default="$TOOL_BASE/bin/hipcc"/>
+    <environment name="BINDIR"    default="$TOOL_BASE/bin"/>
+    <environment name="LIBDIR"    default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE"   default="$TOOL_BASE/include"/>
+  </client>
+  <flags CPPDEFINES="__HIP_PLATFORM_HCC__ __HIP_PLATFORM_AMD__"/>
+  <flags ROCM_FLAGS="--rocm-path=$TOOL_BASE"/>
+  <flags ROCM_FLAGS=""/>
+  <flags ROCM_FLAGS="-fgpu-rdc"/>
+  <flags ROCM_FLAGS="-Wno-pass-failed"/>
+  <flags REM_ROCM_HOST_CXXFLAGS="-march=%%"/>
+  <flags ROCM_HOST_CXXFLAGS="-march=%(min_microarch_name)s"/>
+  <!-- use -isystem instead of -I to silence warnings in the HIP/ROCm headers -->
+  <flags SYSTEM_INCLUDE="1"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path" join="1"/>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="HSA_XNACK" value="1"/>
+  <use name="fmt"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/gcc-plugin.xml
+  <tool name="gcc-plugin" version="14.3.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1/lib/gcc/x86_64-redhat-linux/14.3.1/plugin" revision="3">
+    <lib name="cc1plugin cp1plugin"/>
+    <client>
+      <environment name="INCLUDE"   default="$TOOL_BASE/include"/>
+      <environment name="LIBDIR"    default="$TOOL_BASE"/>
+    </client>
+#if %(use_system_gcc)s
+    <flags SKIP_TOOL_SYMLINKS="1"/>
+#endif
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-cusolver.xml
+<tool name="cuda-cusolver" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/cusolver/index.html"/>
+  <use name="cuda"/>
+  <lib name="cusolver"/>
+  <lib name="cusolverMg"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/xerces-c.xml
+<tool name="xerces-c" version="3.1.3" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/xerces-c/3.1.3-1" revision="3">
+  <info url="http://xml.apache.org/xerces-c/"/>
+  <lib name="xerces-c"/>
+  <client>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cppunit.xml
+<tool name="cppunit" version="1.15.x" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cppunit/1.15.x-1" revision="3">
+  <lib name="cppunit"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+  <use name="sockets"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/pcre.xml
+<tool name="pcre" version="8.43" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/pcre/8.43-local1" revision="3">
+  <info url="http://www.pcre.org"/>
+  <lib name="pcre"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+  <use name="zlib"/>
+  <use name="bz2lib"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/rdma-core.xml
+<tool name="rdma-core" version="v57.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/rdma-core/v57.0-local1" revision="3">
+  <info url="https://github.com/linux-rdma/rdma-core/blob/master/README.md"/>
+  <client>
+    <environment name="LIBDIR"         default="$TOOL_BASE/lib64"/>
+    <environment name="INCLUDE"        default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="PATH" value="$TOOL_BASE/bin" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <runtime name="VERBS_CONFIG_DIR" value="$TOOL_BASE/etc/libibverbs.d" type="path"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-cusparse.xml
+<tool name="cuda-cusparse" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/cusparse/index.html"/>
+  <use name="cuda"/>
+  <lib name="cusparse"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/no-array-bounds-flag.xml
+<tool name="no-array-bounds-flag" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" version="1.0" revision="2">
+  <!-- work around a GCC bug that makes LTO ignore diagnostic #pragma:
+    - https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80922
+    - https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109916
+  -->
+  <flags CXXFLAGS="-Wno-error=array-bounds -Wno-array-bounds"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/frontier_client.xml
+<tool name="frontier_client" version="2.10.2" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/frontier_client/2.10.2-local1" revision="3">
+  <lib name="frontier_client"/>
+  <client>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+  </client>
+  <runtime name="FRONTIER_CLIENT" value="$TOOL_BASE/"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+  <use name="zlib"/>
+  <use name="expat"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/oracle.xml
+<tool name="oracle" version="19.11.0.0.0dbru" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/oracle/19.11.0.0.0dbru-1" revision="3">
+  <lib name="clntsh"/>
+  <client>
+    <environment name="ORACLE_ADMINDIR" value="/etc"/>
+    <environment name="LIBDIR" value="$TOOL_BASE/lib"/>
+    <environment name="BINDIR" value="$TOOL_BASE/bin"/>
+    <environment name="INCLUDE" value="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="PATH" value="$BINDIR" type="path"/>
+  <runtime name="TNS_ADMIN" default="$ORACLE_ADMINDIR"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+  <use name="sockets"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/ofast-flag.xml
+  <tool name="ofast-flag" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" version="1.0" revision="2">
+    <flags CXXFLAGS="-Ofast -fno-reciprocal-math"/>
+    <ifarch match="ppc64le|amd64|x86_64">
+      <flags CXXFLAGS="-mrecip=none"/>
+    </ifarch>
+    <ifarchitecture name="slc6_">
+      <ifcompiler name="llvm">
+        <flags CXXFLAGS="-fno-builtin"/>
+      </ifcompiler>
+    </ifarchitecture>
+    <flags NO_RECURSIVE_EXPORT="1"/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/opengl.xml
+  <tool name="opengl" version="system" revision="2">
+    <lib name="GL"/>
+    <lib name="GLU"/>
+    <use name="x11"/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/oracleocci.xml
+<tool name="oracleocci" version="19.11.0.0.0dbru" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/oracle/19.11.0.0.0dbru-1" revision="2">
+  <lib name="occi"/>
+  <use name="oracle"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/sanitizer-flags-asan.xml
+  <tool name="sanitizer-flags-asan" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" version="1.0" revision="2">
+    <ifrelease name="ASAN">
+      <flags CPPDEFINES="CMS_ADDRESS_SANITIZER"/>
+      <flags CXXFLAGS="-fno-omit-frame-pointer -fsanitize=address"/>
+      <flags CXXFLAGS="-fsanitize=pointer-subtract"/>
+    </ifrelease>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-interface.xml
+<tool name="cuda-interface" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/index.html"/>
+  <client>
+    <environment name="BINDIR"              default="$TOOL_BASE/bin"/>
+    <environment name="LIBDIR"              default="$TOOL_BASE/lib64"/>
+    <environment name="INCLUDE"             default="$TOOL_BASE/include"/>
+  </client>
+  <flags SKIP_TOOL_SYMLINKS="1"/>
+  <runtime name="LD_LIBRARY_PATH" value="$LIBDIR"  type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH"        value="$INCLUDE" type="path"/>
+  <runtime name="PATH"                     value="$BINDIR"  type="path"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/openssl.xml
+  <tool name="openssl" version="system" revision="2">
+    <lib name="ssl"/>
+    <lib name="crypto"/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/sanitizer-flags-ubsan.xml
+  <tool name="sanitizer-flags-ubsan" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" version="1.0" revision="2">
+    <ifrelease name="UBSAN">
+      <flags CPPDEFINES="CMS_UNDEFINED_SANITIZER"/>
+      <flags CXXFLAGS="-fno-omit-frame-pointer -fsanitize=undefined"/>
+      <flags CXXFLAGS="-fsanitize=builtin -fsanitize=pointer-overflow"/>
+      <flags REM_BOOST_SERIALIZATION_CXXFLAGS="-fno-omit-frame-pointer -fsanitize=undefined"/>
+      <flags REM_BOOST_SERIALIZATION_CXXFLAGS="-fsanitize=builtin -fsanitize=pointer-overflow"/>
+    </ifrelease>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-npp.xml
+<tool name="cuda-npp" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/npp/index.html"/>
+  <use name="cuda"/>
+  <lib name="nppial"/>
+  <lib name="nppicc"/>
+  <lib name="nppidei"/>
+  <lib name="nppif"/>
+  <lib name="nppig"/>
+  <lib name="nppim"/>
+  <lib name="nppist"/>
+  <lib name="nppisu"/>
+  <lib name="nppitc"/>
+  <lib name="npps"/>
+  <lib name="nppc"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/resolv.xml
+  <tool name="resolv" version="system" revision="2">
+    <lib name="resolv"/>
+    <flags FORCE_LINK="1"/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-nvgraph.xml
+<tool name="cuda-nvgraph" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/nvgraph/index.html"/>
+  <use name="cuda"/>
+  <lib name="nvgraph"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/root_cxxdefaults.xml
+<tool name="root_cxxdefaults" version="system" revision="2">
+#if %(use_system_gcc)s
+#else
+  <runtime name="ROOT_GCC_TOOLCHAIN" value="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/gcc/14.3.1-1" type="path"/>
+#endif
+  <runtime name="ROOT_INCLUDE_PATH" value="/usr/local/include" type="path" handler="warn"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="/usr/include"       type="path" handler="warn"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-nvjpeg.xml
+<tool name="cuda-nvjpeg" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/nvjpeg/index.html"/>
+  <use name="cuda"/>
+  <lib name="nvjpeg"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/sockets.xml
+  <tool name="sockets" version="system" revision="2">
+    <lib name="crypt"/>
+    <lib name="dl"/>
+    <lib name="rt"/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost.xml
+<tool name="boost" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="3">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_thread"/>
+  <lib name="boost_date_time"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+  </client>
+  <use name="boost_header"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-nvml.xml
+<tool name="cuda-nvml" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/deploy/nvml-api/index.html"/>
+  <use name="cuda-stubs"/>
+  <lib name="nvidia-ml"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/x11.xml
+  <tool name="x11" version="system" revision="2">
+    <use name="sockets"/>
+  </tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_chrono.xml
+<tool name="boost_chrono" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_chrono"/>
+  <use name="boost_system"/>
+  <use name="boost"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-nvrtc.xml
+<tool name="cuda-nvrtc" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/nvrtc/index.html"/>
+  <use name="cuda"/>
+  <lib name="nvrtc"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_filesystem.xml
+<tool name="boost_filesystem" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_filesystem"/>
+  <use name="boost_system"/>
+  <use name="boost"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda-stubs.xml
+<tool name="cuda-stubs" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="3">
+  <info url="https://docs.nvidia.com/cuda/index.html"/>
+  <lib name="cuda"/>
+  <use name="cuda-interface"/>
+  <client>
+    <environment name="LIBDIR"          default="$TOOL_BASE/lib64/stubs"/>
+  </client>
+  <flags SKIP_TOOL_SYMLINKS="1"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_header.xml
+<tool name="boost_header" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="3">
+  <info url="http://www.boost.org"/>
+  <client>
+    <environment name="INCLUDE" default="$TOOL_BASE/include"/>
+  </client>
+  <runtime name="CMSSW_FWLITE_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="sockets"/>
+  <use name="root_cxxdefaults"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <flags CPPDEFINES="BOOST_SPIRIT_THREADSAFE PHOENIX_THREADSAFE"/>
+  <flags CPPDEFINES="BOOST_MATH_DISABLE_STD_FPCLASSIFY"/>
+  <flags CPPDEFINES="BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX"/>
+  <flags CPPDEFINES="BOOST_MPL_IGNORE_PARENTHESES_WARNING"/>
+  <flags CXXFLAGS="-Wno-error=unused-variable"/>
+  <flags SYSTEM_INCLUDE="1"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cuda.xml
+<tool name="cuda" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="6">
+  <info url="https://docs.nvidia.com/cuda/index.html"/>
+  <use name="cuda-interface"/>
+  <use name="cuda-stubs"/>
+  <lib name="cudart"/>
+  <lib name="cudadevrt"/>
+  <client>
+    <environment name="NVCC"      default="$TOOL_BASE/bin/nvcc"/>
+  </client>
+  <flags CUDA_FLAGS=""/>
+  <flags REM_CUDA_HOST_CXXFLAGS="-std=%%"/>
+  <flags REM_CUDA_HOST_CXXFLAGS="%%potentially-evaluated-expression"/>
+  <flags CUDA_HOST_CXXFLAGS=""/>
+  <lib name="cudadevrt" type="cuda"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_iostreams.xml
+<tool name="boost_iostreams" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_iostreams"/>
+  <use name="boost"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/cupti.xml
+<tool name="cupti" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="3">
+  <info url="https://docs.nvidia.com/cupti/Cupti/index.html"/>
+  <lib name="cupti"/>
+  <use name="cuda-interface"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_mpi.xml
+<tool name="boost_mpi" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_mpi"/>
+  <use name="boost"/>
+  <use name="boost_serialization"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/nvidia-drivers.xml
+<tool name="nvidia-drivers" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="2">
+  <info url="https://docs.nvidia.com/cuda/index.html"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/drivers"/>
+  </client>
+  <flags SKIP_TOOL_SYMLINKS="1"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_program_options.xml
+<tool name="boost_program_options" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_program_options"/>
+  <use name="boost"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/nvperf.xml
+<tool name="nvperf" version="12.9.1" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/cuda/12.9.1-local1" revision="3">
+  <info url="https://docs.nvidia.com/cupti/Cupti/index.html"/>
+  <lib name="nvperf_host"/>
+  <lib name="nvperf_target"/>
+  <use name="cuda-interface"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_python.xml
+<tool name="boost_python" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_python-config-version.cmake"/>
+  <client>
+    <environment name="LIBDIR" default="$TOOL_BASE/lib"/>
+  </client>
+  <use name="boost_header"/>
+  <use name="python3"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_regex.xml
+<tool name="boost_regex" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_regex"/>
+  <use name="boost"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_serialization.xml
+<tool name="boost_serialization" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_serialization"/>
+  <use name="boost"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_system.xml
+<tool name="boost_system" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_system"/>
+  <use name="boost"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/boost_test.xml
+<tool name="boost_test" version="1.80.0" path="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/boost/1.80.0-local1" revision="2">
+  <info url="http://www.boost.org"/>
+  <lib name="boost_unit_test_framework"/>
+  <use name="boost"/>
+</tool>
+EOF_TOOLFILE
+cpp -P -x assembler-with-cpp << \EOF_TOOLFILE >> $PKGINSTROOT/tools/selected/python-paths.xml
+<tool name="python-paths" version="1.0" revision="1">
+  <runtime name="PYTHON3PATH"  value="/home/akbehera/Desktop/bitsorg/sxz/el9_amd64_gcc14/external/coral-tools/v1-local13/lib/python3.12/site-packages" type="path"/>
+</tool>
+EOF_TOOLFILE

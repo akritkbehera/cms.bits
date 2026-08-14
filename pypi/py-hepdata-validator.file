@@ -1,0 +1,7 @@
+requires:
+- py-jsonschema
+- py-PyYAML
+- py-click
+- py-requests
+- py-packaging
+---

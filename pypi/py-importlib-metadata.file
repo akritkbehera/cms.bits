@@ -1,0 +1,6 @@
+package: py-importlib-metadata
+requires:
+- py-contextlib2 
+- py-pathlib2 
+- py-zipp
+---

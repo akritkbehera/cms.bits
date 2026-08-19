@@ -51,4 +51,5 @@ cmake "${CMAKE_ARGS[@]}"
 
 ninja -C "$BUILDROOT/$PKGNAME.build" -v ${JOBS:+-j$JOBS}
 ninja -C "$BUILDROOT/$PKGNAME.build" -v ${JOBS:+-j$JOBS} install
-ln -s $ABSEIL_CPP_ROOT/include/absl $INSTALLROOT/include/absl
+rm -rf "$INSTALLROOT/include/absl"
+cp -rL "$ABSEIL_CPP_ROOT/include/absl" "$INSTALLROOT/include/absl"

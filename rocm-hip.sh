@@ -22,6 +22,11 @@ env:
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
 SRC="$BUILDDIR/rocm-systems"
+export HIP_CLANG_PATH=${ROCM_LLVM_ROOT}/lib/llvm/bin
+
+HIPRTC_CMAKE="$SRC/projects/clr/hipamd/src/hiprtc/CMakeLists.txt"
+grep -qF -- '-nogpulib --hip-version=' "$HIPRTC_CMAKE"
+sed -i 's|-nogpulib --hip-version=|-nogpulib -nogpuinc --hip-version=|' "$HIPRTC_CMAKE"
 
 cmake \
   -S "$SRC/projects/clr" \
@@ -34,7 +39,7 @@ cmake \
   -DHIPCC_BIN_DIR=${ROCM_LLVM_ROOT}/bin \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
   -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_PREFIX_PATH="$ROCM_LLVM_ROOT;$ROCM_CORE_ROOT;$ROCR_RUNTIME_ROOT;$ROCM_COMGR_ROOT" \
+  -DCMAKE_PREFIX_PATH="$ROCM_LLVM_ROOT;$ROCM_CORE_ROOT;$ROCR_RUNTIME_ROOT;$ROCM_COMGR_ROOT;$ROCPROFILER_REGISTER_ROOT;$NUMACTL_ROOT;$PYTHON_ROOT" \
   -DCMAKE_C_COMPILER=${ROCM_LLVM_ROOT}/bin/amdclang \
   -DCMAKE_CXX_COMPILER=${ROCM_LLVM_ROOT}/bin/amdclang++ \
   -DCMAKE_INSTALL_LIBDIR=lib \

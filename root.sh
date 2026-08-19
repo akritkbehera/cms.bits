@@ -191,6 +191,7 @@ for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${
   fi
 done
 
+unset ROOT_INCLUDE_PATH
 for d in \
   ${GSL_ROOT} \
   ${LIBJPEG_TURBO_ROOT} \

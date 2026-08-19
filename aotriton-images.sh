@@ -7,8 +7,7 @@ sources:
 requires:
   - gcc
 ---
-#!include <rocm-flags.file>
-
+rocm_archs="gfx90a:sramecc+ gfx942:sramecc+ gfx1100 gfx1102"
 # Port of cmsdist aotriton-images.spec: pick the prebuilt kernel-image tarball(s) matching
 # $rocm_archs (from rocm-flags) and unpack whichever are actually needed.
 #

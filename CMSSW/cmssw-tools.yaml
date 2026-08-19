@@ -189,3 +189,4 @@ requires:
   - xgboost
   - xtd
   - dip
+  - aotriton

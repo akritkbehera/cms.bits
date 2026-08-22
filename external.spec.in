@@ -1,0 +1,22 @@
+%include %{workdir}/system-externals.hash
+Name:           %{pkgname}
+Version:        %{pkgversion}_%{pkghash}
+Release:        1%{?dist}
+Summary:        Auto-generated metadata package for %{pkgname}
+License:        MIT
+BuildArch:      %{arch}
+Requires:       system-externals = 1_%{system_pkghash}
+
+%{expand:%(for d in %{?deps}; do n=${d%%=*}; v=${d#*=}; echo "Requires: $n = $v"; done)}
+
+AutoReqProv:    no
+
+Provides:       %{pkgname} = %{pkgversion}_%{pkghash}-1
+%(find %{tree} -type f | /usr/lib/rpm/rpmdeps --provides | sort -u | sed 's/^/Provides: /')
+
+%(find %{tree} -type f | /usr/lib/rpm/rpmdeps --requires | sort -u | sed 's/^/Requires: /')
+
+%description
+Auto-generated metadata package for %{pkgname}
+
+%files

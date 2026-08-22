@@ -20,4 +20,6 @@ package_family:
     - cmssw*
     - CMSSW*
 auto_patch: false
+hook:
+  POST_INSTALL: check_dependencies
 ---

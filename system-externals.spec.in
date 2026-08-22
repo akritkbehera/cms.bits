@@ -1,0 +1,74 @@
+Name:           %{pkgname}
+Version:        %{pkgversion}_%{pkghash}
+Release:        1%{?dist}
+Summary:        Virtual package exposing provides of system externals
+License:        MIT
+BuildArch:      %{arch}
+
+AutoReqProv:    no
+
+%{expand:%(
+  for seed in %{seeds}; do
+    pkg=$(rpm -q --whatprovides "$seed" 2>/dev/null | head -1)
+    [ -z "$pkg" ] && continue
+    rpm -q --provides "$pkg" 2>/dev/null
+  done | sort -u | sed 's/^/Provides: /'
+)}
+
+Provides:       perl(Cwd)
+Provides:       perl(File::Basename)
+Provides:       perl(File::stat)
+Provides:       perl(Getopt::Long)
+Provides:       perl(List::Util)
+Provides:       perl(POSIX)
+Provides:       perl(bigint)
+Provides:       perl(Carp)
+Provides:       perl(Class::Struct)
+Provides:       perl(Data::Dumper)
+Provides:       perl(Errno)
+Provides:       perl(Exporter)
+Provides:       perl(File::Copy)
+Provides:       perl(File::Find)
+Provides:       perl(File::Path)
+Provides:       perl(File::Spec)
+Provides:       perl(File::Temp)
+Provides:       perl(IO::File)
+Provides:       perl(Text::ParseWords)
+Provides:       perl(constant)
+Provides:       /usr/bin/env
+Provides:       /usr/bin/perl
+Provides:       perl(CGI)
+Provides:       perl(CGI::Carp)
+Provides:       perl(CGI::Util)
+Provides:       perl(DBI)
+Provides:       perl(Digest::MD5)
+Provides:       perl(Encode)
+Provides:       perl(Fcntl)
+Provides:       perl(Getopt::Std)
+Provides:       perl(IO::Pipe)
+Provides:       perl(IO::Socket)
+Provides:       perl(IPC::Open2)
+Provides:       perl(IPC::Open3)
+Provides:       perl(Memoize)
+Provides:       perl(SVN::Core)
+Provides:       perl(SVN::Delta)
+Provides:       perl(SVN::Ra)
+Provides:       perl(Scalar::Util)
+Provides:       perl(Storable)
+Provides:       perl(Time::HiRes)
+Provides:       perl(Time::Local)
+Provides:       perl(YAML::Any)
+Provides:       /bin/rc
+Provides:       %{pkgname} = %{pkgversion}_%{pkghash}
+
+%description
+Virtual package that exposes the full set of provides from selected
+system packages, plus required Perl modules and interpreter.
+
+%files
+
+%post
+if [ -n "$WORK_DIR" ]; then
+  mkdir -p "$WORK_DIR"
+  echo '%%define system_pkghash %{pkghash}' > "$WORK_DIR/system-externals.hash"
+fi

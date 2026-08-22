@@ -14,7 +14,10 @@ AutoReqProv:    no
     rpm -q --provides "$pkg" 2>/dev/null
   done | sort -u | sed 's/^/Provides: /'
 )}
-
+Provides:       /bin/csh
+Provides:       libdrm.so.2()(64bit)
+Provides:       libdrm_amdgpu.so.1()(64bit)
+Provides:       /usr/bin/python
 Provides:       perl(Cwd)
 Provides:       perl(File::Basename)
 Provides:       perl(File::stat)

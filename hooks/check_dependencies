@@ -1,9 +1,11 @@
 DEPS=""
-for r in $REQUIRES; do
+SKIP_AUTOREQ="cuda cudnn"
+for r in $RUNTIME_REQUIRES; do
     [ "$r" = "defaults-release" ] && continue
     R="${r^^}"; R="${R//-/_}"
     ver="${R}_VERSION"; hash="${R}_HASH"
-    DEPS+="$r=${!ver}_${!hash} "
+    depver="${!ver//-/.}"
+    DEPS+="$r=${depver}_${!hash} "
 done
 DEPS="$(echo "$DEPS" | sed 's/[[:space:]]*$//')"
 
@@ -12,15 +14,18 @@ DEPS_DEFINE=()
 
 mkdir -p $INSTALLROOT/etc/rpm
 
+PKGVERSION_SANITIZED="${PKGVERSION//-/.}"
+
 rpmbuild -bb \
   --define "pkgname $PKGNAME" \
   --define "workdir $WORK_DIR" \
-  --define "pkgversion $PKGVERSION" \
+  --define "pkgversion $PKGVERSION_SANITIZED" \
   --define "pkghash $PKGHASH" \
   --define "tree $INSTALLROOT" \
   --define "_rpmdir $INSTALLROOT/etc/rpm" \
   --define "arch $(uname -m)" \
   --define "_build_name_fmt %%{NAME}-%%{VERSION}.%%{ARCH}.rpm" \
+  --define "skip_autoreq $SKIP_AUTOREQ" \
   "${DEPS_DEFINE[@]}" \
   $BITS_CONFIG_DIR/external.spec.in
 
@@ -28,8 +33,7 @@ mkdir -p "$INSTALLROOT/etc/profile.d"
 
 cat << EoF >> "$INSTALLROOT/etc/profile.d/post-relocate.sh"
 DBPATH="\$WORK_DIR/var/lib/rpm"
-RPMFILE="\$WORK_DIR/$ARCHITECTURE/$PKGFAMILY/$PKGNAME/$PKGVERSION-$PKGREVISION/etc/rpm/${PKGNAME}-${PKGVERSION}_${PKGHASH}.$(uname -m).rpm"
-
+RPMFILE="\$WORK_DIR/$ARCHITECTURE/$PKGFAMILY/$PKGNAME/$PKGVERSION-$PKGREVISION/etc/rpm/${PKGNAME}-${PKGVERSION_SANITIZED}_${PKGHASH}.$(uname -m).rpm"
 if [ ! -e "\$DBPATH/rpmdb.sqlite" ]; then
   mkdir -p "\$DBPATH"
   rpm --dbpath "\$DBPATH" --initdb
@@ -37,8 +41,10 @@ fi
 
 if [ "$PKGNAME" = "system-externals" ]; then
   rpm -i --dbpath "\$DBPATH" --nodeps "\$RPMFILE"
+elif rpm --dbpath "\$DBPATH" -q "${PKGNAME}-${PKGVERSION_SANITIZED}_${PKGHASH}" >/dev/null 2>&1; then
+  echo "already registered: ${PKGNAME}-${PKGVERSION_SANITIZED}_${PKGHASH}"
 else
-  rpm -i --dbpath "\$DBPATH" --test "\$RPMFILE" && \
   rpm -i --dbpath "\$DBPATH" "\$RPMFILE"
 fi
+
 EoF

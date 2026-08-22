@@ -12,9 +12,12 @@ Requires:       system-externals = 1_%{system_pkghash}
 AutoReqProv:    no
 
 Provides:       %{pkgname} = %{pkgversion}_%{pkghash}-1
-%(find %{tree} -type f | /usr/lib/rpm/rpmdeps --provides | sort -u | sed 's/^/Provides: /')
 
+%if %(echo " %{?skip_autoreq} " | grep -qw "%{pkgname}" && echo 0 || echo 1)
 %(find %{tree} -type f | /usr/lib/rpm/rpmdeps --requires | sort -u | sed 's/^/Requires: /')
+%endif
+
+%(find %{tree} -type f | /usr/lib/rpm/rpmdeps --provides | sort -u | sed 's/^/Provides: /')
 
 %description
 Auto-generated metadata package for %{pkgname}

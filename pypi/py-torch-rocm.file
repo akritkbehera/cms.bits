@@ -31,7 +31,6 @@ requires:
  - py-networkx
  - py-sympy
  - xz
- - rocm-flags
  - aotriton
  - rocm-hip
  - rocm-comgr
@@ -62,6 +61,8 @@ variables:
 ---
 # cmsdist: pip/torch-rocm.file -> ## INCLUDE pip/torch (+ ROCm overrides).
 # Builds the "torch" pip distribution, so Pypi_name must be overridden (as for -cuda).
+# cmsdist's `## INCLUDE rocm-flags`; supplies $rocm_archs for PYTORCH_ROCM_ARCH below.
+#!include <rocm-flags.file>
 Pypi_name="torch"
 
 # Shared base-torch hooks (PipPatchSource, PipPreBuild with CUDA/ROCM OFF, PipPostInstall).
@@ -109,7 +110,10 @@ Version: $XZ_VERSION
 Libs: -L\${libdir} -llzma
 Cflags: -I\${includedir}
 PC_EOF
- export PKG_CONFIG_PATH="$BUILDDIR/pkgconfig:$PKG_CONFIG_PATH"
+ # /usr/lib64/pkgconfig: rocm_smi-config.cmake re-runs pkg_check_modules(REQUIRED libdrm)
+ # in every consumer, and libdrm is a system package here (same reason as rocm-smi-lib.sh,
+ # rocr-runtime.sh et al -- the tree's pkg-config does not search the system pkgconfig dir).
+ export PKG_CONFIG_PATH="$BUILDDIR/pkgconfig:/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
  # cmsdist's $PIPFILE has no bits equivalent; the unpacked source is pytorch-v<version>,
  # the same path torch-common.file uses for its patch step.
  pushd "$BUILDDIR/py$Pypi_name-v$PKGVERSION"

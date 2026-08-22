@@ -23,5 +23,5 @@ requires:
   - rocsparse
   - rocsolver
 ---
-export ROCM_CMAKE_EXTRA_ARGS='-DCMAKE_CXX_FLAGS="-I$BOOST_ROOT/include"'
+export ROCM_CMAKE_EXTRA_ARGS='-DCMAKE_CXX_FLAGS="$ROCM_DEVICE_LIB_FLAG -I$BOOST_ROOT/include"'
 #!include <rocm-libraries-build.sh>

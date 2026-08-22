@@ -12,8 +12,6 @@ requires:
   -  gcc
 env:
   USE_CUDA: "1"
-hook_params:
- AutoReq: "1"
 ---
 ARCH=$(uname -m)
 CUDADRIVER_VERSION="%(driversversion)s"

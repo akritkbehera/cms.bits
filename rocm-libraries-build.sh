@@ -10,14 +10,18 @@
 #   ROCM_PRE_BUILD_HOOK     bash snippet, eval'd after extraction+patch, before cmake
 #   ROCM_POST_CMAKE_HOOK    bash snippet, eval'd after cmake configure, before make
 #   ROCM_POST_INSTALL_HOOK  bash snippet, eval'd after `make install`
-export HIP_DEVICE_LIB_PATH="$ROCM_LLVM_ROOT/amdgcn/bitcode"
 : "${ROCM_PROJECT:=$PKGNAME}"
+
+ROCM_DEVICE_LIB_FLAG="--rocm-device-lib-path=$ROCM_LLVM_ROOT/amdgcn/bitcode -Wno-unused-command-line-argument"
 
 # Some upstream CMakeLists (e.g. MIOpen's ClangToolChain.cmake) auto-detect the
 # ROCm install via `hipconfig --rocmpath`, which echoes back a stale ROCM_PATH
 # if one happens to be set in the environment (or otherwise mis-detects). Force
-# it explicitly to this build's real rocm-llvm so that auto-detection never runs.
-unset ROCM_PATH
+# it explicitly instead of leaving it unset: some packages (e.g. rocblas's
+# Tensile) shell out to amdclang++ directly, bypassing CMAKE_CXX_FLAGS, and
+# rely on $ROCM_PATH alone to find the HIP runtime headers -- which live in
+# the separate rocm-hip package, not rocm-llvm.
+export ROCM_PATH="$ROCM_HIP_ROOT"
 export ROCM_CMAKE_PATH="$ROCM_LLVM_ROOT"
 
 tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
@@ -38,6 +42,8 @@ CMAKE_ARGS=(
   -DBUILD_CLIENTS_TESTS=off
   -DHIP_ROOT=$ROCM_HIP_ROOT
   -DGPU_TARGETS="gfx90a;gfx942;gfx1100;gfx1102"
+  -DCMAKE_C_FLAGS="$ROCM_DEVICE_LIB_FLAG"
+  -DCMAKE_CXX_FLAGS="$ROCM_DEVICE_LIB_FLAG"
 )
 if [ -n "${ROCM_CMAKE_EXTRA_ARGS:-}" ]; then
   eval "CMAKE_ARGS+=($ROCM_CMAKE_EXTRA_ARGS)"

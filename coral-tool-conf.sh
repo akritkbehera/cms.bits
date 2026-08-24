@@ -2,6 +2,7 @@ package: coral-tool-conf
 version: vCMS
 requires:
  - coral-tools
+hook: disable
 ---
 # =============================================================================
 # coral-tool-conf: Deploys tool configuration files from coral-tools templates

@@ -1,5 +1,5 @@
 DEPS=""
-SKIP_AUTOREQ="cuda cudnn"
+SKIP_AUTOREQ="cuda cudnn oracle"
 for r in $RUNTIME_REQUIRES; do
     [ "$r" = "defaults-release" ] && continue
     R="${r^^}"; R="${R//-/_}"
@@ -33,7 +33,7 @@ mkdir -p "$INSTALLROOT/etc/profile.d"
 
 cat << EoF >> "$INSTALLROOT/etc/profile.d/post-relocate.sh"
 DBPATH="\$WORK_DIR/var/lib/rpm"
-RPMFILE="\$WORK_DIR/$ARCHITECTURE/$PKGFAMILY/$PKGNAME/$PKGVERSION-$PKGREVISION/etc/rpm/${PKGNAME}-${PKGVERSION_SANITIZED}_${PKGHASH}.$(uname -m).rpm"
+RPMFILE="\$WORK_DIR/\$PP/etc/rpm/${PKGNAME}-${PKGVERSION_SANITIZED}_${PKGHASH}.$(uname -m).rpm"
 if [ ! -e "\$DBPATH/rpmdb.sqlite" ]; then
   mkdir -p "\$DBPATH"
   rpm --dbpath "\$DBPATH" --initdb

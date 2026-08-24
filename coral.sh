@@ -38,8 +38,8 @@ patches:
 build_requires:
  - SCRAMV1
  - dwz
-requires:
  - coral-tool-conf
+requires:
  - pcre
  - Python
  - gcc

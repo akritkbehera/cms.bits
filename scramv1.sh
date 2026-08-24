@@ -9,6 +9,7 @@ env:
   SCRAMV1_VERSION: "$PKGVERSION"
 requires:
  - cms-common
+hook: disable
 ---
 if ! [[ "$PKGVERSION" =~ ^(V([0-9]+)_([0-9]+))_([0-9]+) ]]; then
   echo "You are trying to build SCRAM version $PKGVERSION which does not follow the SCRAM version policy."

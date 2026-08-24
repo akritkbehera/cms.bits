@@ -15,6 +15,7 @@ requires:
   - gmake
   - ROOT
   - gcc
+hook: disable
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=0 \

@@ -56,6 +56,7 @@ requires:
   - frontier_client
   - boost
   - oracle
+hook: disable
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 chmod +x "$BUILDDIR/bin/get_tools"

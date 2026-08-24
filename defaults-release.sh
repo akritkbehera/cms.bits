@@ -1,5 +1,5 @@
 package: defaults-release
-version: v1
+version: vCMS
 variables:
   cms_cxx_std: "20"
   cms_build_type: "Release"

@@ -4,6 +4,7 @@ variables:
  override_microarch_name: ""
 requires:
  - cmssw-tools
+hook: disable
 ---
 #!include <tool-conf-flags.file>
 

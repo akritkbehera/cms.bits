@@ -3,6 +3,9 @@ from os.path import exists, dirname, join
 import sys
 print("package: %s" % sys.argv[1])
 print("version: %s" % sys.argv[2])
+print('architecture: "share"')
+print('force_revision: ""')
+print('hook: disable')
 dir=dirname(sys.argv[0])
 override_file = join (dir, "%s.file" % sys.argv[1])
 recipe = ""

@@ -111,6 +111,7 @@ requires:
   - data-PhysicsTools-PyTorchAlpaka
   - data-PhysicsTools-PyTorchAlpakaTest
   - data-RecoLocalCalo-HGCalRecProducers
+hook: disable
 ---
 # Port of cmsdist cmsswdata.spec -> ## INCLUDE cmsswdata (cmsdist/cmsswdata.file).
 # That %install writes etc/scram.d/cmsswdata.xml by walking %pkgreqs (the resolved

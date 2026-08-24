@@ -57,7 +57,7 @@ if [ "${PYTHON3PATH}" != "" ] ; then
      echo "adding $pkg"
      echo "$pkg" >> "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/tool-deps.pth"
   done
-  echo '  <runtime name="PYTHON3PATH"  value="'"$INSTALLROOT"'/'${PYTHON3_LIB_SITE_PACKAGES}'" type="path"/>' >> "$INSTALLROOT/tools/selected/python-paths.xml"
+  echo '  <runtime name="PYTHON3PATH"  value="'"$WORK_DIR/$ARCHITECTURE/cms/$PKGNAME/$PKGVERSION-$PKGREVISION"'/'${PYTHON3_LIB_SITE_PACKAGES}'" type="path"/>' >> "$INSTALLROOT/tools/selected/python-paths.xml"
 fi
 
 # Handle vectorized Python paths

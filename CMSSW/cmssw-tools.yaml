@@ -1,5 +1,6 @@
 tag: 95c34a89349f361c7172a9884f48068fa089ebf1
 source: https://github.com/akritkbehera/scram-tools.file.git
+hook: disable
 requires:
   - AXOL1TL
   - TOPO

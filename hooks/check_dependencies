@@ -1,7 +1,8 @@
 DEPS=""
-SKIP_AUTOREQ="cuda cudnn oracle"
+SKIP_AUTOREQ="cuda cudnn oracle cmsswdata"
 for r in $RUNTIME_REQUIRES; do
     [ "$r" = "defaults-release" ] && continue
+    [[ "$r" == data-* ]] && continue
     R="${r^^}"; R="${R//-/_}"
     ver="${R}_VERSION"; hash="${R}_HASH"
     depver="${!ver//-/.}"

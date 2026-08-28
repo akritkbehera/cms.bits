@@ -1,4 +1,4 @@
-%include %{workdir}/system-externals.hash
+%define system_pkghash %(cat %{workdir}/system-externals.hash)
 Name:           %{pkgname}
 Version:        %{pkgversion}_%{pkghash}
 Release:        1%{?dist}

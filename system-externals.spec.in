@@ -74,5 +74,5 @@ system packages, plus required Perl modules and interpreter.
 %post
 if [ -n "$WORK_DIR" ]; then
   mkdir -p "$WORK_DIR"
-  echo '%%define system_pkghash %{pkghash}' > "$WORK_DIR/system-externals.hash"
+  echo '%{pkghash}' > "$WORK_DIR/system-externals.hash"
 fi

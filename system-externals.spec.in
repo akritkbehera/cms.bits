@@ -70,9 +70,3 @@ Virtual package that exposes the full set of provides from selected
 system packages, plus required Perl modules and interpreter.
 
 %files
-
-%post
-if [ -n "$WORK_DIR" ]; then
-  mkdir -p "$WORK_DIR"
-  echo '%{pkghash}' > "$WORK_DIR/system-externals.hash"
-fi

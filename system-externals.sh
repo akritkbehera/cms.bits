@@ -31,4 +31,10 @@ if rpm --dbpath "\$DBPATH" -q system-externals-1_$PKGHASH >/dev/null 2>&1; then
 else
   rpm -i --dbpath "\$DBPATH" --nodeps "\$RPMFILE"
 fi
+if [ -f "\$WORK_DIR/system-externals.hash" ]; then
+    rm -f "\$WORK_DIR/system-externals.hash"
+fi
+
+echo "$PKGHASH" > "\$WORK_DIR/system-externals.hash"
+chmod 444 "\$WORK_DIR/system-externals.hash"
 EoF

@@ -4,7 +4,7 @@ variables:
   branch: master
   github_user: opencv
 sources:
-- git+https://github.com/%(github_user)s/opencv.git?obj=%(branch)s/%(version)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(version)s.tgz
+- https://github.com/opencv/opencv/archive/refs/tags/%(version)s.tar.gz
 build_requires:
 - CMake
 - ninja

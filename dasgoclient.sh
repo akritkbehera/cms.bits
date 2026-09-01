@@ -2,9 +2,9 @@ package: dasgoclient
 version: vCMS
 variables:
   version_suffix: "00"
-  dasgoclient_tag: v02.04.52
+  dasgoclient_tag: v02.04.54
 sources:
- - https://github.com/dmwm/dasgoclient/releases/download/v02.04.52/dasgoclient_amd64
+ - https://github.com/dmwm/dasgoclient/releases/download/%(dasgoclient_tag)s/dasgoclient_amd64
 requires:
  - gcc
 ---

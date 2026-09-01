@@ -35,6 +35,13 @@ rm -rf $BUILDDIR/build && mkdir -p $BUILDDIR/build && cd $BUILDDIR/build
 
 host_triple=$(gcc -dumpmachine)
 
+# Build LLVM only for the CPU architecture we are on; NVPTX is only needed when
+# CUDA is in the build (mirrors cmsdist llvm.spec).
+llvm_targets="Native"
+if [ -n "$CUDA_ROOT" ]; then
+  llvm_targets="Native;NVPTX"
+fi
+
 cmake_args=(
   -G Ninja
   -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;mlir;lld"
@@ -52,7 +59,7 @@ cmake_args=(
   -DCOMPILER_RT_INCLUDE_TESTS=OFF
   -DLLVM_INCLUDE_TESTS=OFF
   -DLLVM_HOST_TRIPLE="${host_triple}"
-  -DLLVM_TARGETS_TO_BUILD:STRING="X86;PowerPC;AArch64;RISCV;NVPTX"
+  -DLLVM_TARGETS_TO_BUILD:STRING="${llvm_targets}"
   -DCMAKE_REQUIRED_INCLUDES="${ZLIB_ROOT}/include"
   -DCMAKE_PREFIX_PATH="${ZLIB_ROOT};${LIBXML2_ROOT};${ZSTD_ROOT};${LIBUNWIND_ROOT}"
 )

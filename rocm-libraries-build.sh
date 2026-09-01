@@ -1,16 +1,19 @@
 # Shared build recipe for packages built from the ROCm/rocm-libraries monorepo.
 # Include with `#!include <rocm-libraries-build.sh>` as the LAST line of the
-# build-script body, after exporting whichever of the following the package needs
-# (all optional except the package must declare `patches: - rocm-libraries.patch`
-# in its own header so bits stages the shared patch into its own $SOURCEDIR):
+# build-script body, after exporting whichever of the following the package needs:
 #
-#   ROCM_PROJECT           subdirectory under rocm-libraries/projects/ to build
+#   ROCM_PROJECT           subdirectory under rocm-libraries/$ROCM_LIBRARIES_DIR/ to build
 #                           (defaults to $PKGNAME)
+#   ROCM_LIBRARIES_DIR      tree the project lives in: `projects` (default) or `shared`
 #   ROCM_CMAKE_EXTRA_ARGS   extra -D... cmake flags, appended to the base set
-#   ROCM_PRE_BUILD_HOOK     bash snippet, eval'd after extraction+patch, before cmake
+#   ROCM_PRE_BUILD_HOOK     bash snippet, eval'd after extraction, before cmake
 #   ROCM_POST_CMAKE_HOOK    bash snippet, eval'd after cmake configure, before make
 #   ROCM_POST_INSTALL_HOOK  bash snippet, eval'd after `make install`
+#
+# The monorepo tarball comes from the `rocm-sources` package, which clones it once for
+# the whole stack; declare `rocm-sources` in build_requires.
 : "${ROCM_PROJECT:=$PKGNAME}"
+: "${ROCM_LIBRARIES_DIR:=projects}"
 
 ROCM_DEVICE_LIB_FLAG="--rocm-device-lib-path=$ROCM_LLVM_ROOT/amdgcn/bitcode -Wno-unused-command-line-argument"
 
@@ -23,9 +26,11 @@ ROCM_DEVICE_LIB_FLAG="--rocm-device-lib-path=$ROCM_LLVM_ROOT/amdgcn/bitcode -Wno
 # the separate rocm-hip package, not rocm-llvm.
 export ROCM_PATH="$ROCM_HIP_ROOT"
 export ROCM_CMAKE_PATH="$ROCM_LLVM_ROOT"
+export HIP_DEVICE_LIB_PATH="$ROCM_LLVM_ROOT/amdgcn/bitcode"
 
-tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
-patch -p1 -d "$BUILDDIR/rocm-libraries" < "$SOURCEDIR/rocm-libraries.patch"
+tar -xzf "$ROCM_SOURCES_ROOT/rocm_libraries.tar.gz" -C "$BUILDDIR"
+
+ROCM_PROJECT_DIR="$BUILDDIR/rocm-libraries/$ROCM_LIBRARIES_DIR/$ROCM_PROJECT"
 
 if [ -n "${ROCM_PRE_BUILD_HOOK:-}" ]; then
   eval "$ROCM_PRE_BUILD_HOOK"
@@ -33,7 +38,7 @@ fi
 
 CMAKE_ARGS=(
   -B "$BUILDDIR/build"
-  -S "$BUILDDIR/rocm-libraries/projects/$ROCM_PROJECT"
+  -S "$ROCM_PROJECT_DIR"
   -DCMAKE_BUILD_TYPE=Release
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
   -DCMAKE_C_COMPILER="$ROCM_LLVM_ROOT/bin/amdclang"

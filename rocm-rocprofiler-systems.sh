@@ -1,7 +1,5 @@
 package: rocm-rocprofiler-systems
 version: "7.14"
-sources:
-  - git+https://github.com/ROCm/rocm-systems.git?obj=release/therock-%(version)s/HEAD&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
 patches:
   - rocprofiler-systems-elfutils.patch
   - rocprofiler-systems-dyninst-tbb-boost-conflict.patch
@@ -13,6 +11,7 @@ build_requires:
   - libiberty
   - rocm-llvm
   - rocm-cmake
+  - rocm-sources
 requires:
   - gcc
   - rocm-core

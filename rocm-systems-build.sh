@@ -7,9 +7,12 @@
 #   ROCM_CMAKE_EXTRA_ARGS   extra -D... cmake flags, appended to the base set
 #   ROCM_PRE_BUILD_HOOK     bash snippet, eval'd after extraction, before cmake
 #   ROCM_POST_INSTALL_HOOK  bash snippet, eval'd after `make install`
+#
+# The monorepo tarball comes from the `rocm-sources` package, which clones it once for
+# the whole stack; declare `rocm-sources` in build_requires.
 : "${ROCM_PROJECT:=$PKGNAME}"
 
-tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
+tar -xzf "$ROCM_SOURCES_ROOT/rocm_systems.tar.gz" -C "$BUILDDIR"
 
 if [ -n "${ROCM_PRE_BUILD_HOOK:-}" ]; then
   eval "$ROCM_PRE_BUILD_HOOK"

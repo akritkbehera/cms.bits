@@ -2,11 +2,11 @@ package: rocm-llvm
 version: "7.14"
 sources:
   - git+https://github.com/ROCm/llvm-project?obj=release/therock-%(version)s/HEAD&export=rocm-llvm-%(version)s&output=/source.tar.gz
-  - git+https://github.com/ROCm/rocm-systems.git?obj=release/therock-%(version)s/HEAD&export=rocm-systems&submodules=1&output=/rocm-systems.tar.gz
 build_requires:
   - CMake
   - ninja
   - rocm-cmake
+  - rocm-sources
 requires:
   - ninja
   - rocm-core
@@ -22,8 +22,10 @@ env:
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" --strip-components=1 -C "$BUILDDIR"
 
+# Only the ROCr hsa-runtime headers are needed here (for LIBOMPTARGET_HSA_INCLUDE_DIRS);
+# untar the shared rocm-systems tarball instead of cloning it again.
 mkdir -p "$BUILDDIR/rocm-systems"
-tar -xzf "$SOURCEDIR/${SOURCE1}" --strip-components=1 -C "$BUILDDIR/rocm-systems"
+tar -xzf "$ROCM_SOURCES_ROOT/rocm_systems.tar.gz" --strip-components=1 -C "$BUILDDIR/rocm-systems"
 cp -rT "$BUILDDIR/rocm-systems/projects/rocr-runtime/runtime/hsa-runtime" "$BUILDDIR/hsa-runtime"
 
 CMAKE_PREFIX_PATH="$ROCM_CORE_ROOT;$LIBXML2_ROOT;$ZLIB_ROOT;$ROCPROFILER_REGISTER_ROOT"
@@ -62,8 +64,8 @@ cmake -G Ninja \
 # otherwise the runtimes/openmp link step resolves libstdc++ symbols (e.g.
 # _M_replace_cold) against an older/system libstdc++ and fails.
 echo -e "--gcc-toolchain=$GCC_ROOT\n--target=$host_triple\n-m64\n-L$GCC_ROOT/lib64" > "$BUILDDIR/build-llvm/bin/clang++.cfg"
-ln -sf "$BUILDDIR/build-llvm/bin/clang++.cfg" "$BUILDDIR/build-llvm/bin/clang.cfg"
-ln -sf "$BUILDDIR/build-llvm/bin/clang++.cfg" "$BUILDDIR/build-llvm/bin/$host_triple.cfg"
+ln -sf clang++.cfg "$BUILDDIR/build-llvm/bin/clang.cfg"
+ln -sf clang++.cfg "$BUILDDIR/build-llvm/bin/$host_triple.cfg"
 
 ninja -v -C "$BUILDDIR/build-llvm" ${JOBS:+-j$JOBS}
 
@@ -96,7 +98,9 @@ ninja -v -C "$BUILDDIR/build-device-libs" install
 ninja -v -C "$BUILDDIR/build-hip" install
 
 mkdir -p "$INSTALLROOT/lib/llvm/bin/"
-mv "$BUILDDIR/build-llvm/bin/clang++.cfg" "$INSTALLROOT/lib/llvm/bin/"
+for cfg in clang++.cfg clang.cfg "$host_triple.cfg"; do
+  mv "$BUILDDIR/build-llvm/bin/$cfg" "$INSTALLROOT/lib/llvm/bin/$cfg"
+done
 printf "\n--rocm-device-lib-path=%s/amdgcn/bitcode\n" "$INSTALLROOT" >> "$INSTALLROOT/lib/llvm/bin/clang++.cfg"
 
 mkdir -p "$INSTALLROOT/.info"

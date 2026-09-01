@@ -39,5 +39,7 @@ requires:
   - miopen
   - rocrand
   - rocm-comgr
+  - origami
+  - stinkytofu
 ---
 mkdir -p "$INSTALLROOT"

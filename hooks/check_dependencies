@@ -1,51 +1,31 @@
-DEPS=""
+#!/bin/sh
+set -eu
+
+TREE="${1:-$INSTALLROOT}"
+OUTDIR="$INSTALLROOT/etc/deps"
+mkdir -p "$OUTDIR"
+
 SKIP_AUTOREQ="cuda cudnn oracle cmsswdata"
-for r in $RUNTIME_REQUIRES; do
-    [ "$r" = "defaults-release" ] && continue
-    [[ "$r" == data-* ]] && continue
-    R="${r^^}"; R="${R//-/_}"
-    ver="${R}_VERSION"; hash="${R}_HASH"
-    depver="${!ver//-/.}"
-    DEPS+="$r=${depver}_${!hash} "
-done
-DEPS="$(echo "$DEPS" | sed 's/[[:space:]]*$//')"
 
-DEPS_DEFINE=()
-[ -n "$DEPS" ] && DEPS_DEFINE=(--define "deps $DEPS")
+cp $BITS_CONFIG_DIR/hooks/check_dependencies.py $OUTDIR/
 
-mkdir -p $INSTALLROOT/etc/rpm
+to_json() {
+    sort -u | awk '
+        BEGIN { printf "[" }
+        { printf "%s%s", (NR>1 ? "," : ""), "\n  " ; gsub(/\\/,"\\\\"); gsub(/"/,"\\\""); printf "\"%s\"", $0 }
+        END { print (NR ? "\n" : "") "]" }
+    '
+}
 
-PKGVERSION_SANITIZED="${PKGVERSION//-/.}"
+find "$TREE" -type f | /usr/lib/rpm/rpmdeps --provides | to_json > "$OUTDIR/provides.json"
+find "$TREE" -type f | /usr/lib/rpm/rpmdeps --requires | to_json > "$OUTDIR/requires.json"
 
-rpmbuild -bb \
-  --define "pkgname $PKGNAME" \
-  --define "workdir $WORK_DIR" \
-  --define "pkgversion $PKGVERSION_SANITIZED" \
-  --define "pkghash $PKGHASH" \
-  --define "tree $INSTALLROOT" \
-  --define "_rpmdir $INSTALLROOT/etc/rpm" \
-  --define "arch $(uname -m)" \
-  --define "_build_name_fmt %%{NAME}-%%{VERSION}.%%{ARCH}.rpm" \
-  --define "skip_autoreq $SKIP_AUTOREQ" \
-  "${DEPS_DEFINE[@]}" \
-  $BITS_CONFIG_DIR/external.spec.in
+jq -r --arg arch "$ARCHITECTURE" '.dependencies.direct.runtime[] | "$WORK_DIR/\($arch)/*/\(.name)/\(.version)\(if .revision != null then "-\(.revision)" else "" end)/etc/deps/provides.json"' $INSTALLROOT/.meta.json > $OUTDIR/dependencies.json
 
-mkdir -p "$INSTALLROOT/etc/profile.d"
+echo "\$WORK_DIR/$ARCHITECTURE/system-provides.json" >> "$OUTDIR/dependencies.json"
 
-cat << EoF >> "$INSTALLROOT/etc/profile.d/post-relocate.sh"
-DBPATH="\$WORK_DIR/var/lib/rpm"
-RPMFILE="\$WORK_DIR/\$PP/etc/rpm/${PKGNAME}-${PKGVERSION_SANITIZED}_${PKGHASH}.$(uname -m).rpm"
-if [ ! -e "\$DBPATH/rpmdb.sqlite" ]; then
-  mkdir -p "\$DBPATH"
-  rpm --dbpath "\$DBPATH" --initdb
-fi
-
-if [ "$PKGNAME" = "system-externals" ]; then
-  rpm -i --dbpath "\$DBPATH" --nodeps "\$RPMFILE"
-elif rpm --dbpath "\$DBPATH" -q "${PKGNAME}-${PKGVERSION_SANITIZED}_${PKGHASH}" >/dev/null 2>&1; then
-  echo "already registered: ${PKGNAME}-${PKGVERSION_SANITIZED}_${PKGHASH}"
-else
-  rpm -i --dbpath "\$DBPATH" "\$RPMFILE"
-fi
-
+if [[ ! " $SKIP_AUTOREQ " =~ " $PKGNAME " ]]; then
+  cat << EoF >> "$INSTALLROOT/etc/profile.d/post-relocate.sh"
+WORK_DIR=\$WORK_DIR \$WORK_DIR/\$PP/etc/deps/check_dependencies.py
 EoF
+fi

@@ -8,6 +8,7 @@ build_requires:
  - autotools
 requires:
  - autotools
+ - gcc
 ---
 tar -xjf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

@@ -11,6 +11,7 @@ requires:
  - libpciaccess
  - libxml2
  - numactl
+ - zlib
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

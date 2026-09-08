@@ -21,6 +21,8 @@ requires:
  - fastjet
  - openmpi
  - openloops
+ - zlib
+ - qd
 prepend_path:
  LD_LIBRARY_PATH: $SHERPA_ROOT/lib/SHERPA-MC
 ---

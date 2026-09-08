@@ -16,6 +16,9 @@ AutoReqProv:    no
 )}
 
 Provides:       /bin/bash
+Provides:       /usr/bin/bash
+Provides:       /bin/env
+Provides:       /bin/tcsh
 Provides:       /bin/csh
 Provides:       libdrm.so.2()(64bit)
 Provides:       libdrm_amdgpu.so.1()(64bit)

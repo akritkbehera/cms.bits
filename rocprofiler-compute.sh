@@ -10,6 +10,7 @@ requires:
   - rocm-core
   - rocm-llvm
   - rocr-runtime
+  - rocm-comgr
   - Python
   - rocprofiler
   - roctracer

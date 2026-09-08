@@ -4,6 +4,7 @@ build_requires:
 requires:
 - py-torch-cuda
 - zlib
+- cuda
 # The pip:// source download uses the generator's pypi_name, which defaults to the package
 # name minus "py-" (= "torch-scatter-cuda") and 404s on PyPI. Override it to the real dist
 # name here (cmsdist's %%define pip_name). package.py also emits `export Pypi_name` from this,

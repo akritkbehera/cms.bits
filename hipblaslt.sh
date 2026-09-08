@@ -7,6 +7,7 @@ build_requires:
   - rocm-sources
 requires:
   - gcc
+  - zlib
   - rocm-hip
   - rocm-core
   - rocm-llvm

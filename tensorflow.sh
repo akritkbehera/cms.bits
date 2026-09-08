@@ -5,6 +5,15 @@ variables:
 requires:
  - tensorflow-sources
  - py-wheel
+ - flatbuffers
+ - gcc
+ - grpc
+ - zlib
+ - sqlite
+ - libjpeg-turbo
+ - curl
+ - giflib
+ - libpng
 ---
 tf_major=$(echo "$PKG_VERSION" | cut -d. -f1)
 python_mm="${PYTHON_MAJOR_VERSION}${PYTHON_MINOR_VERSION}"

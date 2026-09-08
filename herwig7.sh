@@ -23,6 +23,7 @@ requires:
  - madgraph5amcatnlo
  - Python
  - openloops
+ - gcc
 ---
 tar -xjf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

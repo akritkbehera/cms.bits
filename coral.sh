@@ -51,6 +51,7 @@ requires:
  - zlib
  - bz2lib
  - xerces-c
+ - oracle
 force_revision: ""
 ---
 source $WORK_DIR/cmsset_default.sh

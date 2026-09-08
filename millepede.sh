@@ -8,6 +8,7 @@ requires:
  - gcc
  - ROOT
  - mille
+ - zlib
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

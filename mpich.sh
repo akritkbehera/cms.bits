@@ -4,8 +4,6 @@ sources:
  - https://github.com/pmodels/mpich/releases/download/v%(version)s/mpich-%(version)s.tar.gz
 build_requires:
  - autotools
- - cuda
- - rocm-hip
 requires:
  - Python
  - gcc
@@ -13,6 +11,8 @@ requires:
  - ucx
  - hwloc
  - xpmem
+ - cuda
+ - rocm-hip
 ---
 #!include <cuda-flags.file>
 #!include <rocm-flags.file>

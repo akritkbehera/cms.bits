@@ -10,6 +10,7 @@ build_requires:
 requires:
 - py-torch-cuda
 - zlib
+- cuda
 ---
 # cmsdist: pip/pyg-lib-cuda.file -> ## INCLUDE cuda-flags (+ CUDA overrides)
 #                                -> ## INCLUDE pyg-lib-common -> ## INCLUDE torch-extension-build

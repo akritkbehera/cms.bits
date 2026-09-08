@@ -10,6 +10,8 @@ requires:
  - gcc
  - eigen
  - mille
+ - zlib
+ - ROOT
 ---
 #!include <microarch-flags.file>
 

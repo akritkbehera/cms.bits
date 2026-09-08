@@ -8,6 +8,7 @@ build_requires:
 requires:
   - gcc
   - rocm-hip
+  - roctracer
   - rocm-core
   - rocm-llvm
   - rocr-runtime

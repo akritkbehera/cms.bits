@@ -1,0 +1,196 @@
+#!/bin/sh
+# POST_INSTALL hook: generate $INSTALLROOT/etc/modulefiles/$PKGNAME.
+#
+# Replaces the per-recipe modulefile boilerplate (alidist carries it in 243 of
+# 294 recipes, each hand-picking --bin/--lib/--cmake flags that nothing verifies
+# against what the package actually installed). Here nothing is declared per
+# recipe: the environment is read back from the package's own generated
+# etc/profile.d/init.sh, so `module load X` and `source init.sh` cannot drift.
+#
+# Why an env DIFF rather than parsing init.sh as text: init.sh legitimately
+# contains shell that has no static Tcl equivalent --
+#   Python:  export PYTHON3_LIB_SITE_PACKAGES="lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 ...)"
+#   fastjet: prepend_path onto "${FASTJET_ROOT}/${PYTHON3_LIB_SITE_PACKAGES}"  <- a DEP's variable
+# Sourcing it and diffing the environment lets bash resolve all of that, and we
+# emit the resolved values. Deps are already in our environment (build_template.sh
+# sourced the dependency init.sh before the recipe ran), so the diff isolates
+# exactly this package's own contribution -- which is what the modulefile must
+# carry, since dependencies are handled by `module load` instead.
+#
+# RELOCATION CONTRACT: the emitted Tcl contains no build-time absolute path. The
+# package root is derived at load time from $::env(BASEDIR) (set by BASE/1.0),
+# and every path is expressed relative to it. The file therefore never appears in
+# etc/profile.d/.bits-relocate and needs no rewriting when the tree moves. This
+# is asserted below, and the hook fails the build if a path ever leaks.
+#
+# Ordering note: POST_INSTALL runs at build_template.sh:421, i.e. AFTER
+# .bits-relocate is computed (:345) and after the @@PKGREVISION@<hash>@@
+# re-stamping clause is appended (:360). That is deliberate and safe here --
+# because the hook also runs on the cached-tarball path, the revision is
+# resolved freshly on every build, so the placeholder mechanism is not needed.
+
+set -eu
+
+# ---------------------------------------------------------------- skip list --
+# Deliberately minimal. Only packages that CANNOT have a working modulefile
+# belong here:
+#   defaults-*       build_template.sh skips hooks for them entirely, so no
+#                    modulefile is ever produced and `module load` would fail.
+#   system-externals a manifest of packages imported from the host system; it
+#                    owns no tree of its own to put on a path.
+# A package that installs nothing interesting is NOT a reason to skip: the
+# generator emits an empty-but-valid modulefile for it, which is what keeps
+# `module load` working for anything that depends on it.
+#
+# Note this list is NOT the `hook: disable` list from the recipes -- that flag
+# turns off check_dependencies, which is unrelated to modulefiles.
+# Override per build with BITS_MODULE_SKIP="a b c".
+_skip="${BITS_MODULE_SKIP:-} system-externals"
+
+# Returns 0 when $1 gets no modulefile. Used both for this package and, below,
+# to drop dependencies that ship none -- `module load` on a missing module is a
+# hard error, so a skipped dependency must not be referenced.
+is_skipped() {
+  case "$1" in defaults-*) return 0 ;; esac
+  for _s in $_skip; do
+    if [ "$_s" = "$1" ]; then return 0; fi
+  done
+  return 1
+}
+
+if is_skipped "$PKGNAME"; then
+  echo "generate_module: $PKGNAME is on the skip list - skipping"
+  exit 0
+fi
+
+INITSH="$INSTALLROOT/etc/profile.d/init.sh"
+if [ ! -f "$INITSH" ]; then
+  echo "generate_module: ERROR: $INITSH does not exist" >&2
+  exit 1
+fi
+
+# ------------------------------------------------------- path segments ------
+# Mirror _VERREV in build_template.sh: force_revision set to "" via defaults
+# yields an empty PKGREVISION, and the directory segment is then the bare
+# version with NO trailing dash. Getting this wrong silently breaks every
+# downstream `module load`.
+if [ -n "${PKGREVISION:-}" ]; then
+  VERREV="$PKGVERSION-$PKGREVISION"
+else
+  VERREV="$PKGVERSION"
+fi
+
+# pkg_family (package_family: in defaults-release.sh) inserts a directory level:
+# CMS installs everything under external/ lcg/ cms/, so the module's root is
+# $BASEDIR/<family>/<pkg>/<verrev>. Emitted as a RELATIVE segment, which is what
+# keeps the modulefile relocatable.
+FAMSEG=""
+if [ -n "${PKGFAMILY:-}" ]; then FAMSEG="$PKGFAMILY/"; fi
+
+# ----------------------------------------------- runtime dependency modules --
+# `module load <dep>/<verrev>` for each direct runtime requirement. Versions come
+# from the <DEP>_VERSION / <DEP>_REVISION variables the dependency init.sh chain
+# already exported into our environment -- the same mechanism hooks/rpm_check.sh
+# uses, and cheaper than parsing .meta.json with jq.
+#
+# defaults-* are excluded by is_skipped, so DEFAULTS_RELEASE_ROOT and friends are
+# the one intentional difference between `module load X` and `source init.sh`.
+# That is required, not a gap: defaults packages get no modulefile (build_template.sh
+# skips hooks for them), so loading one would fail. They contribute only build-time
+# settings anyway -- CXXSTD, DCMAKE_BUILD_TYPE -- which have no meaning at runtime.
+DEPMODS=""
+for _req in ${RUNTIME_REQUIRES:-}; do
+  if is_skipped "$_req"; then continue; fi
+  _id=$(printf '%s' "$_req" | tr -c 'A-Za-z0-9_' '_' | tr 'a-z' 'A-Z')
+  eval "_v=\${${_id}_VERSION:-}"
+  eval "_r=\${${_id}_REVISION:-}"
+  # A runtime requirement whose _VERSION is absent means the dependency init.sh
+  # chain did not set it up -- that would produce a `module load` of something
+  # that does not exist, so drop it, but say so rather than silently shipping an
+  # incomplete dependency list.
+  if [ -z "$_v" ]; then
+    echo "generate_module: WARNING: no ${_id}_VERSION in the environment;" \
+         "omitting '$_req' from the module dependencies" >&2
+    continue
+  fi
+  if [ -n "$_r" ]; then
+    DEPMODS="$DEPMODS $_req/$_v-$_r"
+  else
+    DEPMODS="$DEPMODS $_req/$_v"
+  fi
+done
+
+# ------------------------------------------------------------- env capture --
+_tmp="${BUILDDIR:-/tmp}/.bits-module-env.$$"
+mkdir -p "$_tmp"
+# shellcheck disable=SC2064
+trap "rm -rf '$_tmp'" EXIT INT TERM
+
+env -0 > "$_tmp/before"
+# Subshell: never let the sourced init.sh perturb the hook's own shell.
+#
+# BOTH errexit and nounset must be off inside. errexit because init.sh's
+# trailing `[ -d x ] && export ...` idiom returns non-zero when the directory is
+# absent, which is normal. nounset because a recipe's env:/prepend_path: may
+# legitimately reference a variable that is unset here (coral and cmsswdata both
+# do) -- under `set -u` that kills the subshell before `env -0` runs, and the
+# hook then fails the build with no diagnostic at all.
+(
+  set +eu
+  # shellcheck disable=SC1090
+  . "$INITSH" > /dev/null 2>&1
+  env -0
+) > "$_tmp/after"
+
+# The subshell above is deliberately forgiving, so confirm it actually produced
+# something rather than discovering it later as a mystery empty modulefile.
+if [ ! -s "$_tmp/after" ]; then
+  echo "generate_module: ERROR: sourcing $INITSH produced no environment" >&2
+  exit 1
+fi
+
+# ---------------------------------------------------------------- generate --
+MODULEDIR="$INSTALLROOT/etc/modulefiles"
+mkdir -p "$MODULEDIR"
+
+# Escape hatch: a recipe may still hand-write its own modulefile for something
+# the generator cannot infer. Keep those lines and append them AFTER the
+# generated ones, so the recipe wins (setenv is last-writer-wins). The marker
+# distinguishes a recipe's file from one of ours left behind by a previous
+# build -- on the cached-tarball path the tarball already contains our output,
+# and appending to that would duplicate every directive.
+HANDWRITTEN=""
+if [ -f "$MODULEDIR/$PKGNAME" ] &&
+   ! grep -q 'hooks/generate_module' "$MODULEDIR/$PKGNAME"; then
+  HANDWRITTEN="$_tmp/handwritten"
+  cp "$MODULEDIR/$PKGNAME" "$HANDWRITTEN"
+  echo "generate_module: keeping the recipe's hand-written modulefile and" \
+       "appending the generated directives before it"
+fi
+
+python3 "$BITS_CONFIG_DIR/hooks/generate_module.py" \
+  --before "$_tmp/before" \
+  --after "$_tmp/after" \
+  --pkgname "$PKGNAME" \
+  --handwritten "$HANDWRITTEN" \
+  --verrev "$VERREV" \
+  --family-segment "$FAMSEG" \
+  --installroot "$INSTALLROOT" \
+  --workdir "$WORK_DIR" \
+  --arch "${EFFECTIVE_ARCHITECTURE:-$ARCHITECTURE}" \
+  --dep-modules "$DEPMODS" \
+  --output "$MODULEDIR/$PKGNAME"
+
+# ------------------------------------------------------- relocation assert --
+# The whole design rests on the emitted Tcl carrying no build-time absolute
+# path. Verify it rather than trust it: if $WORK_DIR appears, the modulefile
+# would be silently wrong the moment the tree is relocated (and would also be
+# picked up by the .bits-relocate grep on the NEXT build, which by then is too
+# late to help). Fail the build loudly instead.
+if grep -qF "$WORK_DIR" "$MODULEDIR/$PKGNAME"; then
+  echo "generate_module: ERROR: build path leaked into the modulefile:" >&2
+  grep -nF "$WORK_DIR" "$MODULEDIR/$PKGNAME" >&2
+  exit 1
+fi
+
+echo "generate_module: wrote $MODULEDIR/$PKGNAME"

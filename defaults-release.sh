@@ -21,5 +21,6 @@ package_family:
     - CMSSW*
 auto_patch: false
 hook:
-  POST_INSTALL: check_dependencies
+  POST_INSTALL: check_dependencies,generate_module
+revision_policy: "hash"
 ---

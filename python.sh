@@ -14,9 +14,9 @@ requires:
  - libuuid
  - gcc
 env:
-  PYTHON_MAJOR_MINOR_VERSION: $(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')
-  PYTHON_MAJOR_MINOR_STR: $(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||' | sed 's|\.||')
-  PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages"
+  PYTHON_MAJOR_MINOR_VERSION: "%(python_major_minor)s"
+  PYTHON_MAJOR_MINOR_STR: "%(python_major_minor_str)s"
+  PYTHON3_LIB_SITE_PACKAGES: "lib/python%(python_major_minor)s/site-packages"
 ---
 export DB6_ROOT
 

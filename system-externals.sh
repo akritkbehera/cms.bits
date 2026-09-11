@@ -1,15 +1,63 @@
 package: system-externals
 version: "1"
-sources: 
- - file://system-externals.spec.in
 variables:
  seeds: 'bash glibc glibc-headers openssl-libs libX11 libxcrypt readline ncurses-libs tcl tk mesa-libGLU libglvnd-glx libglvnd-opengl libXext libXft libXpm perl perl-libs libbrotli python3 perl-base perl-lib perl-filetest perl-overload perl-vars libcom_err krb5-libs libaio libgcc'
-hooks: disable
+hook: disable
 ---
-mkdir -p $INSTALLROOT/etc/rpm
-
-cp $SOURCEDIR/system-externals.spec.in $INSTALLROOT
-touch $INSTALLROOT/system-externals.spec
+provides_arr=(
+    "/bin/bash"
+    "/usr/bin/bash"
+    "/bin/env"
+    "/bin/tcsh"
+    "/bin/csh"
+    "libdrm.so.2()(64bit)"
+    "libdrm_amdgpu.so.1()(64bit)"
+    "/usr/bin/python"
+    "perl(Cwd)"
+    "perl(File::Basename)"
+    "perl(File::stat)"
+    "perl(Getopt::Long)"
+    "perl(List::Util)"
+    "perl(POSIX)"
+    "perl(bigint)"
+    "perl(Carp)"
+    "perl(Class::Struct)"
+    "perl(Data::Dumper)"
+    "perl(Errno)"
+    "perl(Exporter)"
+    "perl(File::Copy)"
+    "perl(File::Find)"
+    "perl(File::Path)"
+    "perl(File::Spec)"
+    "perl(File::Temp)"
+    "perl(IO::File)"
+    "perl(Text::ParseWords)"
+    "perl(constant)"
+    "/usr/bin/env"
+    "/usr/bin/perl"
+    "perl(CGI)"
+    "perl(CGI::Carp)"
+    "perl(CGI::Util)"
+    "perl(DBI)"
+    "perl(Digest::MD5)"
+    "perl(Encode)"
+    "perl(Fcntl)"
+    "perl(Getopt::Std)"
+    "perl(IO::Pipe)"
+    "perl(IO::Socket)"
+    "perl(IPC::Open2)"
+    "perl(IPC::Open3)"
+    "perl(Memoize)"
+    "perl(SVN::Core)"
+    "perl(SVN::Delta)"
+    "perl(SVN::Ra)"
+    "perl(Scalar::Util)"
+    "perl(Storable)"
+    "perl(Time::HiRes)"
+    "perl(Time::Local)"
+    "perl(YAML::Any)"
+    "/bin/rc"
+)
 
 cat << 'EoF' > "$INSTALLROOT/etc/profile.d/post-relocate.sh"
 to_json() {
@@ -21,19 +69,41 @@ to_json() {
 }
 EoF
 
-cat << EoF >> "$INSTALLROOT/etc/profile.d/post-relocate.sh"
-rpmspec -P \
-  --define "pkgname $PKGNAME" \
-  --define "pkgversion $PKGVERSION" \
-  --define "pkghash $PKGHASH" \
-  --define "tree $INSTALLROOT" \
-  --define "seeds %(seeds)s" \
-  --define "_rpmdir $INSTALLROOT/etc/rpm" \
-  --define "arch $(uname -m)" \
-  --define "_build_name_fmt %%{NAME}-%%{VERSION}.%%{ARCH}.rpm" \
-  \$WORK_DIR/\$PP/system-externals.spec.in > \$WORK_DIR/\$PP/system-externals.spec
-EoF
+# Emit provides_arr into the deploy-time script as literal lines. Written via a
+# QUOTED heredoc inside the generated file, so entries keep their parentheses and
+# slashes verbatim -- "libdrm.so.2()(64bit)" and "perl(File::Spec)" would
+# otherwise need escaping at two levels. Generated from the array above so the
+# list has one home.
+{
+  echo "fake_provides=\$(cat <<'FAKE_PROVIDES_EOF'"
+  printf '%%s\n' "${provides_arr[@]}"
+  echo "FAKE_PROVIDES_EOF"
+  echo ")"
+} >> "$INSTALLROOT/etc/profile.d/post-relocate.sh"
 
 cat << EoF >> "$INSTALLROOT/etc/profile.d/post-relocate.sh"
-rpmspec -q --provides "\$WORK_DIR/\$PP/system-externals.spec" | to_json > "\$WORK_DIR/$ARCHITECTURE/system-provides.json"
+export seeds='%(seeds)s'
+seed_provides=""
+
+for req in \$seeds; do
+    # Two things to defend against. --whatprovides can name more than one
+    # package, so take the first line only. And when nothing provides the seed,
+    # rpm writes "no package provides ..." to STDOUT, not stderr, and that text
+    # would otherwise be captured and end up as a JSON entry -- so branch on
+    # rpm's exit status, which is the only reliable signal here. Assign before
+    # piping to head, or \$? would report head's status instead of rpm's.
+    if ! _rpm=\$(rpm -q --whatprovides "\$req" 2> /dev/null); then
+        echo "system-externals: nothing provides '\$req' -- skipped" >&2
+        continue
+    fi
+    _rpm=\$(printf '%%s\n' "\$_rpm" | head -n 1)
+    seed_provides="\${seed_provides}
+\$(rpm -q --provides "\$_rpm" 2> /dev/null || true)"
+done
+
+# grep . drops the blank first line that the leading newline above leaves behind;
+# without it sort -u keeps it and to_json emits "" as a real array entry.
+printf '%%s\n%%s\n' "\$seed_provides" "\$fake_provides" \
+  | grep . \
+  | to_json > "\$WORK_DIR/$ARCHITECTURE/999system-provides.json"
 EoF

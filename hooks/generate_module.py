@@ -166,6 +166,31 @@ def build_rewriter(before, pkg_root, install_root, shell_id, workdir, arch):
   return PathRewriter(rules)
 
 
+def dep_load_lines(deps):
+  """Emit a `module load` for each dependency, guarded by `is-loaded`.
+
+  The guard is not cosmetic. Modules records every `module load` it evaluates in
+  a modulefile as an implicit requirement, and the records for the whole loaded
+  closure live in ONE __MODULES_LMPREREQ variable. Linux caps a single
+  environment string at 128 KiB (MAX_ARG_STRLEN), and a large collection blows
+  through that -- cmssw-tools reached 218 KiB -- after which every fork+exec from
+  the loaded environment dies with "Argument list too long", including the shell
+  `bits enter` is about to exec. Skipping the load when the dependency is already
+  present drops that variable by ~75%, because in a deep closure almost every
+  dependency has been pulled in by something earlier.
+
+  Semantics are unchanged: an already-loaded dependency has nothing left to do,
+  and a DIFFERENT version of it still reaches `module load` and still trips the
+  `conflict` line, exactly as an unguarded load would.
+  """
+  out = []
+  for dep in deps:
+    out.append("if { ![is-loaded %s] } {" % dep)
+    out.append("    module load %s" % dep)
+    out.append("}")
+  return out
+
+
 def main():
   parser = argparse.ArgumentParser(description=__doc__)
   parser.add_argument("--before", required=True)
@@ -195,22 +220,23 @@ def main():
   # does not describe the package being installed -- and a mismatch would
   # silently bake an absolute build path into the modulefile, so fail loudly
   # with the reason instead of leaving the caller's grep to find it.
-  expected_root = posixpath.join(args.workdir, args.arch,
-                                 args.family_segment + args.pkgname,
-                                 args.verrev)
+  # The caller repointed <PKG>_ROOT at the STAGED tree ($INSTALLROOT) before
+  # sourcing, so that init.sh's `[ -d ... ]` guards test directories that exist
+  # at POST_INSTALL time -- the final path is not populated until the rsync that
+  # runs after the hooks. So the root to map back is the staging one, and the
+  # final-path cross-check lives in the caller (against the root init.sh
+  # declares, before the rewrite).
   pkg_root = after.get("%s_ROOT" % shell_id, "")
   if not pkg_root:
     sys.stderr.write(
         "generate_module: %s_ROOT is not set after sourcing init.sh -- cannot "
         "determine the package root\n" % shell_id)
     return 1
-  if pkg_root != expected_root:
+  if os.path.normpath(pkg_root) != os.path.normpath(args.installroot):
     sys.stderr.write(
-        "generate_module: package root mismatch for %s\n"
-        "  init.sh resolved : %s\n"
-        "  environment says : %s\n"
-        "  (check PKGVERSION/PKGREVISION/PKGFAMILY for this build)\n"
-        % (args.pkgname, pkg_root, expected_root))
+        "generate_module: %s_ROOT is %s but the staged tree is %s -- the "
+        "root rewrite did not take effect, so path entries would be missing\n"
+        % (shell_id, pkg_root, args.installroot))
     return 1
   # The same location expressed relative to BASEDIR, which BASE/1.0 sets to
   # <workdir>/<arch> at load time. Purely relative segments -> relocatable.
@@ -235,9 +261,8 @@ def main():
       "conflict %s" % args.pkgname,
       "",
       "# Dependencies. BASE/1.0 defines BASEDIR, so it must come first.",
-      "module load BASE/1.0",
   ]
-  lines.extend("module load %s" % dep for dep in args.dep_modules.split())
+  lines.extend(dep_load_lines(["BASE/1.0"] + args.dep_modules.split()))
   lines.extend([
       "",
       "# Package root, derived at load time. No build-time path is baked in,",

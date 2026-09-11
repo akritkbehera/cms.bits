@@ -81,7 +81,11 @@ for _req in ${RUNTIME_REQUIRES:-}; do
     continue
   fi
   if [ -n "$_r" ]; then _dv="$_v-$_r"; else _dv="$_v"; fi
-  echo "module load $_req/$_dv" >> "$OUT"
+  {
+    echo "if { ![is-loaded $_req/$_dv] } {"
+    echo "    module load $_req/$_dv"
+    echo "}"
+  } >> "$OUT"
 done
 
 # --------------------------------------------------------- 3. own variables --

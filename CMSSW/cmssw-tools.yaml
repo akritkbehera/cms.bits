@@ -1,6 +1,9 @@
 tag: 95c34a89349f361c7172a9884f48068fa089ebf1
 source: https://github.com/akritkbehera/scram-tools.file.git
-hook: disable
+hook:
+  POST_INSTALL: generate_module
+build_requires:
+  - cmsswdata 
 requires:
   - AXOL1TL
   - TOPO
@@ -9,7 +12,6 @@ requires:
   - celeritas
     # - crab
   - hls4mlemulatorextras
-  - cmsswdata
     # - cmssw-wm-tools
   - google-benchmark
   - catch2

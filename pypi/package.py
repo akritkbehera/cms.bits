@@ -4,7 +4,7 @@ from bits_helpers.utilities import yamlLoad, yamlDump
 import sys
 
 dir=dirname(sys.argv[0])
-build_requires = ["Python", "setuptools", "pip"]
+build_requires = ["setuptools", "pip"]
 if not sys.argv[1] in ["py-wheel", "py-flit-core"]:
   build_requires.append("py-flit-core")
 prepend_path = {"PYTHON3PATH": ["%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"]}
@@ -38,9 +38,9 @@ if "build_requires" in spec:
 else:
   spec["build_requires"] = build_requires
 if "requires" in spec:
-    spec["requires"].extend(["gcc"])
+    spec["requires"].extend(["gcc", "Python"])
 else:
-    spec["requires"] = ["gcc"]
+    spec["requires"] = ["gcc", "Python"]
 prepath = spec.get("prepend_path", {})
 if prepath:
   for k, v in prepath.items():

@@ -120,6 +120,30 @@ for _req in ${RUNTIME_REQUIRES:-}; do
   fi
 done
 
+# ----------------------------------------------------- staging root rewrite --
+# The FINAL tree ($WORK_DIR/<arch>/...) is not populated until the rsync that
+# runs after POST_INSTALL, so init.sh's `[ -d "$<PKG>_ROOT/bin" ]` guards would
+# every one of them test a directory that does not exist yet and contribute
+# nothing -- which is how an earlier generator silently produced modulefiles
+# with no PATH at all. init.sh derives its own root from
+# $WORK_DIR/$BITS_ARCH_PREFIX, so pointing those two at the staging tree makes
+# the guards test the tree that IS populated right now. generate_module.py
+# asserts the result came out equal to $INSTALLROOT.
+#
+# The dependency lines at the top of init.sh are `[ -n "${DEP_REVISION}" ] || .`,
+# and build_template.sh has already sourced every dependency into this hook's
+# environment, so they short-circuit and never look under the repointed
+# WORK_DIR. That is also the invariant generate_module.py relies on: the diff
+# must contain this package's own contribution and nothing its dependencies add.
+_ARCH="${EFFECTIVE_ARCHITECTURE:-$ARCHITECTURE}"
+_STAGE_TAIL="$_ARCH/${FAMSEG}${PKGNAME}/${VERREV}"
+_STAGE_PREFIX="${INSTALLROOT%/$_STAGE_TAIL}"
+if [ "$_STAGE_PREFIX" = "$INSTALLROOT" ]; then
+  echo "generate_module: ERROR: INSTALLROOT ($INSTALLROOT) does not end in" \
+       "$_STAGE_TAIL -- cannot derive the staging prefix" >&2
+  exit 1
+fi
+
 # ------------------------------------------------------------- env capture --
 _tmp="${BUILDDIR:-/tmp}/.bits-module-env.$$"
 mkdir -p "$_tmp"
@@ -137,6 +161,11 @@ env -0 > "$_tmp/before"
 # hook then fails the build with no diagnostic at all.
 (
   set +eu
+  # Repoint at the staging tree; see "staging root rewrite" above. Both are in
+  # generate_module.py's SKIP_EXACT, so neither reaches the modulefile.
+  WORK_DIR="$_STAGE_PREFIX"
+  BITS_ARCH_PREFIX="$_ARCH"
+  export WORK_DIR BITS_ARCH_PREFIX
   # shellcheck disable=SC1090
   . "$INITSH" > /dev/null 2>&1
   env -0

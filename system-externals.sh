@@ -68,12 +68,6 @@ to_json() {
     '
 }
 EoF
-
-# Emit provides_arr into the deploy-time script as literal lines. Written via a
-# QUOTED heredoc inside the generated file, so entries keep their parentheses and
-# slashes verbatim -- "libdrm.so.2()(64bit)" and "perl(File::Spec)" would
-# otherwise need escaping at two levels. Generated from the array above so the
-# list has one home.
 {
   echo "fake_provides=\$(cat <<'FAKE_PROVIDES_EOF'"
   printf '%%s\n' "${provides_arr[@]}"
@@ -86,12 +80,6 @@ export seeds='%(seeds)s'
 seed_provides=""
 
 for req in \$seeds; do
-    # Two things to defend against. --whatprovides can name more than one
-    # package, so take the first line only. And when nothing provides the seed,
-    # rpm writes "no package provides ..." to STDOUT, not stderr, and that text
-    # would otherwise be captured and end up as a JSON entry -- so branch on
-    # rpm's exit status, which is the only reliable signal here. Assign before
-    # piping to head, or \$? would report head's status instead of rpm's.
     if ! _rpm=\$(rpm -q --whatprovides "\$req" 2> /dev/null); then
         echo "system-externals: nothing provides '\$req' -- skipped" >&2
         continue
@@ -101,9 +89,7 @@ for req in \$seeds; do
 \$(rpm -q --provides "\$_rpm" 2> /dev/null || true)"
 done
 
-# grep . drops the blank first line that the leading newline above leaves behind;
-# without it sort -u keeps it and to_json emits "" as a real array entry.
 printf '%%s\n%%s\n' "\$seed_provides" "\$fake_provides" \
   | grep . \
-  | to_json > "\$WORK_DIR/$ARCHITECTURE/999system-provides.json"
+  | to_json > "\$WORK_DIR/$ARCHITECTURE/system-provides.json"
 EoF

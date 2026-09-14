@@ -1,7 +1,9 @@
 package: libxslt
 version: "1.1.42"
-tag: v%(version)s
-source: https://gitlab.gnome.org/GNOME/libxslt.git
+variables:
+  tag: v%(version)s
+sources:
+  - https://gitlab.gnome.org/GNOME/libxslt/-/archive/%(tag)s/libxslt-%(tag)s.tar.gz
 build_requires:
 - autotools
 requires:
@@ -9,7 +11,9 @@ requires:
 - libxml2
 - pkg-config
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 export CPPFLAGS="-I${LIBXML2_ROOT}/include/libxml2"
 export LDFLAGS="-L${LIBXML2_ROOT}/lib"

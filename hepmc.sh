@@ -1,13 +1,17 @@
 package: hepmc
 version: 2.06.10
-tag: 97620c648f31c9129b42c0b38fe4bd1ddfee9cab
-source: https://github.com/cms-externals/hepmc
+variables:
+  tag: 97620c648f31c9129b42c0b38fe4bd1ddfee9cab
+sources:
+  - https://github.com/cms-externals/hepmc/archive/%(tag)s.tar.gz
 build_requires:
   - CMake
 requires:
   - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 CMAKE_ARGS=(
     -S "$BUILDDIR"

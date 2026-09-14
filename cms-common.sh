@@ -1,11 +1,15 @@
 package: cms-common
 version: "1261"
-tag: 817620fac9a30385b05efb2dd0f668c90b7ec89f
-source: https://github.com/cms-sw/cms-common
+variables:
+  tag: 817620fac9a30385b05efb2dd0f668c90b7ec89f
+sources:
+  - https://github.com/cms-sw/cms-common/archive/%(tag)s.tar.gz
 force_revision: ""
 ---
-# Copy source tree to build directory, excluding git metadata.
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+# Unpack the source tarball into the build directory.
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 # Substitute CMS install prefix and architecture in all source files.
 # @CMS_PREFIX@ is replaced with the global install root (not the package dir).

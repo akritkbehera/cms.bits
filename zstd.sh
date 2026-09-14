@@ -1,7 +1,9 @@
 package: zstd
 version: "1.5.7"
-tag: v%(version)s
-source: https://github.com/facebook/zstd
+variables:
+  tag: v%(version)s
+sources:
+  - https://github.com/facebook/zstd/archive/%(tag)s.tar.gz
 build_requires:
  - CMake
  - gmake
@@ -11,7 +13,9 @@ env:
   ZSTD_SOURCE: https://github.com/facebook/zstd/releases/download/v%(version)s/zstd-%(version)s.tar.gz
   ZSTD_STRIP_PREFIX: zstd-%(version)s
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 cmake build/cmake \
  -DZSTD_BUILD_CONTRIB:BOOL=OFF \

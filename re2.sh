@@ -1,14 +1,18 @@
 package: re2
 version: "2021_06_01"
-tag: "2021-06-01"
-source: https://github.com/google/re2/
+variables:
+  tag: "2021-06-01"
+sources:
+  - https://github.com/google/re2/archive/%(tag)s.tar.gz
 build_requires:
  - CMake
  - gmake
 requires:
  - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 cmake \
   -S "$BUILDDIR" \

@@ -1,8 +1,9 @@
 package: cmssw-tools-old
 version: "v1"
-tag: 839a4957df178a5453b888ce68fff6e1b33691fe
-source: https://github.com/akritkbehera/scram-tools.file.git
+sources:
+  - https://github.com/akritkbehera/scram-tools.file/archive/%(tag)s.tar.gz
 variables:
+  tag: 839a4957df178a5453b888ce68fff6e1b33691fe
   runGlimpse: yes
   saveDeps: yes
   subpackageDebug: yes
@@ -383,7 +384,9 @@ requires:
   - py-mplhep
   - py-correctionlib
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 chmod +x "$BUILDDIR/bin/get_tools"
 chmod +x "$BUILDDIR/bin/fix_tool_variables"
 [ -f "$BUILDDIR/bin/get_vectorized_tools" ] && chmod +x "$BUILDDIR/bin/get_vectorized_tools"

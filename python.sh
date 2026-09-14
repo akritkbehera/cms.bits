@@ -1,7 +1,9 @@
 package: Python
 version: "3.12.13"
-tag: "v%(version)s"
-source: https://github.com/python/cpython
+variables:
+  tag: "v%(version)s"
+sources:
+  - https://github.com/python/cpython/archive/%(tag)s.tar.gz
 requires:
  - expat
  - bz2lib
@@ -24,7 +26,9 @@ export DB6_ROOT
 
 export LIBFFI_ROOT
 
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/;
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 mkdir -p "${INSTALLROOT}"/{include,lib,bin};
 

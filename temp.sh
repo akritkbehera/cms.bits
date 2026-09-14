@@ -1,7 +1,9 @@
 package: ROOT
 version: "v1"
-tag: cms/v6-36-00-patches/1715228c2c
-source: https://github.com/cms-sw/root
+variables:
+  tag: 90929c0736a5c753c1b14a41e7bdb0fbb16cfdbe
+sources:
+  - https://github.com/cms-sw/root/archive/%(tag)s.tar.gz
 build_requires:
 - CMake
 - ninja
@@ -40,7 +42,9 @@ esac
 PKGBUILDDIR="$BUILDDIR/$PKGNAME-$PKGVERSION"
 
 mkdir -p "$PKGBUILDDIR"
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$PKGBUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$PKGBUILDDIR"
 curl -L -k -s -o "$PKGBUILDDIR/graf2d/asimage/src/libAfterImage/config.sub" http://cmsrep.cern.ch/cmssw/download/config/config.sub
 curl -L -k -s -o "$PKGBUILDDIR/graf2d/asimage/src/libAfterImage/config.guess" http://cmsrep.cern.ch/cmssw/download/config/config.guess
 chmod +x $PKGBUILDDIR/graf2d/asimage/src/libAfterImage/config.{sub,guess}

@@ -1,7 +1,7 @@
 package: fmt
 version: "10.2.1"
-tag: 10.2.1
-source: https://github.com/fmtlib/fmt/
+sources:
+  - https://github.com/fmtlib/fmt/archive/%(version)s.tar.gz
 build_requires:
 - CMake
 - gmake
@@ -10,7 +10,9 @@ requires:
 ---
 #!include <compilation-flags.file>
 
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 CMAKE_ARGS=(
   -S "$BUILDDIR"

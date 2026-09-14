@@ -1,12 +1,16 @@
 package: cmssw-wm-tools
 version: "260904"
-tag: da0764e408308fdce128c437bfb143ab6941f61f
-source: https://github.com/cms-sw/cmssw-wm-tools
+variables:
+  tag: da0764e408308fdce128c437bfb143ab6941f61f
+sources:
+  - https://github.com/cms-sw/cmssw-wm-tools/archive/%(tag)s.tar.gz
 architecture: share
 force_revision: ""
 ---
-# Copy source tree to build directory, excluding git metadata.
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+# Unpack the source tarball into the build directory.
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 # Install the entire source tree into the package directory.
 rsync -a $BUILDDIR/ $INSTALLROOT/

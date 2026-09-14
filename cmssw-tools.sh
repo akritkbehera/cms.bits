@@ -1,8 +1,9 @@
 package: cmssw-toolsa
 version: "v1"
-tag: afed73c88d5901aa3ced7d49aba5cc9196a7051f
-source: https://github.com/akritkbehera/scram-tools.file.git
+sources:
+  - https://github.com/akritkbehera/scram-tools.file/archive/%(tag)s.tar.gz
 variables:
+  tag: afed73c88d5901aa3ced7d49aba5cc9196a7051f
   skipreqtools: jcompiler
 requires:
  - AXOL1TL
@@ -202,7 +203,9 @@ requires:
 #   $INSTALLROOT/tools/available/ - XML files for optional/inactive tools
 #   $INSTALLROOT/tools/*.tmpl     - Templates with embedded XML (for coral-tool-conf)
 # =============================================================================
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 chmod +x $BUILDDIR/bin/get_tools
 chmod +x $BUILDDIR/bin/fix_tool_variables
 # Convert package name to uppercase with underscores (e.g., coral-tools -> CORAL_TOOLS)

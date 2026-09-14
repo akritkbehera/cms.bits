@@ -1,13 +1,17 @@
 package: dablooms
 version: 0.9.1
-tag: v%(version)s
-source: https://github.com/bitly/dablooms
+variables:
+  tag: v%(version)s
+sources:
+  - https://github.com/bitly/dablooms/archive/%(tag)s.tar.gz
 build_requires:
  - gmake
 requires:
  - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 make all
 

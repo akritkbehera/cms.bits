@@ -1,13 +1,17 @@
 package: photospp
 version: "3.64"
-tag: v%(version)s
+variables:
+  tag: v%(version)s
 requires:
  - hepmc
  - hepmc3
  - gcc
-source: https://gitlab.cern.ch/photospp/photospp.git
+sources:
+  - https://gitlab.cern.ch/photospp/photospp/-/archive/%(tag)s/photospp-%(tag)s.tar.gz
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 rm -f ./config/config.{sub,guess}
 

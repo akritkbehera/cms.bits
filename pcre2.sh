@@ -1,13 +1,17 @@
 package: pcre2
 version: "10.36"
-tag: pcre2-%(version)s
-source: https://github.com/PCRE2Project/pcre2
+variables:
+  tag: pcre2-%(version)s
+sources:
+  - https://github.com/PCRE2Project/pcre2/archive/%(tag)s.tar.gz
 requires:
  - bz2lib
  - zlib
  - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 sh autogen.sh
 

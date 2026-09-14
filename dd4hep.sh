@@ -1,7 +1,9 @@
 package: dd4hep
 version: v01-37x
-tag: ed75e7e233b068cbe2cd5eb50a82a80da27ad99b
-source: https://github.com/AIDASoft/DD4hep.git
+variables:
+  tag: ed75e7e233b068cbe2cd5eb50a82a80da27ad99b
+sources:
+  - https://github.com/AIDASoft/DD4hep/archive/%(tag)s.tar.gz
 build_requires:
  - CMake
  - gmake
@@ -22,7 +24,9 @@ requires:
 
 export build_flags="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
 
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 export BOOST_ROOT
 

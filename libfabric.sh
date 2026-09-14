@@ -1,9 +1,10 @@
 package: libfabric
 version: "2.1.0"
-tag: v%(version)s
 variables:
+  tag: v%(version)s
   github_user: ofiwg
-source: https://github.com/ofiwg/libfabric.git
+sources:
+  - https://github.com/ofiwg/libfabric/archive/%(tag)s.tar.gz
 requires:
   - gcc
   - curl
@@ -17,7 +18,9 @@ build_requires:
   - autotools
   - gmake
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 cd "$BUILDDIR"
 

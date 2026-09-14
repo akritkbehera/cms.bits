@@ -1,14 +1,16 @@
 package: ninja
-version: "%(tag_basename)s"
-tag: v1.11.1
-source: https://github.com/ninja-build/ninja
+version: "v1.11.1"
+sources:
+  - https://github.com/ninja-build/ninja/archive/%(version)s.tar.gz
 build_requires:
   - re2c
   - Python
 requires:
   - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 python3 ./configure.py --bootstrap
 
 mkdir -p "$INSTALLROOT/bin"

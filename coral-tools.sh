@@ -1,8 +1,9 @@
 package: coral-tools
 version: "v1"
-tag: 69822c60dea6fb66528eb16430853a3a756fabd6
-source: https://github.com/akritkbehera/scram-tools.file.git
+sources:
+  - https://github.com/akritkbehera/scram-tools.file/archive/%(tag)s.tar.gz
 variables:
+  tag: 69822c60dea6fb66528eb16430853a3a756fabd6
   skipreqtools: jcompiler
   override_microarch: "-march=x86-64-v2"
   package_vectorization: ""
@@ -58,7 +59,9 @@ requires:
   - oracle
 hook: disable
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 chmod +x "$BUILDDIR/bin/get_tools"
 chmod +x "$BUILDDIR/bin/fix_tool_variables"
 [ -f "$BUILDDIR/bin/get_vectorized_tools" ] && chmod +x "$BUILDDIR/bin/get_vectorized_tools"

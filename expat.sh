@@ -1,13 +1,15 @@
 package: expat
-version: "%(tag_basename)s"
-tag: R_2_7_1
+version: "R_2_7_1"
 requires:
  - gcc
 build_requires:
  - gmake
-source: https://github.com/libexpat/libexpat
+sources:
+  - https://github.com/libexpat/libexpat/archive/%(version)s.tar.gz
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"

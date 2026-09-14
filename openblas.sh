@@ -1,13 +1,17 @@
 package: OpenBLAS
 version: 0.3.27
-tag: v%(version)s
-source: https://github.com/OpenMathLib/OpenBLAS
+variables:
+  tag: v%(version)s
+sources:
+  - https://github.com/OpenMathLib/OpenBLAS/archive/%(tag)s.tar.gz
 requires:
  - gcc
 ---
 #!include <microarch-flags.file>
 
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 ARCH="$(uname -m)"
 

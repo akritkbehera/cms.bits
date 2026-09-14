@@ -1,14 +1,17 @@
 package: xz
 version: 5.8.3
-tag: v%(version)s
+variables:
+  tag: v%(version)s
 build_requires:
  - autotools
 requires:
  - gcc
-source: https://github.com/tukaani-project/xz
+sources:
+  - https://github.com/tukaani-project/xz/archive/%(tag)s.tar.gz
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded \
-    "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 ./autogen.sh --no-po4a
 

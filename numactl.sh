@@ -1,7 +1,9 @@
 package: numactl
 version: "2.0.19"
-tag: v%(version)s
-source: https://github.com/numactl/numactl
+variables:
+  tag: v%(version)s
+sources:
+  - https://github.com/numactl/numactl/archive/%(tag)s.tar.gz
 build_requires:
  - autotools
 requires:
@@ -9,7 +11,9 @@ requires:
 prepend_path:
   MANPATH: $NUMACTL_ROOT/share/man
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 ./autogen.sh
 ./configure \

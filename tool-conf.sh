@@ -1,7 +1,9 @@
 package: tool-conf
 version: v1
-tag: bd299a84cde9e2efed17b220969b6daf2ca3447e
-source: https://github.com/akritkbehera/scram-tools.file.git
+variables:
+  tag: bd299a84cde9e2efed17b220969b6daf2ca3447e
+sources:
+  - https://github.com/akritkbehera/scram-tools.file/archive/%(tag)s.tar.gz
 requires:
   - gcc
   - zlib
@@ -37,6 +39,8 @@ requires:
   - boost
   - oracle
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$INSTALLROOT"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$INSTALLROOT"
 export SCRAM_TOOLS_BIN_DIR=$BUILDDIR/bin
 python3 /home/akbehera/Desktop/bitsorg/scram/tools.py

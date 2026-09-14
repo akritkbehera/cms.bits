@@ -1,7 +1,7 @@
 package: libffi
-version: "%(tag_basename)s"
-tag: v3.5.2
-source: https://github.com/libffi/libffi
+version: "v3.5.2"
+sources:
+  - https://github.com/libffi/libffi/archive/%(version)s.tar.gz
 build_requires:
  - autotools
  - gmake
@@ -10,8 +10,9 @@ requires:
 prepend_path:
   LD_LIBRARY_PATH: $LIBFFI_ROOT/lib64
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
-      "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 # Refresh config.guess/config.sub so autoreconf recognizes newer host triples.
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"

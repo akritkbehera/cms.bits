@@ -1,8 +1,10 @@
 package: SCRAMV1
 version: V3_00_95
-tag: 21a9cd17bdeb37d0ad4a42b3bcbbc4597a65aa2a
+variables:
+  tag: 21a9cd17bdeb37d0ad4a42b3bcbbc4597a65aa2a
 branch: SCRAMV3
-source: https://github.com/cms-sw/SCRAM
+sources:
+  - https://github.com/cms-sw/SCRAM/archive/%(tag)s.tar.gz
 architecture: "share"
 force_revision: ""
 env:
@@ -20,8 +22,10 @@ fi
 SCRAM_REL_MINOR="${BASH_REMATCH[1]}"   # e.g. V3_12
 SCRAM_REL_MAJOR="V${BASH_REMATCH[2]}"  # e.g. V3
 
-# Copy source tree to build directory, excluding git metadata.
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+# Unpack the source tarball into the build directory.
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 # Substitute CMS install path and SCRAM version in the Python module.
 # @CMS_PATH@ becomes the install root and @SCRAM_VERSION@ becomes the version string.

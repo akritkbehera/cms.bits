@@ -1,11 +1,15 @@
 package: file-bootstrap
 version: "5.46"
-tag: FILE5_46
-source: https://github.com/file/file
+variables:
+  tag: FILE5_46
+sources:
+  - https://github.com/file/file/archive/%(tag)s.tar.gz
 requires:
  - autotools
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 autoreconf -fiv
 ./configure --prefix=$INSTALLROOT

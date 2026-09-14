@@ -1,11 +1,15 @@
 package: xerces-c
 version: "3.1.3"
-tag: xerces-3.1.3
-source: https://github.com/apache/xerces-c
+variables:
+  tag: xerces-3.1.3
+sources:
+  - https://github.com/apache/xerces-c/archive/%(tag)s.tar.gz
 requires:
  - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"

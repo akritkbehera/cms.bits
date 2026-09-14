@@ -1,7 +1,7 @@
 package: TBB
-version: "%(tag_basename)s"
-tag: v2022.3.0
-source: https://github.com/uxlfoundation/oneTBB
+version: "v2022.3.0"
+sources:
+  - https://github.com/uxlfoundation/oneTBB/archive/%(version)s.tar.gz
 build_requires:
   - CMake
   - gmake
@@ -9,7 +9,9 @@ requires:
   - gcc
   - hwloc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
       -DCMAKE_BUILD_TYPE=RelWithDebInfo \

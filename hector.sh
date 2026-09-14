@@ -1,12 +1,16 @@
 package: hector
 version: 1.3.4_patch1
-tag: 566e76718059fde2bf044579a2010a482b52a04a
-source: https://github.com/cms-externals/hector
+variables:
+  tag: 566e76718059fde2bf044579a2010a482b52a04a
+sources:
+  - https://github.com/cms-externals/hector/archive/%(tag)s.tar.gz
 requires:
  - ROOT
  - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 mkdir -p obj lib
 
 # Add CXX and CXXFLAGS to Makefile and increase output verbose level

@@ -1,7 +1,7 @@
 package: davix
-version: "%(tag_basename)s"
-tag: R_0_8_9
-source: https://github.com/cern-fts/davix
+version: "R_0_8_9"
+sources:
+  - git+https://github.com/cern-fts/davix.git?obj=devel/%(version)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
 build_requires:
  - CMake
  - gmake
@@ -13,9 +13,9 @@ requires:
  - Python
  - zlib
 ---
-cd $SOURCEDIR
-git submodule update --recursive --init
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 CMAKE_ARGS=(
     -S "$BUILDDIR"

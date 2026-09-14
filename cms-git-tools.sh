@@ -1,8 +1,9 @@
 package: cms-git-tools
 version: "251202"
-tag: 3a9b0d4071871bf3a7ba4cfc105f8935978562f2
-source: https://github.com/cms-sw/cms-git-tools
+sources:
+  - https://github.com/cms-sw/cms-git-tools/archive/%(tag)s.tar.gz
 variables:
+  tag: 3a9b0d4071871bf3a7ba4cfc105f8935978562f2
   fakerevision: "251202"
 build_requires:
  - gmake
@@ -10,8 +11,10 @@ force_architecture: share
 force_revision: ""
 hook: disable
 ---
-# Copy source tree to build directory, excluding git metadata.
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+# Unpack the source tarball into the build directory.
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 # Install git-cms-* commands to common/ and man pages to share/man/.
 mkdir -p $INSTALLROOT/common $INSTALLROOT/share/man/man1

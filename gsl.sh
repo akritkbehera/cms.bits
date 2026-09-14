@@ -1,12 +1,14 @@
 package: GSL
-version: "%(tag_basename)s"
-tag: "v2.6.0"
-source: https://github.com/ampl/gsl
+version: "v2.6.0"
+sources:
+  - https://github.com/ampl/gsl/archive/%(version)s.tar.gz
 requires:
   - gcc
   - OpenBLAS
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"

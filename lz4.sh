@@ -1,13 +1,15 @@
 package: lz4
-version: "%(tag_basename)s"
-tag: v1.9.2
-source: https://github.com/lz4/lz4
+version: "v1.9.2"
+sources:
+  - https://github.com/lz4/lz4/archive/%(version)s.tar.gz
 build_requires:
   - gmake
 requires:
   - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 make ${JOBS:+-j$JOBS}
 make install PREFIX=$INSTALLROOT

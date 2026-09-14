@@ -1,3 +1,5 @@
+build_requires:
+- CMake
 requires:
 - py-typing-extensions
 ---

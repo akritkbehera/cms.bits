@@ -1,3 +1,5 @@
 requires: 
 - py-flit
+patches:
+- entrypoints-flit-core-4.patch
 ---

@@ -6,3 +6,4 @@ requires:
 - py-tomli
 - py-tomli-w
 ---
+PipPostBuildPy='sed -i -E -e "s|#!/usr/bin/env python|#!/usr/bin/env python3|" $INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/flit/sdist.py'

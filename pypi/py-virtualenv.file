@@ -10,4 +10,5 @@ requires:
 - py-importlib-resources
 - py-backports-entry-points-selectable
 - py-platformdirs
+- py-python-discovery
 ---

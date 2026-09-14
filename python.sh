@@ -1,5 +1,5 @@
 package: Python
-version: "3.12.4"
+version: "3.12.13"
 tag: "v%(version)s"
 source: https://github.com/python/cpython
 requires:
@@ -13,6 +13,8 @@ requires:
  - xz
  - libuuid
  - gcc
+build_requires:
+ - gmake
 env:
   PYTHON_MAJOR_MINOR_VERSION: "%(python_major_minor)s"
   PYTHON_MAJOR_MINOR_STR: "%(python_major_minor_str)s"

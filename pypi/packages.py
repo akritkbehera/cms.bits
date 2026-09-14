@@ -14,7 +14,7 @@ def getPackages(virtual_packages, configDir, *args):
     if line.startswith('#'):continue
     if not '==' in line: continue
     items = line.strip().split(';')
-    (pkg, ver) = items[0].strip().split('==',1)
+    (pkg, ver) = items[0].replace('#','').strip().split('==',1)
     py_pkg = "py-%s" % pkg
     pkg_name = py_pkg.lower()
     if pkg_name in virtual_packages: continue

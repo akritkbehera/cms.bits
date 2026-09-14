@@ -1,5 +1,5 @@
 package: grpc
-version: "1.48.4"
+version: "1.82.0"
 sources:
  - git+https://github.com/grpc/grpc.git?obj=master/v%(version)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
 build_requires:
@@ -14,18 +14,10 @@ requires:
  - c-ares
  - abseil-cpp
  - re2
-patches:
- - grpc-mno-outline-atomics.patch
- - grpc-openssl-no-engine.patch
- - grpc-fix-aligned_storage.patch
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
-
-patch -p1 < "$SOURCEDIR/$PATCH0"
-patch -p1 < "$SOURCEDIR/$PATCH1"
-patch -p1 < "$SOURCEDIR/$PATCH2"
 
 CMAKE_ARGS=(
     -G Ninja

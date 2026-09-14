@@ -1,7 +1,6 @@
 package: py-pyg-lib
-version: 0.6.0
 sources:
-- git+https://github.com/pyg-team/pyg-lib?obj=main/%(version)s&export=pyg-lib-%(version)s&submodules=1&output=/source.tar.gz
+- git+https://github.com/pyg-team/pyg-lib?obj=master/%(version)s&export=pyg-lib-%(version)s&submodules=1&output=/source.tar.gz
 patches:
 - pyg-lib.patch
 build_requires:
@@ -10,6 +9,7 @@ build_requires:
 requires:
 - py-torch
 - zlib
+- abseil-cpp
 ---
 # cmsdist: pip/pyg-lib.file -> ## INCLUDE pyg-lib-common -> ## INCLUDE torch-extension-build
 # bits has no ## INCLUDE, so we source the two shared fragments here. BITS_CONFIG_DIR

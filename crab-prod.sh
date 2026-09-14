@@ -2,8 +2,8 @@ package: crab-prod
 version: vCMS_prod
 variables:
   version_suffix:     "00"
-  crabclient_version: "v3.250820"
-  crabserver_version: "v3.250818"
+  crabclient_version: "v3.260630"
+  crabserver_version: "v3.260622"
   crabserver_packages: ""
 sources:
   - git://github.com/dmwm/CRABClient.git?obj=master/%(crabclient_version)s&export=CRABClient&output=/CRABClient-%(crabclient_version)s.tar.gz

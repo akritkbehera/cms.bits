@@ -1,5 +1,5 @@
 package: TOoLLiP
-version: 1.0.1
+version: 3.1.0
 sources:
  - https://github.com/cms-hls4ml/%(package)s/archive/refs/tags/v%(version)s.tar.gz
 build_requires:

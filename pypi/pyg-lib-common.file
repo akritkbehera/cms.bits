@@ -14,7 +14,10 @@ build_flags="-Wall -Wextra ${arch_build_flags}"
 # cmsdist: %define patchsrc0 — runs in the unpacked source root ($PYPI_SRC) via runIt.
 # (This is in addition to Patch0 = pyg-lib.patch, applied from the frontmatter patches: list.)
 PipPatchSource=$(cat <<'EOF'
-grep -q 'CMAKE_CXX_STANDARD 17' CMakeLists.txt && sed -i -e "s|CMAKE_CXX_STANDARD 17|CMAKE_CXX_STANDARD ${CXXSTD}|" CMakeLists.txt
+grep -q 'CMAKE_CXX_STANDARD 20' CMakeLists.txt
+sed -i -e "s|CMAKE_CXX_STANDARD 20|CMAKE_CXX_STANDARD ${CXXSTD}|" CMakeLists.txt
+grep -q 'march=native' third_party/METIS/GKlib/GKlibSystem.cmake
+sed -i -e '/-march=native/d' third_party/METIS/GKlib/GKlibSystem.cmake
 EOF
 )
 
@@ -26,7 +29,7 @@ EOF
 PipPreBuildPy=$(cat <<'EOF'
 eval "${AdditionalPipPreBuildPy:-}"
 export ZLIB_ROOT=${ZLIB_ROOT}
-export CMAKE_PREFIX_PATH="${GCC_ROOT}:${PY_TORCH_ROOT}:${CUDA_ROOT}:${ZLIB_ROOT}"
+export CMAKE_PREFIX_PATH="${GCC_ROOT}:${PY_TORCH_ROOT}:${CUDA_ROOT}:${ZLIB_ROOT}:${ABSEIL_CPP_ROOT}"
 export FORCE_NINJA=1
 export VERBOSE=1
 export CMAKE_CXX_FLAGS="${build_flags}"

@@ -333,26 +333,25 @@ else
   log_skip "saveDeps disabled"
 fi
 
-eval "$(USER_SCRAM_RUNTIME_TYPE=BUILD $SCRAMCMD run -sh)"
-
-cmdpath=$(command -v edmPluginRefresh 2>/dev/null || true)
-if [ -n "$cmdpath" ]; then
+# cmssw-config (>= V09-10-04) ships run_edmPluginRefresh, which builds the plugin
+# cache from the per-lib edm/ directory; the edm/ inputs are dropped afterwards.
+edm_cmd="$INSTALLROOT/config/SCRAM/run_edmPluginRefresh"
+if [ -x "$edm_cmd" ]; then
   # Parallel plugin refresh across lib dirs (biglib + lib); the vectorized
-  # cache copy stays inside each lib's subshell so ordering is preserved.
+  # refresh stays inside each lib's subshell so ordering is preserved.
   _refresh_pids=()
   for lib in $CMSSW_LIBS; do
-    [ -d "$INSTALLROOT/$lib" ] || { log_skip "no $lib"; continue; }
+    [ -d "$INSTALLROOT/$lib/edm" ] || { log_skip "no $lib/edm"; continue; }
     (
       log_info "edmPluginRefresh: $lib"
-      rm -f "$INSTALLROOT/$lib/.edmplugincache"
-      edmPluginRefresh "$INSTALLROOT/$lib"
+      "$edm_cmd" "$INSTALLROOT/$lib"
+      rm -rf "$INSTALLROOT/$lib/edm"
       if [ "$PACKAGE_VECTORIZATION" != "0" ]; then
         for arch in $PACKAGE_VECTORIZATION; do
           arch_dir="$INSTALLROOT/$lib/scram_${arch}"
-          [ -d "$arch_dir" ] || continue
-          rm -f "$arch_dir/.edmplugincache"
-          [ -e "$INSTALLROOT/$lib/.edmplugincache" ] && \
-            cp "$INSTALLROOT/$lib/.edmplugincache" "$arch_dir/.edmplugincache"
+          [ -d "$arch_dir/edm" ] || continue
+          "$edm_cmd" "$arch_dir"
+          rm -rf "$arch_dir/edm"
         done
       fi
       log_ok "edmPluginRefresh done: $lib"
@@ -363,7 +362,7 @@ if [ -n "$cmdpath" ]; then
   for pid in "${_refresh_pids[@]}"; do wait "$pid" || _refresh_rc=1; done
   [ $_refresh_rc -ne 0 ] && log_err "edmPluginRefresh failed" && exit 1
 else
-  log_skip "edmPluginRefresh not in PATH"
+  log_skip "run_edmPluginRefresh not available in cmssw-config"
 fi
 
 log_section "Block 8: INSTALL"

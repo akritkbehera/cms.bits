@@ -2,6 +2,8 @@ package: CMake
 version: "3.31.12"
 sources:
   - https://cmake.org/files/v3.31/cmake-%(version)s.tar.gz
+build_requires:
+  - gmake
 requires:
   - gcc
   - bz2lib

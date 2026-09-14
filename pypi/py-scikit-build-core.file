@@ -6,4 +6,5 @@ requires:
 - py-packaging
 - py-pathspec
 - py-tomli
+- CMake
 ---

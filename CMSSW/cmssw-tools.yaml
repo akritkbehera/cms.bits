@@ -12,8 +12,9 @@ requires:
   - celeritas
     # - crab
   - hls4mlemulatorextras
-    # - cmssw-wm-tools
+  - cmssw-wm-tools
   - google-benchmark
+  - google-test
   - catch2
   - starlight
   - alpgen
@@ -39,6 +40,7 @@ requires:
   - gdbm
   - geant4
   - geant4-data
+  - geant4data
   - g4hepem
   - glimpse
   - gmake
@@ -60,6 +62,7 @@ requires:
   - EMTF_NN
   - L1METML
   - L1TSC4NGJetModel
+  - L1TSC82ProngJetModel
   - lhapdf
   - libjpeg-turbo
   - libpng
@@ -78,6 +81,7 @@ requires:
   - ROOT
   - libpciaccess
   - acts
+  - actsdata
   - numactl
   - hwloc
   - rdma-core
@@ -161,6 +165,7 @@ requires:
   - zlib
   - openldap
   - gperftools
+  - perfetto
   - cuda
   - cuda-compatible-runtime
   - gdrcopy

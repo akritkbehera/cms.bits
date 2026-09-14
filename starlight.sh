@@ -8,6 +8,8 @@ sources:
   - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
 patches:
   - starlight-r193-allow-setting-CMAKE_CXX_FLAGS.patch
+build_requires:
+ - CMake
 requires:
  - gcc
  - clhep

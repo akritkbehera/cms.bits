@@ -33,6 +33,7 @@ requires:
  - py-sympy
  - cuda
  - cudnn
+ - abseil-cpp
 ---
 # cmsdist: pip/torch-cuda.file -> ## INCLUDE pip/torch (+ CUDA overrides).
 # Package is py-torch-cuda but it builds the "torch" pip distribution; set Pypi_name
@@ -50,6 +51,12 @@ source "${BITS_CONFIG_DIR}/pypi/torch-common.file"
 # arch list; +PTX on the last arch mirrors cmsdist's cuda_arch_float macro (pip/torch-cuda).
 PipPreBuildPy=$(cat <<'EOF'
  unset CMAKE_ROOT
+ # CUDA kernels (cutlass/flash-attn) need ~4 GB+ per compile; torch-common's MEM_GB/4 jobs
+ # ran the 62 GB build host out of memory (cicc OOM-killed), so use MEM_GB/8 for the CUDA build.
+ MAX_JOBS=$(( $(/usr/bin/free -g | awk '/^Mem:/{print $2}') / 8 ))
+ if [ $MAX_JOBS -lt 1 ] ; then MAX_JOBS=1; fi
+ if [ $MAX_JOBS -gt $JOBS ] ; then MAX_JOBS=$JOBS; fi
+ export MAX_JOBS
  export USE_CUDA=ON
  export USE_CUDNN=ON
  export TORCH_CUDA_ARCH_LIST="$(echo "$cuda_arch" | tr ' ' '\n' | sed -E 's|([0-9])$|.\1|' | tr '\n' ' ' | sed -e 's/ *$/+PTX/')"

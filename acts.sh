@@ -1,9 +1,9 @@
 package: acts
-version: "v44.0.1"
+version: "46.8.1"
 variables:
-  tag:         30fb4ea
-  branch:      cms/%(version)s
-  github_user: cms-externals
+  tag:         v%(version)s
+  branch:      main
+  github_user: acts-project
 sources:
   - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
 build_requires:
@@ -17,6 +17,7 @@ requires:
   - expat
   - fastjet
   - geant4
+  - vecgeom
   - clhep
   - xerces-c
   - zlib
@@ -73,6 +74,7 @@ cmake_args=(
     "-DCMAKE_BUILD_TYPE=%(cms_build_type)s"
     "-DCMAKE_INSTALL_PREFIX=$INSTALLROOT"
     "-DCMAKE_SKIP_INSTALL_RPATH=ON"
+    "-DEigen3_DIR=$EIGEN_ROOT/share/eigen3/cmake"
     "-DBUILD_SHARED_LIBS=ON"
     "-DACTS_NLOHMANNJSON_SOURCE="
     "-DACTS_USE_SYSTEM_NLOHMANN_JSON=ON"
@@ -128,6 +130,9 @@ if [ "$build_test" = "1" ]; then
         "-DPython_EXECUTABLE=$(which python3)"
         "-DACTS_BUILD_EXAMPLES_PYTHON_BINDINGS=ON"
         "-DTRACCC_BUILD_TESTING=ON"
+        "-DTRACCC_BUILD_SIMULATION=ON"
+        "-DTRACCC_BUILD_PERFORMANCE=ON"
+        "-DCMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE=PRE_TEST"
     )
 fi
 

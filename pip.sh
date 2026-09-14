@@ -1,6 +1,6 @@
 package: pip
 version: "%(tag_basename)s"
-tag: 26.0.1 
+tag: 26.1.2
 sources:
 - https://raw.githubusercontent.com/pypa/get-pip/refs/tags/%(version)s/public/get-pip.py
 requires:

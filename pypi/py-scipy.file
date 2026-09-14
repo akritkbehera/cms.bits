@@ -9,6 +9,14 @@ build_requires:
 - CMake 
 - ninja
 ---
+PipBuildOptions='--config-settings=compile-args="-j$JOBS"'
+
+# Pin f2py_version to the py-numpy we build against instead of querying it at configure time.
+PipPatchSource=$(cat <<'EOF'
+grep '^f2py_version = run_command' scipy/meson.build && npver=$(echo $PY_NUMPY_VERSION | sed 's|-[0-9a-f]*||') && sed -i -e "s|^f2py_version = run_command.*|f2py_version = '${npver}'|" scipy/meson.build
+EOF
+)
+
 PipPreBuild=$(cat <<'EOF'
 export NPY_NUM_BUILD_JOBS=${JOBS:+-j $JOBS}
 export FFLAGS="${FFLAGS_OPT} -fallow-argument-mismatch -fPIC"

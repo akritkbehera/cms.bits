@@ -1,5 +1,7 @@
 package: rocm-rocprofiler-sdk
 version: "7.14"
+patches:
+  - rocm-rocprofiler-sdk.patch
 build_requires:
   - CMake
   - gmake
@@ -23,6 +25,7 @@ requires:
 export PKG_CONFIG_PATH="/usr/lib64/pkgconfig:${PKG_CONFIG_PATH:-}"
 export ROCM_PROJECT="rocprofiler-sdk"
 export ROCM_PRE_BUILD_HOOK='
+patch -p1 -d "$BUILDDIR/rocm-systems/projects/rocprofiler-sdk" < "$SOURCEDIR/rocm-rocprofiler-sdk.patch"
 sed -i "2i\include(CPack)" "$BUILDDIR/rocm-systems/projects/rocprofiler-sdk/CMakeLists.txt"
 export CC=${ROCM_LLVM_ROOT}/bin/amdclang
 export CXX=${ROCM_LLVM_ROOT}/bin/amdclang++

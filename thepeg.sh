@@ -5,6 +5,7 @@ sources:
 patches:
  - LHEEventNum.patch
  - thepeg-deprecated-warn.patch
+ - thepeg-Particle-parents.patch
  - thepeg-cpp23.patch
 build_requires:
  - autotools
@@ -28,6 +29,7 @@ tar -xjf "$SOURCEDIR/${SOURCE0}" \
 patch -p1 < "$SOURCEDIR/$PATCH0"
 patch -p1 < "$SOURCEDIR/$PATCH1"
 patch -p1 < "$SOURCEDIR/$PATCH2"
+patch -p1 < "$SOURCEDIR/$PATCH3"
 autoreconf -fiv
 
 export CXX="$(which g++) -fPIC"

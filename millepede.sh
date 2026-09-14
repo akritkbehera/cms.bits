@@ -17,6 +17,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 cmake_args=(
     -S "$BUILDDIR"
     -B "$BUILDDIR/build"
+    -DCMAKE_BUILD_TYPE=%(cms_build_type)s
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
     -DCMAKE_PREFIX_PATH="${GCC_ROOT};${ROOT_ROOT};${MILLE_ROOT}"
     -DCMAKE_CXX_STANDARD="%(cms_cxx_std)s"

@@ -1,2 +1,12 @@
-
+requires:
+- py-PyYAML
+- py-Jinja2
+- py-numpy
+- py-packaging
+- py-tornado
+- py-pillow
+- py-contourpy
+- py-pandas
+- py-xyzservices
+- py-narwhals
 ---

@@ -6,5 +6,5 @@ requires:
 - py-jedi
 - py-backcall
 - py-comm
-- py-nest-asyncio
+- py-nest-asyncio2
 ---

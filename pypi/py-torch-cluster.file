@@ -4,6 +4,7 @@ build_requires:
 requires:
 - py-torch
 - zlib
+- abseil-cpp
 ---
 # cmsdist: pip/torch-cluster.file -> ## INCLUDE torch-cluster-common
 #                                 -> ## INCLUDE torch-extension-build

@@ -1,7 +1,7 @@
 package: log4cplus
-version: 2.1.2
+version: 2.0.7
 sources:
- - https://github.com/log4cplus/log4cplus/releases/download/REL_2_1_2/log4cplus-2.1.2.tar.gz
+ - https://github.com/log4cplus/log4cplus/releases/download/REL_2_0_7/log4cplus-%(version)s.tar.gz
 build_requires:
  - CMake
  - gmake
@@ -15,7 +15,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
   -DBUILD_SHARED_LIBS:BOOL=OFF \
-  -DWITH_UNIT_TESTS=OFF \
+  -DLOG4CPLUS_BUILD_TESTING=OFF \
   -DLOG4CPLUS_BUILD_LOGGINGSERVER=OFF
 
 make -C "$BUILDDIR/build" ${JOBS:+-j$JOBS} VERBOSE=1

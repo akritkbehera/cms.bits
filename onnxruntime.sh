@@ -14,6 +14,7 @@ build_requires:
 requires:
  - gcc
  - protobuf
+ - abseil-cpp
  - py-numpy
  - py-onnx
  - zlib

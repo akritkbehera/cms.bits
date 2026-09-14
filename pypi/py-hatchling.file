@@ -6,4 +6,5 @@ requires:
 - py-trove-classifiers
 - py-calver
 - py-packaging
+- py-tomlkit
 ---

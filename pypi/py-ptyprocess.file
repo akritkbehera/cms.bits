@@ -1,3 +1,7 @@
+variables:
+  commit: 12d3221806c0a7cf114b894101814b1f9e338ed4
+sources:
+- git+https://github.com/pexpect/ptyprocess?obj=master/%(commit)s&export=py-ptyprocess-%(version)s&output=/py-ptyprocess-%(version)s-%(commit)s.tgz
 requires:
 - py-flit-core
 ---

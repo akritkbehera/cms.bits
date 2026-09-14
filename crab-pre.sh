@@ -2,8 +2,8 @@ package: crab-pre
 version: vCMS_pre
 variables:
   version_suffix:     "00"
-  crabclient_version: "v3.250522"
-  crabserver_version: "v3.250401"
+  crabclient_version: "v3.251020"
+  crabserver_version: "v3.251015"
   crabserver_packages: ""
 sources:
   - git://github.com/dmwm/CRABClient.git?obj=master/%(crabclient_version)s&export=CRABClient&output=/CRABClient-%(crabclient_version)s.tar.gz

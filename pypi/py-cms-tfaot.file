@@ -7,8 +7,8 @@ requires:
 - py-cmsml
 variables:
  github_user: cms-externals
- tag: bd45d653370360db8118efcad77246b0c61e560a
- branch: master
+ tag: 848ab9750a528b23f1fdc026e408e5d90cbc0574
+ branch: tf-2.21.0-aot-metadata-objects
 sources:
 - git+https://github.com/%(github_user)s/cms-tfaot.git?obj=%(branch)s/%(tag)s&export=cms-tfaot-%(version)s&output=/cms-tfaot-%(version)s-%(tag)s.tgz
 ---

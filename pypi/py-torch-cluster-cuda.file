@@ -4,6 +4,7 @@ build_requires:
 requires:
 - py-torch-cuda
 - zlib
+- abseil-cpp
 - cuda
 # The pip:// source download uses the generator's pypi_name, which defaults to the package
 # name minus "py-" (= "torch-cluster-cuda") and 404s on PyPI. Override it to the real dist

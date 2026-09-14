@@ -1,3 +1,6 @@
 build_requires:
 - py-hatchling
+- py-uv-build
+requires:
+- bz2lib
 ---

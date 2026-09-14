@@ -1,28 +1,19 @@
 package: protobuf
 version: "%(tag_basename)s"
-tag: v3.21.9
+tag: v6.31.1
 sources:
 - https://github.com/protocolbuffers/protobuf/archive/refs/tags/%(tag_basename)s.tar.gz
 requires:
 - gcc
 - zlib
+- abseil-cpp
 build_requires:
 - CMake
 - ninja
-patches:
-- protobuf_text_format.patch
-- protobuf-non-virtual-dtor.patch
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
-
-patch -p1 < "$SOURCEDIR/$PATCH0"
-patch -p1 < "$SOURCEDIR/$PATCH1"
-
-# Make sure the default c++std standard is c++11, then bump to the CMS standard
-grep -q 'CMAKE_CXX_STANDARD  *11' CMakeLists.txt
-sed -i -e 's|CMAKE_CXX_STANDARD  *11|CMAKE_CXX_STANDARD %(cms_cxx_std)s|' CMakeLists.txt
 
 CMAKE_ARGS=(
     -G Ninja
@@ -38,7 +29,7 @@ CMAKE_ARGS=(
     -DCMAKE_CXX_FLAGS="-I${ZLIB_ROOT}/include"
     -DCMAKE_C_FLAGS="-I${ZLIB_ROOT}/include"
     -DCMAKE_SHARED_LINKER_FLAGS="-L${ZLIB_ROOT}/lib"
-    -DCMAKE_PREFIX_PATH="${ZLIB_ROOT}"
+    -DCMAKE_PREFIX_PATH="${ABSEIL_CPP_ROOT};${ZLIB_ROOT}"
 )
 
 cmake "${CMAKE_ARGS[@]}"

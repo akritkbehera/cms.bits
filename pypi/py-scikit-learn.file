@@ -1,6 +1,10 @@
+build_requires:
+- py-meson-python
 requires:
 - py-scipy
 - py-joblib
 - py-threadpoolctl
+- py-narwhals
 ---
+PipBuildOptions='--config-settings=compile-args="-j$JOBS"'
 PipPreBuild='SKLEARN_BUILD_PARALLEL=${JOBS:+-j $JOBS}; export CFLAGS="-Wno-error=incompatible-pointer-types"'

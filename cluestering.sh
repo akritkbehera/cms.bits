@@ -1,5 +1,5 @@
 package: CLUEstering
-version: 2.7.2
+version: 2.12.0
 sources:
   - https://gitlab.cern.ch/kalos/%(package)s/-/archive/%(version)s/%(package)s-%(version)s.tar.gz
 requires:

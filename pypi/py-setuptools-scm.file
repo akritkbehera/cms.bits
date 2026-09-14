@@ -3,4 +3,5 @@ requires:
 - py-packaging 
 - py-typing-extensions 
 - py-importlib-metadata
+- py-vcs-versioning
 ---

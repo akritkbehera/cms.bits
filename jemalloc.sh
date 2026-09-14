@@ -1,9 +1,9 @@
 package: jemalloc
-version: 5.3.0
+version: 5.3.1
 variables:
   github_user: cms-externals
   branch: cms/%%(version)s
-  tag: 54eaed1d8b56b1aa528be3bdd1877e59c56fa90c
+  tag: fc5eb3f3a066cf57492e316f2d6e1ab4824ba72b
 sources: 
  - git+https://github.com/%(github_user)s/jemalloc.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
 build_requires:

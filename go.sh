@@ -1,5 +1,5 @@
 package: go
-version: "1.22.5"
+version: "1.25.5"
 variables:
   aarch64_src: "arm64"
   x86_64_src: "amd64"

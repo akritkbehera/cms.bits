@@ -1,7 +1,7 @@
 # Shared build fragment for the torch C++ extensions (torch-scatter/sparse/cluster,
 # pyg-lib). Port of cmsdist pip/files/torch-extension-build.file.
 # Sourced/included by the extension packages; the consumer must carry the deps in its
-# frontmatter (build_requires: CMake, ninja / requires: zlib) since bits has no ## INCLUDE
+# frontmatter (build_requires: CMake, ninja / requires: zlib, abseil-cpp) since bits has no ## INCLUDE
 # dependency-merge. cmsdist provides cpp-standard, compilation_flags and microarch_flags;
 # in bits those give $CXXSTD, $arch_build_flags and $default_microarch.
 
@@ -27,7 +27,7 @@ if [ "${enable_cpp_api}" = "yes" ]; then
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \
     -DCMAKE_INSTALL_LIBDIR=lib \
-    -DCMAKE_PREFIX_PATH="${GCC_ROOT};${PY_TORCH_ROOT};${CUDA_ROOT};${ZLIB_ROOT}" \
+    -DCMAKE_PREFIX_PATH="${GCC_ROOT};${PY_TORCH_ROOT};${CUDA_ROOT};${ZLIB_ROOT};${ABSEIL_CPP_ROOT}" \
     -DCMAKE_CXX_STANDARD="${CXXSTD}" \
     -DCMAKE_CXX_FLAGS="${build_flags}" \
     -DCMAKE_C_FLAGS="${build_flags}" \

@@ -1,5 +1,5 @@
 package: tensorflow
-version: 2.17.0
+version: 2.21.0
 variables:
   enable_gpu: "0"
 requires:
@@ -8,20 +8,23 @@ requires:
  - flatbuffers
  - gcc
  - grpc
+ - abseil-cpp
  - zlib
  - sqlite
  - libjpeg-turbo
  - curl
  - giflib
  - libpng
+ - llvm
+ - hwloc
 ---
 tf_major=$(echo "$PKG_VERSION" | cut -d. -f1)
-python_mm="${PYTHON_MAJOR_VERSION}${PYTHON_MINOR_VERSION}"
+python_mm="${PYTHON_MAJOR_MINOR_STR}"
 arch=$(uname -m)
 
 mkdir -p "$INSTALLROOT/lib" "$INSTALLROOT/xla-aot-runtime"
 
-wheel unpack "$TENSORFLOW_SOURCES_ROOT/tensorflow-2.17.0-cp312-cp312-linux_x86_64.whl"
+wheel unpack "$TENSORFLOW_SOURCES_ROOT"/tensorflow-${PKG_VERSION}*-cp${python_mm}-cp${python_mm}-linux_${arch}.whl
 
 mv "tensorflow-$PKG_VERSION/tensorflow/include"            "$INSTALLROOT/include"
 for l in libtensorflow_cc.so libtensorflow_framework.so; do

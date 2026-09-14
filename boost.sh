@@ -1,8 +1,8 @@
 package: boost
-version: "1.91.0"
+version: "1.92.0"
 variables:
-  # underscore form for the release-tarball name (boost_1_91_0.tar.gz)
-  boost_underscore: "1_91_0"
+  # underscore form for the release-tarball name (boost_1_92_0.tar.gz)
+  boost_underscore: "1_92_0"
 sources:
   # Upstream switched from the cms-externals git fork to the official release tarballs.
   - https://archives.boost.io/release/%(version)s/source/boost_%(boost_underscore)s.tar.gz

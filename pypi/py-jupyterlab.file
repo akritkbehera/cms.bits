@@ -16,4 +16,5 @@ requires:
 - py-tomli
 - py-tornado
 - py-traitlets
+- py-jupyter-builder
 ---

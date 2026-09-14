@@ -5,7 +5,7 @@ variables:
   x86_64_version: "1911000"
   selected_version: "%%(%(platform_machine)s_version)s"
   mirror: download.oracle.com/otn_software/linux/instantclient/%(selected_version)s
-  aarch64_src: "linux.arm64-%%(version)s"
+  aarch64_src: "linux.arm64-19.10.0.0.0dbru"
   x86_64_src: "linux.x64-%%(version)s"
   selected_src: "%%(%(platform_machine)s_src)s"
   occi_lib: "19.1"

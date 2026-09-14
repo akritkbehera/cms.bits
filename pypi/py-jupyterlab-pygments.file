@@ -1,4 +1,7 @@
 requires:
 - py-Pygments
 - py-jupyter-packaging
+build_requires:
+- py-hatch-nodejs-version
+- py-hatch-jupyter-builder
 ---

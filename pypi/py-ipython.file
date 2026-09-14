@@ -13,4 +13,5 @@ requires:
 - py-typing-extensions
 - py-exceptiongroup
 - py-ipython-pygments-lexers
+- py-psutil
 ---

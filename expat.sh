@@ -1,8 +1,10 @@
 package: expat
 version: "%(tag_basename)s"
-tag: R_2_4_8
+tag: R_2_7_1
 requires:
  - gcc
+build_requires:
+ - gmake
 source: https://github.com/libexpat/libexpat
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/

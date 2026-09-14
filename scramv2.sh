@@ -1,7 +1,7 @@
 package:      SCRAMV2
-version:      V2_2_9_pre22
+version:      V2_2_9_pre23
 variables:
- tag:         92aa727563d79e2bf6ce387c751e3bfa74201b38
+ tag:         a58bd81a6c7bd8e763e34274470bfc97054fb808
  branch:      SCRAMV2
  github_user: cms-sw
  SCRAM_ALL_VERSIONS:  shell(echo %(version)s | grep -E '^V[0-9]+_[0-9]+_[0-9]+$')

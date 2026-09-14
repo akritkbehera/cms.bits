@@ -1,3 +1,5 @@
+build_requires:
+- py-scikit-build-core
 requires:
 - CMake
 - protobuf
@@ -7,8 +9,6 @@ requires:
 - py-numpy
 - py-pytest-runner
 - py-ml_dtypes
-patches: 
-- py3-onnx.patch
+- abseil-cpp
 ---
-PipPatchSource="grep -q 'CMAKE_CXX_STANDARD[[:space:]]*[0-9][0-9]' CMakeLists.txt && { sed -i -E \"s|(CMAKE_CXX_STANDARD[[:space:]]*)[0-9][0-9]|\1$CXXSTD|\" CMakeLists.txt; }"
-PipPreBuildPy="export SETUPTOOLS_SCM_PRETEND_VERSION=1.21.0; export ONNX_ML=1; export CMAKE_ARGS=\"-DCMAKE_CXX_STANDARD=$CXXSTD -DONNX_USE_PROTOBUF_SHARED_LIBS=ON -DProtobuf_USE_STATIC_LIBS=OFF -DCMAKE_PREFIX_PATH=$PROTOBUF_ROOT\""
+PipPreBuildPy="export ONNX_ML=1; export CMAKE_ARGS=\"-DCMAKE_CXX_STANDARD=$CXXSTD -DONNX_USE_PROTOBUF_SHARED_LIBS=ON -DProtobuf_USE_STATIC_LIBS=OFF -DCMAKE_PREFIX_PATH=$PROTOBUF_ROOT;$ABSEIL_CPP_ROOT\""

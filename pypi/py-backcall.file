@@ -1,3 +1,5 @@
 requires:
 - py-flit-core
+patches:
+- backcall-flit-core-4.patch
 ---

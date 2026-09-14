@@ -1,8 +1,8 @@
 package: tensorflow-sources
-version: "2.17.0"
+version: "2.21.0"
 variables:
-  tag: 4bc8eb2ebed6a8c02a3446f2541b6ed396a95cdf
-  branch: cms/v%%(version)s
+  tag: bc673ee0b966ac36ea73b9ab86d40967396a66a0
+  branch: cms/v%(version)s
   github_user: cms-externals
   build_type: "opt"
   pythonOnly: "no"
@@ -10,7 +10,7 @@ variables:
 sources:
  - git+https://github.com/%(github_user)s/tensorflow.git?obj=%(branch)s/%(tag)s&export=tensorflow-%(version)s&output=/tensorflow-%(version)s.tgz
 patches:
- - tensorflow-gcc14-aarch64.patch
+ - tensorflow-tf2xla-return-type.patch
 build_requires:
  - bazel
  - java-env
@@ -36,8 +36,13 @@ requires:
  - py-six
  - py-termcolor
  - py-absl-py
- - py-opt-einsum
  - py-flatbuffers
+ - llvm
+ - hwloc
+ - py-psutil
+ - py-lit
+ - py-tblib
+ - py-portpicker
  - eigen
  - protobuf
  - zlib
@@ -50,6 +55,7 @@ requires:
  - cuda
  - cudnn
  - grpc
+ - abseil-cpp
  - flatbuffers
 ---
 #!include <compilation-flags.file>
@@ -63,6 +69,12 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
+# Add a trailing unreachable statement after the fully-covered switch in
+# xla::cpu::EncodedBufferAllocationInfo::operator BufferAllocationInfo() so that
+# gcc does not fail the header with -Werror=return-type when it is included by
+# downstream CMSSW code (e.g. PhysicsTools/TensorFlowAOT).
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
+
 sed -i -e "s|lib/python[^/]*/site-packages/|lib/python$PYTHON_MAJOR_MINOR_VERSION/site-packages/|" third_party/systemlibs/pybind11.BUILD
 sed -i -e "s|site-packages/pybind11\"|site-packages/pybind11/include\"|g" third_party/systemlibs/pybind11.BUILD
 
@@ -72,6 +84,12 @@ export MAJOR_VERSION=$(echo "$PKG_VERSION" | cut -d. -f1)
 export PYTHON_BIN_PATH="$(which python3)"
 export USE_DEFAULT_PYTHON_LIB_PATH=1
 export GCC_HOST_COMPILER_PATH="$(which gcc)"
+# TF 2.21's XLA CPU codegen intrinsics (xla/codegen/intrinsic/cpp, cc_to_llvm_ir)
+# compile C++ to LLVM IR with clang-only flags (-emit-llvm, -fno-sanitize=all, ...),
+# so gcc cannot build them. Use clang; on Linux it defaults to libstdc++, so the
+# result stays ABI-compatible with the rest of CMSSW.
+export TF_NEED_CLANG=1
+export CLANG_COMPILER_PATH="${LLVM_ROOT}/bin/clang"
 export CC_OPT_FLAGS="-Wno-sign-compare"
 export BAZEL_OPTS="--batch --output_user_root ../build"
 
@@ -80,15 +98,12 @@ BAZEL_OPTS="$BAZEL_OPTS --host_jvm_args=--add-opens=java.base/java.nio=ALL-UNNAM
 BAZEL_OPTS="$BAZEL_OPTS --host_jvm_args=--add-opens=java.base/java.lang=ALL-UNNAMED"
 fi
 
-BAZEL_OPTS="$BAZEL_OPTS build -s --verbose_failures --distinct_host_configuration=false"
+BAZEL_OPTS="$BAZEL_OPTS build -s --verbose_failures"
 
 if [[ -n "$selected_microarch" ]]; then
   BAZEL_OPTS="$BAZEL_OPTS --copt=$selected_microarch"
   BAZEL_OPTS="$BAZEL_OPTS --copt=-DEIGEN_USE_AVX512_GEMM_KERNELS=0"
 
-  if [[ "$selected_microarch" != "$default_microarch" ]]; then
-    BAZEL_OPTS="$BAZEL_OPTS --distinct_host_configuration=true"
-  fi
 fi
 
 if [[ -n "$arch_build_flags" ]]; then
@@ -100,7 +115,25 @@ BAZEL_OPTS+=" --config=$build_type \
   --host_cxxopt=-std=c++$CXXSTD \
   --jobs=${JOBS:-$(nproc)}"
 
-BAZEL_OPTS+=" --config=noaws --config=nogcp --config=nohdfs --config=nonccl"
+BAZEL_OPTS+=" --config=nogcp --config=nonccl"
+# On Linux, XLA always compiles numa_hwloc.cc (//xla/tsl:with_numa_support = match_any
+# linux_any), but the CMS hwloc system BUILD only links -lhwloc under
+# --define=with_numa_support=true. Without it the hwloc symbols are undefined at link.
+BAZEL_OPTS+=" --define=with_numa_support=true"
+# TF 2.21 defaults to the hermetic clang toolchain (rules_ml_toolchain / llvm18).
+# The 'clang_local' config disables hermetic cc and toolchain resolution, falling
+# back to @local_config_cc, which ./configure populates from the CMS clang
+# (TF_NEED_CLANG=1 + CLANG_COMPILER_PATH set above).
+BAZEL_OPTS+=" --config=clang_local"
+# oneDNN bundles fmt 11.0.2 whose consteval format-string checks clang 21 rejects under
+# C++20. oneDNN is a C++17 codebase, so build just its files with -std=c++17
+# (per_file_copt is applied after the global --cxxopt, so it wins).
+BAZEL_OPTS+=" --per_file_copt=external/onednn/.*[.]cpp@-std=c++17"
+BAZEL_OPTS+=" --per_file_copt=external/jpegxl/.*enc_fast_lossless.*@-O1"
+# Build-time tools (protoc_minimal, ...) run under bazel with a cleared env, so they lose
+# LD_LIBRARY_PATH and can't find the gcc libstdc++ nor any other external lib. Forward
+# the full ${LD_LIBRARY_PATH} into the action environment (build-time only, relocatable).
+BAZEL_OPTS+=" --host_action_env=LD_LIBRARY_PATH=${LD_LIBRARY_PATH} --action_env=LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
 BAZEL_OPTS+=" --action_env=PYTHONPATH"
 BAZEL_OPTS+=" --action_env=TF_PYTHON_VERSION=3.12"
 
@@ -131,7 +164,9 @@ if [[ "%(enable_gpu)s" == "1" ]]; then
 fi
 
 export TF_NEED_CUDA="%(enable_gpu)s"
-export TF_NEED_CLANG=0
+# TF_NEED_CLANG / CLANG_COMPILER_PATH are set earlier (clang is required for XLA's
+# LLVM-IR intrinsics); keep the value consistent here.
+export TF_NEED_CLANG=1
 export TF_DOWNLOAD_CLANG=0
 export TF_NEED_JEMALLOC=0
 export TF_NEED_HDFS=0
@@ -162,6 +197,7 @@ echo "curl:${CURL_ROOT}"                    >> ${TF_CMS_EXTERNALS}
 #echo "com_google_protobuf:${PROTOBUF_ROOT}" >> ${TF_CMS_EXTERNALS}
 echo "com_github_grpc_grpc:${GRPC_ROOT}"    >> ${TF_CMS_EXTERNALS}
 echo "gif:${GIFLIB_ROOT}"                   >> ${TF_CMS_EXTERNALS}
+echo "hwloc:${HWLOC_ROOT}"                  >> ${TF_CMS_EXTERNALS}
 echo "org_sqlite:${SQLITE_ROOT}"            >> ${TF_CMS_EXTERNALS}
 echo "cython:"                              >> ${TF_CMS_EXTERNALS}
 echo "flatbuffers:${FLATBUFFERS_ROOT}"      >> ${TF_CMS_EXTERNALS}
@@ -175,13 +211,33 @@ export TF_SYSTEM_LIBS=$(cat ${TF_CMS_EXTERNALS} | sed 's|:.*||' | tr "\n" "," | 
 echo "pypi_numpy:${PY_NUMPY_ROOT}"         >> ${TF_CMS_EXTERNALS}
 
 # Create local repos for pypi_* packages required by TF
-tf_requirement=requirements_lock_${PYTHON_MAJOR_VERSION}_${PYTHON_MINOR_VERSION}.txt
+tf_requirement=requirements_lock_${PYTHON_MAJOR_MINOR_VERSION/./_}.txt
 for name in $(grep '^[a-zA-Z].*==' ${tf_requirement} | sed 's| *==.*||;s|-|_|g'); do
   bfile="pypi"
   [ -f third_party/cms/${name}.BUILD ] && bfile="${name}"
   sed -i -e "s|def repos():|def pypi_${name}():\n  cms_new_local_repository(name = \"pypi_${name}\",build_file = \"//third_party/cms:${bfile}.BUILD\")\n\ndef repos():\n    pypi_${name}()|" third_party/cms/workspace.bzl
 done
 rm -f ${tf_requirement}; touch ${tf_requirement}
+
+# TF 2.21 switched rules_python to the "hub" layout: pip packages are referenced
+# as @pypi//<pkg> (and numpy headers as @pypi//numpy:numpy_headers) instead of
+# the older per-package @pypi_<pkg> repos. The CMS build provides each package as
+# its own local repo (@pypi_<pkg>, from third_party/cms/<pkg>.BUILD), so remap the
+# hub labels back to the per-package repos in all BUILD/.bzl files. The
+# '@pypi//:requirements.bzl' load in WORKSPACE is intentionally left untouched.
+find . \( -name BUILD -o -name BUILD.bazel -o -name '*.bzl' -o -name '*.BUILD' \) -type f -print0 \
+  | xargs -0 --no-run-if-empty grep -lZ '@pypi//' \
+  | xargs -0 --no-run-if-empty sed -i \
+      -e 's|@pypi//numpy:numpy_headers|@pypi_numpy//:numpy_headers|g' \
+      -e 's|@pypi//\([a-zA-Z0-9_][a-zA-Z0-9_]*\)|@pypi_\1//:pkg|g'
+
+# gif is a CMS system lib (TF_SYSTEM_LIBS=gif), but @gif is a linkopt-only cc_library.
+# Under cc_shared_library its standalone '-lgif' linker_input is dropped while
+# libgif_internal.pic.a is still linked into libtensorflow_cc.so.2, so the link fails
+# with undefined DGifOpen/DGifSlurp/GifErrorString/... . Put the link flags on
+# gif_internal itself so they travel in the same linker_input as its objects.
+grep -q '"//conditions:default": \["-ldl"\],' tensorflow/core/lib/gif/BUILD
+sed -i -e 's|"//conditions:default": \["-ldl"\],|"//conditions:default": ["-ldl", "-Lexternal/gif/lib", "-lgif"],|' tensorflow/core/lib/gif/BUILD
 
 if [ -d ../build ] ; then
   chmod -R u+w  ../build
@@ -218,8 +274,9 @@ esac
 mkdir -p "$INSTALLROOT/lib-xla-runtime"
 find "bazel-out/${bazel_dir}/bin" -path '*/pip_package/wheel_house/tensorflow-%(version)s*.whl' | xargs --no-run-if-empty -i cp '{}' $INSTALLROOT/
 find "bazel-out/${bazel_dir}/bin" -path '*/external/ducc/libfft*.pic.a'             | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
-find "bazel-out/${bazel_dir}/bin" -path '*/external/local_tsl/tsl/*/libmutex.pic.a' | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
-find "bazel-out/${bazel_dir}/bin" -path '*/external/nsync/libnsync_cpp.pic.a'       | xargs --no-run-if-empty -i cp '{}' "$INSTALLROOT/lib-xla-runtime/"
-for lib in libfft.pic.a libfft_wrapper.pic.a libmutex.pic.a libnsync_cpp.pic.a; do
+# TF 2.21 dropped nsync and the standalone TSL mutex lib in favour of abseil
+# synchronisation, so libmutex.pic.a / libnsync_cpp.pic.a no longer exist.
+# Only the ducc FFT runtime libs remain here.
+for lib in libfft.pic.a libfft_wrapper.pic.a; do
   test -e "$INSTALLROOT/lib-xla-runtime/${lib}"
 done

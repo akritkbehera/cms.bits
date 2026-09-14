@@ -1,7 +1,9 @@
 build_requires:
 - CMake
 - ninja
+- py-scikit-build-core
 requires:
+- c-blosc2
 - py-scikit-build
 - py-cython
 - py-numpy
@@ -10,4 +12,9 @@ requires:
 - py-py-cpuinfo
 - py-rich
 - py-numexpr
+- py-httpx
+- py-requests
+- py-pydantic
+- py-threadpoolctl
 ---
+PipPreBuild='export CMAKE_ARGS="-DUSE_SYSTEM_BLOSC2=1 -DCMAKE_PREFIX_PATH=${C_BLOSC2_ROOT}"'

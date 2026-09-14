@@ -3,6 +3,8 @@ version: "v2.6.3"
 tag: 61c39efdea943ac863037d7e35b236145904e64d
 sources: 
  - https://github.com/hpc/xpmem/archive/%(tag_basename)s.tar.gz
+build_requires:
+ - autotools
 requires:
  - gcc
 ---

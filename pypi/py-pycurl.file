@@ -2,3 +2,4 @@ requires:
  - curl
 ---
 PipPreBuild='export PYCURL_SSL_LIBRARY=openssl'
+PipPostBuildPy='rm -rf $INSTALLROOT/share/doc'

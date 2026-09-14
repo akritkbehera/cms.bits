@@ -1,3 +1,6 @@
 build_requires:
  - py-flit-core
+requires:
+ - py-flit
 ---
+PipPatchSource='rm -f testpath/cli-*.exe'

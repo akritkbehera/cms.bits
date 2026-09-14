@@ -23,6 +23,7 @@ cmake \
   -G Ninja \
   -S "$BUILDDIR" \
   -B "$BUILDDIR/build" \
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s \
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
   -DCMAKE_INSTALL_RUNDIR=/var/run \
   -DENABLE_RESOLVE_NEIGH=FALSE \

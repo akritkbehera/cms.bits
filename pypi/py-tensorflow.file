@@ -2,6 +2,7 @@ build_requires:
  - tensorflow-sources
 requires:
  - py-tensorboard
+ - py-opt-einsum
  - py-tensorflow-estimator
  - py-wrapt
  - py-google-pasta
@@ -19,6 +20,27 @@ requires:
  - py-jax
  - py-tensorflow-io-gcs-filesystem
  - llvm
+ - py-numpy
+ - py-typing-extensions
+ - py-keras-applications
+ - py-keras-preprocessing
+ - py-future
+ - py-gast
+ - setuptools
+ - py-cython
+ - py-protobuf
+ - py-astor
+ - py-six
+ - py-termcolor
+ - py-absl-py
+ - py-flatbuffers
+ - eigen
+ - py-pybind11
+ - hwloc
+ - py-psutil
+ - py-lit
+ - py-tblib
+ - py-portpicker
  - zlib
  - libjpeg-turbo
  - libpng
@@ -26,6 +48,7 @@ requires:
  - flatbuffers
  - grpc
  - protobuf
+ - abseil-cpp
  - curl
  - sqlite
 sources:
@@ -46,7 +69,7 @@ PipDepsPost="grep -v '\<libclang\>'"
 RelocateFiles="\
 lib/python3.12/site-packages/tensorflow/include/external/local_config_cuda/cuda/cuda/cuda_config.h \
 lib/python3.12/site-packages/tensorflow/include/third_party/gpus/cuda/cuda_config.h \
-lib/python3.12N/site-packages/tensorflow/python/platform/build_info.py"
+lib/python3.12/site-packages/tensorflow/python/platform/build_info.py"
 
 PipPostInstall='
   for f in $RelocateFiles; do

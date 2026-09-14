@@ -29,6 +29,12 @@ nvcc_flags_constexpr="--expt-relaxed-constexpr"
 # allow __host__, __device__ attributes in lambda declarations
 nvcc_flags_lambda="--extended-lambda"
 
+# - in whole-program compilation mode (-rdc=false), force 'static' linkage for host side stub
+#   functions generated for __global__ function templates
+# - mark __global__ functions and function templates, and __constant__, __device__ and __managed__
+#   variables and variable templates, with __attribute__((visibility("hidden")))
+nvcc_visibility_flags="--static-global-template-stub=true --device-entity-has-hidden-visibility=true"
+
 # parallel device code compilation, integrated with make:
 #   split-compile=0  automatically divide heavy translation units into multiple parallel
 #                    compilation units
@@ -61,4 +67,4 @@ nvcc_flags_gnu_version="-Xcudafe --gnu_version=$override_gnu_version"
 nvcc_flags_cudart="--cudart shared"
 
 # collect all CUDA flags
-nvcc_cuda_flags="$nvcc_flags_stdcxx $nvcc_flags_opt $nvcc_flags_debug $nvcc_flags_constexpr $nvcc_flags_lambda $nvcc_flags_parallel_compile $nvcc_flags_cuda_archs $nvcc_flags_cuda_diag_suppress $nvcc_flags_cudage_diag $nvcc_flags_gnu_version $nvcc_flags_cudart"
+nvcc_cuda_flags="$nvcc_flags_stdcxx $nvcc_flags_opt $nvcc_flags_debug $nvcc_flags_constexpr $nvcc_flags_lambda $nvcc_visibility_flags $nvcc_flags_parallel_compile $nvcc_flags_cuda_archs $nvcc_flags_cuda_diag_suppress $nvcc_flags_cudage_diag $nvcc_flags_gnu_version $nvcc_flags_cudart"

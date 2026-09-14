@@ -1,6 +1,6 @@
 package: cmssw-wm-tools
-version: "250417"
-tag: cd271d3796bfd8d0eff6500f801a4367bfd1b5dc
+version: "260904"
+tag: da0764e408308fdce128c437bfb143ab6941f61f
 source: https://github.com/cms-sw/cmssw-wm-tools
 architecture: share
 force_revision: ""

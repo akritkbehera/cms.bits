@@ -3,7 +3,7 @@
 
 # --- Source / config ---
 branch:        master
-configtag:     V09-09-03
+configtag:     V09-10-04
 srctree:       src
 bootstrapfile: config/bootsrc.xml
 

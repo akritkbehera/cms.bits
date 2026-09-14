@@ -1,5 +1,5 @@
 package: flatbuffers
-version: "24.3.25"
+version: "25.9.23"
 sources:
  - https://github.com/google/flatbuffers/archive/refs/tags/v%(version)s.tar.gz
 build_requires:

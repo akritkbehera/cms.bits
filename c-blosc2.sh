@@ -1,5 +1,5 @@
 package: c-blosc2
-version: 3.2.1
+version: 3.3.3
 sources:
  - https://github.com/Blosc/c-blosc2/archive/refs/tags/v%(version)s.tar.gz
 build_requires:

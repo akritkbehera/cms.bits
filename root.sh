@@ -1,5 +1,5 @@
 package: ROOT
-version: 6.36.11
+version: 6.36.15
 tag: 4fbe34700bb4936e9529d5f88fcc93d6cec115ff
 source: https://github.com/cms-sw/root
 env:

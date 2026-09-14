@@ -1,3 +1,11 @@
+build_requires:
+- CMake
+- ninja
+# meson-python fixes the RPATH of installed shared libs (needed with -Dsystem-qhull) by
+# running `patchelf`; cmsdist takes it from the build OS, bits only has patchelf-bootstrap.
+- patchelf-bootstrap
+patches:
+- matplotlib-freetype-slc7.patch
 requires:
 - py-numpy
 - py-pillow
@@ -14,7 +22,13 @@ requires:
 - zlib
 - libpng
 - FreeType
+- qhull
 ---
-PipPreBuild='  export CFLAGS="-I${FREETYPE_ROOT}/include/freetype2 -I${LIBPNG_ROOT}/include/libpng16" \
-  export LDFLAGS="-L${FREETYPE_ROOT}/lib -L${LIBPNG_ROOT}/lib" \
-  export PKG_CONFIG=false'
+PipPreBuild=$(cat <<'EOF'
+export CFLAGS="-I${FREETYPE_ROOT}/include/freetype2 -I${LIBPNG_ROOT}/include/libpng16 -I${QHULL_ROOT}/include"
+export CXXFLAGS="-I${FREETYPE_ROOT}/include/freetype2 -I${LIBPNG_ROOT}/include/libpng16 -I${QHULL_ROOT}/include"
+export LDFLAGS="-L${FREETYPE_ROOT}/lib -L${LIBPNG_ROOT}/lib -L${QHULL_ROOT}/lib"
+export PKG_CONFIG=false
+EOF
+)
+PipBuildOptions='--config-settings=setup-args="-Dsystem-freetype=true" --config-settings=setup-args="-Dsystem-qhull=true" --config-settings=setup-args="--backend=ninja" --config-settings=compile-args="-v" --config-settings=compile-args="-j$JOBS"'

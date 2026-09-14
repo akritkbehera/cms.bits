@@ -1,14 +1,20 @@
 package: abseil-cpp
-version: "%(tag_basename)s"
-tag: "20230802.3"
-source: https://github.com/abseil/abseil-cpp
+version: "20250814.1"
+sources:
+- https://github.com/abseil/abseil-cpp/archive/%(version)s.tar.gz
 build_requires:
 - CMake
 - gmake
 requires:
 - gcc
+patches:
+- abseil-cpp-ubsan.patch
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
+
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 CMAKE_ARGS=(
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"

@@ -1,7 +1,7 @@
 package: setuptools
-version: "82.0.0"
+version: "83.0.0"
 sources:
- - https://pypi.io/packages/source/s/setuptools/setuptools-%(version)s.tar.gz
+ - https://github.com/pypa/setuptools/archive/v%(version)s.tar.gz
 requires:
  - Python
  - gcc

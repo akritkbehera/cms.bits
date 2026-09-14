@@ -3,7 +3,7 @@ index 77fc1f3..3a77a6b 100644
 --- a/src/core/tsi/ssl_transport_security.cc
 +++ b/src/core/tsi/ssl_transport_security.cc
 @@ -38,7 +38,9 @@
-
+ 
  #include <openssl/bio.h>
  #include <openssl/crypto.h>  // For OPENSSL_free
 +#if !defined(OPENSSL_NO_ENGINE)

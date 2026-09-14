@@ -26,6 +26,7 @@ patch -p1 < "$SOURCEDIR/$PATCH0"
 cmake_args=(
   -S "$BUILDDIR"
   -B "$BUILDDIR/build"
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s
   -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"
   -DEVTGEN_HEPMC3:BOOL=OFF
   -DHEPMC2_ROOT_DIR:PATH="$HEPMC_ROOT"
@@ -39,9 +40,8 @@ cmake_args=(
 
 cmake "${cmake_args[@]}"
 
-# spec builds serially (plain make, no %makeprocesses)
-make -C "$BUILDDIR/build"
-make -C "$BUILDDIR/build" install
+make -C "$BUILDDIR/build" ${JOBS:+-j$JOBS} VERBOSE=1
+make -C "$BUILDDIR/build" ${JOBS:+-j$JOBS} install VERBOSE=1
 
 mkdir -p "$INSTALLROOT/lib"
 find "$INSTALLROOT/lib64" -name "*.*" -exec mv {} "$INSTALLROOT/lib" \;

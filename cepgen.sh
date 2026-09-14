@@ -18,11 +18,15 @@ requires:
  - zlib
  - xz
  - Python
+ - json
+patches:
+ - cepgen-gcc15.patch
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 sed -i -e 's|add_subdirectory(BoostWrapper)||' "$BUILDDIR/CepGenAddOns/CMakeLists.txt"
 
 # Export package roots for cmake discovery
@@ -41,7 +45,7 @@ CMAKE_ARGS=(
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
     -DCMAKE_BUILD_TYPE=%(cms_build_type)s
     -DBoost_NO_SYSTEM_PATHS=ON
-    -DCMAKE_PREFIX_PATH="${BZ2LIB_ROOT};${ZLIB_ROOT};${XZ_ROOT}"
+    -DCMAKE_PREFIX_PATH="${BZ2LIB_ROOT};${ZLIB_ROOT};${XZ_ROOT};${JSON_ROOT}"
 )
 
 if [[ "$VERBOSE" == "1" ]]; then

@@ -10,10 +10,14 @@ requires:
  - ninja
 build_requires:
  - CMake
+patches:
+ - c-blosc-remove-bool.patch
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
+
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 CMAKE_ARGS=(
     -G Ninja

@@ -4,6 +4,7 @@ build_requires:
 requires:
 - py-torch
 - zlib
+- abseil-cpp
 ---
 # cmsdist: pip/torch-scatter.file -> ## INCLUDE torch-scatter-common
 #                                 -> ## INCLUDE torch-extension-build

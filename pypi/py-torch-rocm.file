@@ -55,6 +55,7 @@ requires:
  - roctracer
  - rccl
  - rocm-core
+ - abseil-cpp
 variables:
   pypi_name: torch
   pypi_source_name: torch-%(version)s.tar.gz

@@ -1,3 +1,5 @@
 requires:
 - py-flit-core
+patches:
+- cloudpickle-flit-core-4.patch
 ---

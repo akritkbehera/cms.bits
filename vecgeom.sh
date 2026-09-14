@@ -1,5 +1,5 @@
 package: vecgeom
-version: "2.1.0"
+version: "2.1.1"
 variables:
  vecgeom_backend: Scalar
  tag: v%(version)s
@@ -30,7 +30,7 @@ patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 vecgeom_version=$(echo "$PKG_VERSION" | sed -e 's|^v||;s|-.*||')
 
-# Upstream (2.1.0) pins the version string in CMakeLists directly.
+# Upstream pins the version string in CMakeLists directly.
 grep -q 'set(VecGeom_VERSION\s*' "$BUILDDIR/CMakeLists.txt"
 sed -i -e "s|set(VecGeom_VERSION *.*|set(VecGeom_VERSION ${vecgeom_version})|" "$BUILDDIR/CMakeLists.txt"
 

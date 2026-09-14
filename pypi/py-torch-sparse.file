@@ -4,6 +4,7 @@ build_requires:
 requires:
 - py-torch
 - zlib
+- abseil-cpp
 ---
 # cmsdist: pip/torch-sparse.file -> ## INCLUDE torch-sparse-common
 #                                -> ## INCLUDE torch-extension-build

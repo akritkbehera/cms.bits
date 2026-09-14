@@ -20,6 +20,7 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCED
 CMAKE_ARGS=(
     -S "$BUILDDIR"
     -B "$BUILDDIR/build"
+    -DCMAKE_BUILD_TYPE=%(cms_build_type)s
     -DRAPIDJSON_HAS_STDSTRING=1
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
     -DEMBEDDED_LIBCURL=FALSE

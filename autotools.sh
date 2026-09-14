@@ -5,7 +5,7 @@ variables:
  autoconf_version: "2.72"
  automake_version: '1.16.5'
  libtool_version: "2.5.4"
- gettext_version: "0.22"
+ gettext_version: "0.22.5"
  pkg_config_version: "0.29.2"
 sources:
  - https://mirror.ibcp.fr/pub/gnu/m4/m4-%(m4_version)s.tar.gz
@@ -16,8 +16,12 @@ sources:
  - https://pkgconfig.freedesktop.org/releases/pkg-config-%(pkg_config_version)s.tar.gz
 env:
  M4: "$AUTOTOOLS_ROOT/bin/m4"
+build_requires:
+ - gmake
 requires:
  - gcc
+patches:
+ - autotools-pkg-config-gcc15.patch
 ---
 for f in "$SOURCEDIR"/*; do
     case "$f" in    
@@ -26,7 +30,7 @@ for f in "$SOURCEDIR"/*; do
 done
 
 pushd $BUILDDIR/m4-%(m4_version)s
-  ./configure --disable-dependency-tracking --prefix="$INSTALLROOT"
+  env CFLAGS="-O2 -std=gnu17" ./configure --disable-dependency-tracking --prefix="$INSTALLROOT"
   make ${JOBS:+-j$JOBS}
   make install
 popd
@@ -74,6 +78,7 @@ pushd $BUILDDIR/gettext-%(gettext_version)s
 popd
 
 pushd $BUILDDIR/pkg-config-%(pkg_config_version)s 
+  patch -p1 < "$SOURCEDIR/$PATCH0"
   ./configure \
     --prefix="$INSTALLROOT" \
     --disable-dependency-tracking \

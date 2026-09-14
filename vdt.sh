@@ -17,6 +17,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 patch -p1 < $SOURCEDIR/$PATCH0
 
 cmake_args=(
+  -DCMAKE_BUILD_TYPE=%(cms_build_type)s
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
   -DPYTHONLIBS_VERSION_STRING=%(python_major_minor)s
   -DPRELOAD:BOOL=ON

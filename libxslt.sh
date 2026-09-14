@@ -21,6 +21,8 @@ export LIBS="-lxml2"
 --prefix=$INSTALLROOT \
 --disable-silent-rules \
 --with-libxml-prefix=$LIBXML2_ROOT \
+--with-libxml-include-prefix=$LIBXML2_ROOT/include/libxml2 \
+--with-libxml-libs-prefix=$LIBXML2_ROOT/lib \
 --without-crypto --without-python
 
 make ${JOBS:+-j${JOBS}}

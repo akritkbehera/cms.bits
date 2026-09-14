@@ -31,6 +31,7 @@ requires:
  - py-Jinja2
  - py-networkx
  - py-sympy
+ - abseil-cpp
 ---
 # Base-torch build hooks live in the shared torch-common fragment (also used by
 # py-torch-cuda). BITS_CONFIG_DIR (== cms.bits) is exported by build.sh; the body runs

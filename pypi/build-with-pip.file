@@ -99,8 +99,12 @@ runIt relocatePy3SitePackages
 runIt PipPostBuildPy
 
 if [ -d "${INSTALLROOT}/bin" ] ; then
-  for py in $(grep -Rl -m1 '^#\!.*python' "${INSTALLROOT}/bin") ; do
+  # -I: skip binary files. A native executable (e.g. maturin's Rust binary) can contain a
+  # "#!...python" string; grep -n finds no line in it, lnum stays empty and an address-less
+  # `sed c` would replace EVERY line of the binary with the shebang.
+  for py in $(grep -RlI -m1 '^#\!.*python' "${INSTALLROOT}/bin") ; do
     lnum=$(grep -n -m1 '^#\!.*python' $py | sed 's|:.*||')
+    [ -n "$lnum" ] || continue
     sed -i -e "${lnum}c#!/usr/bin/env python3" $py
   done
 fi

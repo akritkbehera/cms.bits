@@ -30,6 +30,8 @@ requires:
   - py-cmsml
   - py-law
   - py-protobuf
+  - py-backports-zstd
+  - py-pyg-lib
   - py-torch
   - py-torch-cluster
   - py-torch-scatter
@@ -39,6 +41,7 @@ requires:
   - py-torch-scatter-cuda
   - py-torch-sparse-cuda
   - py-pyg-lib-cuda
+  - py-torch-rocm
   - py-tables
   - py-tabulate
   - py-numexpr

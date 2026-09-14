@@ -1,5 +1,5 @@
 package: bootstrap-driver
-version: "40.0"
+version: "42.0"
 requires:
  - rpm
  - gcc

@@ -63,7 +63,7 @@ CONFIGURE_OPTS="\
   --with-pmix=internal \
   "
 [ -n "$CUDA_ROOT" ] && CONFIGURE_OPTS+=" --with-cuda=$CUDA_ROOT --with-cuda-libdir=$CUDA_ROOT/lib64/stubs"
-[ -n "$ROCM_ROOT" ] && CONFIGURE_OPTS+=" --with-rocm=$ROCM_ROOT"
+[ -n "$ROCM_HIP_ROOT" ] && CONFIGURE_OPTS+=" --with-rocm=$ROCM_HIP_ROOT"
 
 ./configure $CONFIGURE_OPTS
 make ${JOBS:+-j$JOBS}

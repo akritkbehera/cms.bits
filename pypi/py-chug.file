@@ -1,3 +1,8 @@
+build_requires:
+ - py-pdm-backend
 requires:
  - py-webdataset
+ - py-pypdfium2
+ - py-simple-parsing
+ - py-timm
 ---

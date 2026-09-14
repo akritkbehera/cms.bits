@@ -92,6 +92,7 @@ export TF_NEED_CLANG=1
 export CLANG_COMPILER_PATH="${LLVM_ROOT}/bin/clang"
 export CC_OPT_FLAGS="-Wno-sign-compare"
 export BAZEL_OPTS="--batch --output_user_root ../build"
+export LLVM_VERSION=$(echo "$LLVM_VERSION" | sed 's|\..*||')
 
 if [ $(${JAVA_HOME}/bin/java -version 2>&1 | grep -E -i 'openjdk version "[1-9]' | sed -E 's|.* "([0-9]+)[.].*|\1|') -ge 17 ] ; then
 BAZEL_OPTS="$BAZEL_OPTS --host_jvm_args=--add-opens=java.base/java.nio=ALL-UNNAMED"

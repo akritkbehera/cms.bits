@@ -23,4 +23,9 @@ auto_patch: false
 hook:
   POST_INSTALL: check_dependencies,generate_module
 revision_policy: "hash"
+system:
+  prefix: "/cvmfs"
+  cvmfs_releases_template: "{prefix}/{platform}/{family}{pkg}/{tag}"
+  cvmfs_modules_template: "{prefix}/{platform}/modules/{pkg}"
+  cvmfs_shared_path_template: "{prefix}/share/{family}{pkg}/{tag}"
 ---

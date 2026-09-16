@@ -17,8 +17,8 @@ to_json() {
     '
 }
 
-find "$TREE" -type f | /usr/lib/rpm/rpmdeps --provides | to_json > "$OUTDIR/provides.json"
-find "$TREE" -type f | /usr/lib/rpm/rpmdeps --requires | to_json > "$OUTDIR/requires.json"
+find "$TREE" -type f | /usr/lib/rpm/rpmdeps --provides --define="_use_internal_dependency_generator 1" --define '__elf_flags %{nil}' | to_json > "$OUTDIR/provides.json"
+find "$TREE" -type f | /usr/lib/rpm/rpmdeps --requires --define="_use_internal_dependency_generator 1" | to_json > "$OUTDIR/requires.json"
 
 jq -r --arg arch "$ARCHITECTURE" '.dependencies.direct.runtime[] | "$WORK_DIR/\($arch)/*/\(.name)/\(.version)\(if .revision != null then "-\(.revision)" else "" end)/etc/deps/provides.json"' $INSTALLROOT/.meta.json > $OUTDIR/dependencies.json
 

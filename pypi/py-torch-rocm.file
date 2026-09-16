@@ -1,6 +1,6 @@
 sources:
  - https://github.com/pytorch/pytorch/releases/download/v%(version)s/pytorch-v%(version)s.tar.gz
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/FindEigen3.cmake.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/fa77cb2b2d69be33e49dd6b2fdcc121a2260589c/FindEigen3.cmake.file
 patches:
  - pytorch-system-fmt.patch
  - pytorch-hipblaslt-include.patch

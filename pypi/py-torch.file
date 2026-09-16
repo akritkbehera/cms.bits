@@ -2,7 +2,7 @@ package: py-torch
 version: 2.13.0
 sources:
  - https://github.com/pytorch/pytorch/releases/download/v%(version)s/pytorch-v%(version)s.tar.gz
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/FindEigen3.cmake.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/master/FindEigen3.cmake.file
 patches:
  - pytorch-system-fmt.patch
  # cmsdist Patch1 for torch 2.13.

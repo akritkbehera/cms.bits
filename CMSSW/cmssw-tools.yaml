@@ -2,9 +2,8 @@ sources:
   - https://github.com/akritkbehera/scram-tools.file/archive/95c34a89349f361c7172a9884f48068fa089ebf1.tar.gz
 hook:
   POST_INSTALL: generate_module
-build_requires:
-  - cmsswdata 
 requires:
+  - cmsswdata
   - system-externals
   - AXOL1TL
   - TOPO

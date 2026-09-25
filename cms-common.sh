@@ -5,6 +5,7 @@ variables:
 sources:
   - https://github.com/cms-sw/cms-common/archive/%(tag)s.tar.gz
 force_revision: ""
+hook: disable
 ---
 # Unpack the source tarball into the build directory.
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

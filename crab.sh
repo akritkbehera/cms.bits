@@ -6,18 +6,22 @@ requires:
  - crab-dev
 architecture: share
 sources:
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab.sh.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-proxy-package.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-setup.csh.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-setup.sh.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-env.csh.file
- - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_20_1_X/g14/crab/crab-env.sh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/f3861e7f41008a1649d2821eec79388c6eca8e1a/crab/crab.sh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/f3861e7f41008a1649d2821eec79388c6eca8e1a/crab/crab-proxy-package.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/f3861e7f41008a1649d2821eec79388c6eca8e1a/crab/crab-setup.csh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/f3861e7f41008a1649d2821eec79388c6eca8e1a/crab/crab-setup.sh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/f3861e7f41008a1649d2821eec79388c6eca8e1a/crab/crab-env.csh.file
+ - https://raw.githubusercontent.com/cms-sw/cmsdist/f3861e7f41008a1649d2821eec79388c6eca8e1a/crab/crab-env.sh.file
 ---
-cp $SOURCEDIR/$SOURCE0 $INSTALLROOT/
-cp $SOURCEDIR/$SOURCE1 $INSTALLROOT/
-cp $SOURCEDIR/$SOURCE2 $INSTALLROOT/
-cp $SOURCEDIR/$SOURCE3 $INSTALLROOT/
-cp $SOURCEDIR/$SOURCE4 $INSTALLROOT/
+mkdir -p "$INSTALLROOT/etc/profile.d"
+
+# cmsdist crab.spec copies all six sources (crab.sh, crab-proxy-package,
+# crab-setup.{csh,sh}, crab-env.{csh,sh}); copy every declared source so a new
+# Source entry cannot be missed (bits exports SOURCE0..N and SOURCE_COUNT).
+for i in $(seq 0 $((SOURCE_COUNT - 1))); do
+  eval "crab_src=\$SOURCE$i"
+  cp "$SOURCEDIR/$crab_src" "$INSTALLROOT/"
+done
 
 for f in "$INSTALLROOT"/*.file; do
   mv "$f" "${f%.file}"

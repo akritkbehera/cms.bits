@@ -20,7 +20,23 @@ to_json() {
 find "$TREE" -type f | /usr/lib/rpm/rpmdeps --provides --define="_use_internal_dependency_generator 1" --define '__elf_flags %{nil}' | to_json > "$OUTDIR/provides.json"
 find "$TREE" -type f | /usr/lib/rpm/rpmdeps --requires --define="_use_internal_dependency_generator 1" | to_json > "$OUTDIR/requires.json"
 
-jq -r --arg arch "$ARCHITECTURE" '.dependencies.direct.runtime[] | "$WORK_DIR/\($arch)/*/\(.name)/\(.version)\(if .revision != null then "-\(.revision)" else "" end)/etc/deps/provides.json"' $INSTALLROOT/.meta.json > $OUTDIR/dependencies.json
+# Locate each runtime dependency via its <NAME>_ROOT (set by the dependency's
+# init.sh), which already accounts for shared-architecture packages such as
+# SCRAMV1 living under $WORK_DIR/share. Dependencies built with hooks disabled
+# have no provides.json and are skipped. Fall back to the arch glob when
+# <NAME>_ROOT is not available.
+: > "$OUTDIR/dependencies.json"
+jq -r '.dependencies.direct.runtime[] | [.name, .version, (.revision // "")] | @tsv' "$INSTALLROOT/.meta.json" |
+while IFS="$(printf '\t')" read -r name version revision; do
+  var="$(echo "$name" | tr 'a-z-' 'A-Z_')_ROOT"
+  eval "root=\${$var:-}"
+  if [ -n "$root" ] && [ -d "$root" ]; then
+    [ -f "$root/etc/deps/provides.json" ] || continue
+    echo "\$WORK_DIR${root#"$WORK_DIR"}/etc/deps/provides.json"
+  else
+    echo "\$WORK_DIR/$ARCHITECTURE/*/$name/$version${revision:+-$revision}/etc/deps/provides.json"
+  fi
+done >> "$OUTDIR/dependencies.json"
 
 echo "\$WORK_DIR/$ARCHITECTURE/system-provides.json" >> "$OUTDIR/dependencies.json"
 

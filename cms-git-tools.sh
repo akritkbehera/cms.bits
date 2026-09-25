@@ -4,10 +4,9 @@ sources:
   - https://github.com/cms-sw/cms-git-tools/archive/%(tag)s.tar.gz
 variables:
   tag: 3a9b0d4071871bf3a7ba4cfc105f8935978562f2
-  fakerevision: "251202"
 build_requires:
  - gmake
-force_architecture: share
+architecture: share
 force_revision: ""
 hook: disable
 ---
@@ -37,7 +36,7 @@ if [ -f \$WORK_DIR/etc/cms-git-tools/version ] ; then
 fi
 
 # Enter the installed package directory to use relative paths (matches spec's
-cd \$WORK_DIR/share/$PKGNAME/$PKGVERSION
+cd \$WORK_DIR/share/$PKGFAMILY/$PKGNAME/$PKGVERSION${PKGREVISION:+-$PKGREVISION}
 
 # Sync man pages and git-cms-* commands to the shared install area.
 [ -d ./share ]  && rsync -a ./share/  \$WORK_DIR/share/

@@ -5,12 +5,14 @@ hook:
 build_requires:
   - cmsswdata 
 requires:
+  - system-externals
   - AXOL1TL
   - TOPO
   - CICADA
   - OpenBLAS
   - celeritas
-    # - crab
+  - crab
+  - cms-bootstrap
   - hls4mlemulatorextras
   - cmssw-wm-tools
   - google-benchmark

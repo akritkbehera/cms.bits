@@ -9,6 +9,7 @@ sources:
 build_requires:
   - CMake
   - gmake
+  - google-test
 requires:
   - gcc
   - boost
@@ -49,9 +50,6 @@ export CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64"
 # Detect CUDA and ROCm
 cuda_enabled="OFF"; [ -n "$CUDA_ROOT" ] && cuda_enabled="ON"
 rocm_enabled="OFF"; [ -n "$ROCM_ROOT" ] && rocm_enabled="ON"
-
-# HIP/ROCm support is not yet working correctly
-rocm_enabled="OFF"
 
 # Unpack the source tarball
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
@@ -104,6 +102,8 @@ cmake_args=(
     "-DTRACCC_USE_SYSTEM_ROCTHRUST=${rocm_enabled}"
     "-DVECMEM_BUILD_CUDA_LIBRARY=${cuda_enabled}"
     "-DVECMEM_BUILD_HIP_LIBRARY=${rocm_enabled}"
+    "-DTRACCC_USE_SYSTEM_GOOGLETEST=ON"
+    "-DGTest_DIR=$GOOGLE_TEST_ROOT/lib64/cmake/GTest"
 )
 
 # CUDA-specific options
@@ -134,6 +134,14 @@ if [ "$build_test" = "1" ]; then
         "-DTRACCC_BUILD_PERFORMANCE=ON"
         "-DCMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE=PRE_TEST"
     )
+fi
+
+# Let CMake select headers separately for CUDA and HIP targets instead of
+# inheriting conflicting dependency headers through global include paths.
+unset CPATH CPLUS_INCLUDE_PATH C_INCLUDE_PATH
+
+if [ "$rocm_enabled" = "ON" ]; then
+    export ROCM_PATH="$ROCM_LLVM_ROOT"
 fi
 
 cmake "${cmake_args[@]}" -L

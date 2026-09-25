@@ -33,6 +33,7 @@ requires:
   - bz2lib
   - zstd
   - xz
+  - rocm-hip
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/python"
 ---

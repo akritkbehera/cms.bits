@@ -8,7 +8,7 @@ variables:
 sources:
   - git://github.com/dmwm/CRABClient.git?obj=master/%(crabclient_version)s&export=CRABClient&output=/CRABClient-%(crabclient_version)s.tar.gz
   - git://github.com/dmwm/CRABServer.git?obj=master/%(crabserver_version)s&export=CRABServer&output=/CRABServer-%(crabserver_version)s.tar.gz
-architecture: shared
+architecture: share
 ---
 
 if [ -n "%(crabserver_packages)s" ]; then

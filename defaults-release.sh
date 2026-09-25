@@ -14,7 +14,7 @@ package_family:
     - SCRAMV1
   cms:
     - coral*
-    - data-[A-Z][-a-z0-9]*
+    - data-*
     - cms*
     - crab*
     - cmssw*

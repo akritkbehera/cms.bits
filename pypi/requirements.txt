@@ -1,5 +1,10 @@
 #############################################################################
-#List of pip based packages. One package per line
+# List of pip based packages. One package per line.
+# Add the source archive digest to enforce it, e.g.:
+# package_name==1.2.3 --sha256=<64 hexadecimal characters>
+# Generated packages enforce checksums; a missing digest will fail the build.
+# If package_name.file overrides sources, put the checksum on that source entry
+# instead (the requirements digest applies only to the generated PyPI source).
 #This now only support python3
 #############################################################################
 #Use update_requirements.py script to auto-update versions. First package after

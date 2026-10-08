@@ -19,6 +19,11 @@ variables = {
 }
 
 sources = ["pip://%%(pypi_name)s/%%(version)s?pip_options=%%(pypi_download_opts)s&pip=%%(pypi_pip)s&output=/%%(pypi_source_name)s"]
+if len(sys.argv) > 4:
+  import re
+  if not re.fullmatch(r'sha256:[0-9a-fA-F]{64}', sys.argv[4]):
+    raise ValueError("Expected a SHA-256 digest as the fourth argument")
+  sources[0] += "," + sys.argv[4]
 recipe = ""
 header = ""
 override_file = join (dir, "%s.file" % sys.argv[1])
@@ -27,6 +32,7 @@ if exists(override_file):
     header,recipe = ref.read().split("---", 1)
 header = "package: %s\nversion: \"%s\"\n%s" % (sys.argv[1], sys.argv[2], header.strip())
 spec = yamlLoad(header.strip())
+spec.setdefault("enforce_checksums", True)
 var = spec.get("variables", {})
 for k, v in var.items():
   variables[k] = v

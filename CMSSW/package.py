@@ -20,15 +20,6 @@ from bits_helpers.log import debug, info, banner, warning
 from config_loader import ConfigLoader
 
 
-def load_vars_legacy(path):
-    """Load legacy vars.yaml file (backward compatibility)."""
-    if not exists(path):
-        return {}
-    with open(path) as f:
-        raw = yamlLoad(f.read())
-    return {k: str(v) if v is not None else '' for k, v in raw.items()}
-
-
 def apply_override(spec, body, override_file, variables):
     """
     Merge <pkg>.file overrides into spec; prepend body if the file has one.
@@ -42,7 +33,7 @@ def apply_override(spec, body, override_file, variables):
     Returns:
         Tuple of (updated_spec, updated_body)
     """
-    if not exists(override_file):
+    if not override_file or not exists(override_file):
         return spec, body
 
     with open(override_file) as f:
@@ -76,12 +67,12 @@ def build_spec(yaml_file, body_file, override_file, package, version,
     Args:
         yaml_file: Path to package YAML spec (e.g., cmssw.yaml)
         body_file: Path to build body template
-        override_file: Path to override file (e.g., cmssw.file)
+        override_file: Optional path to override file (e.g., cmssw.file)
         package: Package name
         version: Package version
         extra_vars: Additional variables to merge
         body_prefix: Prefix to prepend to body
-        config: Configuration from ConfigLoader (if None, falls back to legacy)
+        config: Configuration from ConfigLoader
 
     Returns:
         Tuple of (spec_dict, body_string)
@@ -93,13 +84,7 @@ def build_spec(yaml_file, body_file, override_file, package, version,
 
     # Start with variables from spec, then layer config, then extra_vars
     variables = spec.pop('variables', {})
-
-    if config and 'variables' in config:
-        # Use layered config variables
-        variables.update(config['variables'])
-    else:
-        # Fallback to legacy vars.yaml
-        variables.update(load_vars_legacy(join(dirname(yaml_file), 'vars.yaml')))
+    variables.update((config or {}).get('variables', {}))
 
     if extra_vars:
         variables.update(extra_vars)
@@ -169,10 +154,11 @@ else:
     body_file = join(dirname(pkg_dir), 'tool-conf-src.file') if pkg_type == 'cmssw-tools' \
                 else join(pkg_dir, pkg_type + '-build.sh')
 
+    # cmssw-tools is configured by cmssw-tools.yaml; ignore the old .file override.
     spec, body = build_spec(
         yaml_file=join(pkg_dir, pkg_type + '.yaml'),
         body_file=body_file,
-        override_file=join(pkg_dir, pkg_type + '.file'),
+        override_file=None if pkg_type == 'cmssw-tools' else join(pkg_dir, pkg_type + '.file'),
         package=pkg_type,
         version='100',
         config=config,

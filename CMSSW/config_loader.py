@@ -54,7 +54,7 @@ class ConfigLoader:
         ├── flavor/{flavor}/vars.yaml  # Build flavor (debug, etc.)
         └── queue/{queue}/vars.yaml    # Release queue specific
 
-    Fallback: If layers don't exist, falls back to legacy vars.yaml.
+    The base layer supplies the shared defaults.
     """
 
     LAYER_ORDER = ['base', 'os', 'flavor', 'queue']
@@ -236,12 +236,6 @@ class ConfigLoader:
             'flavor': flavor,
             'queue': queue,
         }
-
-        # Load legacy vars.yaml as fallback base
-        legacy_path = join(self.pkg_dir, 'vars.yaml')
-        legacy_vars = self._load_yaml_file(legacy_path)
-        if legacy_vars:
-            layers.append({'variables': legacy_vars})
 
         # Load each layer in order
         for layer_type in self.LAYER_ORDER:

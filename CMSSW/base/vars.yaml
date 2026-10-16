@@ -1,5 +1,5 @@
 # Core defaults for CMSSW and cmssw-tools.
-# Architecture-specific settings are in arch/{arch}/vars.yaml
+# OS-specific settings live in os/{os}/vars.yaml; flavor settings in flavor/{flavor}/vars.yaml.
 
 # --- Source / config ---
 branch:        master

@@ -32,7 +32,18 @@ while IFS="$(printf '\t')" read -r name version revision; do
   eval "root=\${$var:-}"
   if [ -n "$root" ] && [ -d "$root" ]; then
     [ -f "$root/etc/deps/provides.json" ] || continue
-    echo "\$WORK_DIR${root#"$WORK_DIR"}/etc/deps/provides.json"
+    case "$root" in
+    "$WORK_DIR"/*)
+      # Keep workdir-local paths relocatable in dependencies.json.
+      dep_path="\$WORK_DIR${root#"$WORK_DIR"}"
+      ;;
+    *)
+      # --reuse-from dependencies live outside this build's WORK_DIR.
+      # Preserve their absolute path instead of prefixing it with WORK_DIR.
+      dep_path="$root"
+      ;;
+    esac
+    printf '%s\n' "$dep_path/etc/deps/provides.json"
   else
     echo "\$WORK_DIR/$ARCHITECTURE/*/$name/$version${revision:+-$revision}/etc/deps/provides.json"
   fi

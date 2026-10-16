@@ -21,3 +21,5 @@ bash $INSTALLROOT/tools/template.tmpl
 envsubst '$PKGINSTROOT' < $CMSSW_TOOLS_ROOT/tools/available.tmpl > $INSTALLROOT/tools/template.tmpl
 
 bash $INSTALLROOT/tools/template.tmpl
+
+

@@ -25,7 +25,6 @@ hook:
 revision_policy: "hash"
 system:
   prefix: "/cvmfs"
-  cvmfs_releases_template: "{prefix}/{platform}/{family}{pkg}/{tag}"
-  cvmfs_modules_template: "{prefix}/{platform}/modules/{pkg}"
-  cvmfs_shared_path_template: "{prefix}/share/{family}{pkg}/{tag}"
+  install_dir: "/home/akbehera/Desktop/x86-64/sw/el9_amd64_gcc14"
+  module_dir: "/home/akbehera/Desktop/x86-64/sw/MODULES/el9_amd64_gcc14"
 ---

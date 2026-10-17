@@ -1,5 +1,5 @@
 package: alpaka
-version: 2.1.1
+version: 2.2.0
 sources:
  - https://github.com/alpaka-group/%(package)s/archive/%(version)s.tar.gz
 ---

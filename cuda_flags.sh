@@ -5,7 +5,7 @@ omptarget_cuda_archs="$(echo $cuda_arch | sed 's/ /,/g')"
 # LLVM style for listing the supported CUDA compute architectures
 llvm_flags_cuda_archs="$(for arch in $cuda_arch; do echo -n ' --offload-arch=sm_'$arch ; done) -Wunknown-cuda-version"
 # C++ standard to use for building host and device code with nvcc
-nvcc_flags_stdcxx="-std=c++$CXXSTD"
+nvcc_flags_stdcxx="-std=c++${CMS_CXX_STANDARD:-${CXXSTD:-20}}"
 # generate optimised code
 nvcc_flags_opt="-O3"
 # generate debugging information for device code

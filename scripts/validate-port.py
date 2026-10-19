@@ -60,7 +60,9 @@ def validate(name, text=None):
 
 changed = subprocess.check_output(['git', 'diff', '--name-only'], cwd=ROOT, text=True).splitlines()
 changed += subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=ROOT, text=True).splitlines()
-for name in changed:
+# coral-tools also consumes tool-conf-src.file, without CMSSW's recipe variables.
+changed.append('coral-tools.sh')
+for name in dict.fromkeys(changed):
     if name.endswith('.sh') and re.search(r'^---\s*$', (ROOT / name).read_text(), re.M):
         validate(name)
 

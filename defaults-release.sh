@@ -4,6 +4,7 @@ variables:
   cms_cxx_std: "20"
   cms_build_type: "Release"
   override_microarch_name: ""
+  cuda_host_min_microarch_name: "x86-64-v2"
 env:
   CXXSTD: '20'
   DCMAKE_BUILD_TYPE: 'Release'

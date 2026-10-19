@@ -7,6 +7,7 @@ variables:
   commit: d53ac33805ba0a23fa139adaf24227fb6707e6fa
 sources:
  - https://gitlab.com/libeigen/eigen/-/archive/%(commit)s/eigen-%(commit)s.tar.gz
+ - https://gitlab.com/libeigen/eigen/-/commit/cae72577d966aa48593f68b5e030aca8f51c4939.patch
 patches:
  - eigen-const-scalar-operand.patch
 build_requires:
@@ -23,6 +24,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"
 
 patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$SOURCE1"
 
 cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \

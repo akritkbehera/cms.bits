@@ -1,7 +1,7 @@
 package: ROOT
-version: 6.36.15
+version: 6.40.05
 variables:
-  tag: 4fbe34700bb4936e9529d5f88fcc93d6cec115ff
+  tag: 2808f92b2882db2ed042f8a6f6aa106e47b6eabf
 sources:
   - https://github.com/cms-sw/root/archive/%(tag)s.tar.gz
 env:
@@ -13,6 +13,7 @@ build_requires:
 - ninja
 requires:
 - gcc
+- curl
 - GSL
 - libjpeg-turbo
 - libpng
@@ -99,6 +100,7 @@ cmake_args=(
   -Dftgl=OFF
   -Dfftw3=ON
   -Dtbb=ON
+  -Dtmva-pymva=ON
   -Dimt=ON
   -DFFTW_INCLUDE_DIR="${FFTW3_ROOT}/include"
   -DFFTW_LIBRARY="${FFTW3_ROOT}/lib/libfftw3.${soext}"
@@ -156,7 +158,7 @@ cmake_args=(
   -DZLIB_ROOT="${ZLIB_ROOT}"
   -DZLIB_INCLUDE_DIR="${ZLIB_ROOT}/include"
   -DZSTD_ROOT="${ZSTD_ROOT}"
-  -DCMAKE_PREFIX_PATH="${LZ4_ROOT};${GSL_ROOT};${XZ_ROOT};${GIFLIB_ROOT};${FREETYPE_ROOT};${PYTHON3_ROOT};${LIBPNG_ROOT};${PCRE2_ROOT};${TBB_ROOT};${OPENBLAS_ROOT};${DAVIX_ROOT};${LIBXML2_ROOT};${ZSTD_ROOT};${JSON_ROOT}"
+  -DCMAKE_PREFIX_PATH="${CURL_ROOT};${LZ4_ROOT};${GSL_ROOT};${XZ_ROOT};${GIFLIB_ROOT};${FREETYPE_ROOT};${PYTHON_ROOT};${LIBPNG_ROOT};${PCRE2_ROOT};${TBB_ROOT};${OPENBLAS_ROOT};${DAVIX_ROOT};${LIBXML2_ROOT};${ZSTD_ROOT};${JSON_ROOT}"
 )
 
 # Add OS-specific options

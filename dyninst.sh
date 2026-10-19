@@ -4,6 +4,7 @@ sources:
  - https://github.com/%(package)s/%(package)s/archive/refs/tags/v%(version)s.tar.gz
 patches:
  - dyninst-pr1880.patch
+ - dyninst-tbb-version.patch
 build_requires:
  - CMake
  - gmake
@@ -18,6 +19,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"
 
 patch -p1 < "$SOURCEDIR/$PATCH0"
+patch -p1 < "$SOURCEDIR/$PATCH1"
 
 CMAKE_ARGS=(
   -S "$BUILDDIR" -B "$BUILDDIR/build"

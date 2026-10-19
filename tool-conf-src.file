@@ -1,15 +1,23 @@
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
+# Local source patch carries the cmsdist tool updates on top of the fork's fixes.
+for ((num=0; num<${PATCH_COUNT:-0}; num++)); do
+  patch_var="PATCH${num}"
+  patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/${!patch_var}"
+done
 chmod +x "$BUILDDIR/bin/get_tools"
 chmod +x "$BUILDDIR/bin/fix_tool_variables"
 [ -f "$BUILDDIR/bin/get_vectorized_tools" ] && chmod +x "$BUILDDIR/bin/get_vectorized_tools"
 #!include <toolflags.file>
+export PYTHONV="$PYTHON_MAJOR_MINOR_VERSION"
 source $BUILDDIR/tool-env.file
 # =============================================================================
 # tool-conf-src.file - SCRAM tool configuration generator for bits
 # =============================================================================
 # Translated from cmsdist/scram/tool-conf-src.file
+
+export CUDA_HOST_MIN_MICROARCH_NAME="%(cuda_host_min_microarch_name)s"
 
 rm -rf "$INSTALLROOT"
 mkdir -p "$INSTALLROOT/tools/selected" "$INSTALLROOT/tools/available"

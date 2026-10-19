@@ -1,5 +1,3 @@
 requires:
 - py-flit
-patches:
-- threadpoolctl-flit-core-4.patch
 ---

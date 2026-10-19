@@ -11,6 +11,7 @@ build_requires:
  - CMake
  - ninja
  - py-packaging
+ - py-scikit-build-core
 requires:
  - eigen
  - FFTW3
@@ -34,6 +35,5 @@ requires:
  - abseil-cpp
 ---
 # Base-torch build hooks live in the shared torch-common fragment (also used by
-# py-torch-cuda). BITS_CONFIG_DIR (== cms.bits) is exported by build.sh; the body runs
-# before build-with-pip's runIt calls, so the hook vars are in place by build time.
-source "${BITS_CONFIG_DIR}/pypi/torch-common.file"
+# py-torch-cuda). Including it also puts shared changes into each recipe hash.
+#!include <pypi/torch-common.file>

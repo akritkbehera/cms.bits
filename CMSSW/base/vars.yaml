@@ -3,7 +3,7 @@
 
 # --- Source / config ---
 branch:        master
-configtag:     V09-10-04
+configtag:     V09-10-12
 srctree:       src
 bootstrapfile: config/bootsrc.xml
 
@@ -19,9 +19,10 @@ nolibchecks:      ""
 usercxxflags:     ""
 
 # --- Build-body compatibility ---
-# Arch/vectorization/microarch support was removed. These two keys are kept
-# empty only because scram-project-build.sh still references them via
-# %(...)s under strict substitution; leaving them empty disables vectorization.
+# General compiler microarchitecture/vectorization support is disabled. These
+# two keys are kept empty only because scram-project-build.sh still references
+# them via %(...)s under strict substitution; leaving them empty disables
+# vectorization. CUDA host compilation has its own portable baseline below.
 package_vectorization: ""
 scram_target_default:  ""
 
@@ -35,6 +36,7 @@ gpu_types:                     ""
 use_cuda:                      "1"
 use_rocm:                      "1"
 cuda_gcc_support:              "true"
+cuda_host_min_microarch_name:  "x86-64-v2"
 
 # --- Debug / profiling ---
 subpackageDebug:        "yes"

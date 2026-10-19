@@ -1,6 +1,7 @@
 build_requires:
 - py-hatchling
 - py-hatch-vcs
+- py-setuptools-scm
 requires:
 - py-appdirs
 - py-distlib

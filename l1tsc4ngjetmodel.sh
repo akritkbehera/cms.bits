@@ -1,5 +1,5 @@
 package: L1TSC4NGJetModel
-version: 1.0.1
+version: 2.1.0
 sources:
  - https://github.com/cms-hls4ml/%(package)s/archive/refs/tags/v%(version)s.tar.gz
 build_requires:

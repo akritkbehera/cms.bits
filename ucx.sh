@@ -80,6 +80,11 @@ CONFIGURE_OPTS+=" \
 export CPPFLAGS="-I$NUMACTL_ROOT/include"
 export LDFLAGS="-L$NUMACTL_ROOT/lib"
 export CFLAGS="$selected_microarch"
+export CXXFLAGS="$selected_microarch"
+if [ -z "$without_rocm" ]; then
+  export CPPFLAGS="$CPPFLAGS -I$ROCR_RUNTIME_ROOT/include/hsa"
+  export LDFLAGS="$LDFLAGS -L$ROCR_RUNTIME_ROOT/lib64"
+fi
 
 if [ -z "$without_cuda" ]; then
   ./configure $CONFIGURE_OPTS --with-nvcc-gencode="$nvcc_flags_cuda_archs"
@@ -88,6 +93,11 @@ else
 fi
 make ${JOBS:+-j$JOBS}
 make install
+
+if [ -z "$without_rocm" ]; then
+  test -f "$INSTALLROOT/lib/ucx/libuct_rocm.so"
+  test -f "$INSTALLROOT/lib/ucx/libucm_rocm.so"
+fi
 
 rm -rf $INSTALLROOT/lib/pkgconfig
 rm -f $INSTALLROOT/lib/lib*.la

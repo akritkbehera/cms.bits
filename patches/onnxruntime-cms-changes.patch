@@ -1,0 +1,54 @@
+diff --git a/onnxruntime/core/mlas/lib/platform.cpp b/onnxruntime/core/mlas/lib/platform.cpp
+--- a/onnxruntime/core/mlas/lib/platform.cpp
++++ b/onnxruntime/core/mlas/lib/platform.cpp
+@@ -30,6 +30,7 @@
+ #include <cctype>
+ #include <cstdlib>
+ #include <mutex>
++#include <string>
+ #include <thread>
+ 
+ #if defined(MLAS_TARGET_RISCV64) && defined(MLAS_USE_RVV) && defined(__linux__)
+@@ -497,8 +498,11 @@
+         //
+ 
+         uint64_t xcr0 = MlasReadExtendedControlRegister(_XCR_XFEATURE_ENABLED_MASK);
++        const char *cpu_opt = std::getenv("MLAS_DYNAMIC_CPU_ARCH");
++        if (cpu_opt == nullptr) cpu_opt = "99";
++        auto opt = std::stoi(cpu_opt);
+ 
+-        if ((xcr0 & 0x6) == 0x6) {
++        if ((opt > 0) && (xcr0 & 0x6) == 0x6) {
+ 
+             this->GemmFloatKernel = MlasGemmFloatKernelAvx;
+ 
+@@ -532,7 +536,7 @@
+             __cpuid_count(7, 0, Cpuid7[0], Cpuid7[1], Cpuid7[2], Cpuid7[3]);
+ #endif
+ 
+-            if (((Cpuid1[2] & 0x1000) != 0) && ((Cpuid7[1] & 0x20) != 0)) {
++            if ((opt > 1) && ((Cpuid1[2] & 0x1000) != 0) && ((Cpuid7[1] & 0x20) != 0)) {
+ 
+                 this->Avx2Supported_ = true;
+ 
+diff --git a/onnxruntime/core/providers/cpu/tensor/scatter.cc b/onnxruntime/core/providers/cpu/tensor/scatter.cc
+--- a/onnxruntime/core/providers/cpu/tensor/scatter.cc
++++ b/onnxruntime/core/providers/cpu/tensor/scatter.cc
+@@ -338,7 +338,7 @@
+ 
+   // Compute strides for the input/output tensor
+   std::vector<int64_t> input_strides(num_dims);
+-  input_strides.back() = 1;
++  input_strides[num_dims - 1] = 1;
+   if (num_dims > 1) {
+     for (auto i = int64_t(num_dims - 2); i >= 0; --i) {
+       input_strides[narrow<size_t>(i)] = input_data_shape[SafeInt<size_t>(i) + 1] * input_strides[SafeInt<size_t>(i) + 1];
+@@ -347,7 +347,7 @@
+ 
+   // Compute strides for the updates/indices tensor
+   std::vector<int64_t> upd_strides(num_dims);
+-  upd_strides.back() = 1;
++  upd_strides[num_dims - 1] = 1;
+   if (num_dims > 1) {
+     for (auto i = int64_t(num_dims - 2); i >= 0; --i) {
+       upd_strides[narrow<size_t>(i)] = upd_shape[SafeInt<size_t>(i) + 1] * upd_strides[SafeInt<size_t>(i) + 1];

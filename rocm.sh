@@ -37,6 +37,7 @@ requires:
   - rocprim
   - rocthrust
   - miopen
+  - migraphx
   - rocrand
   - rocm-comgr
   - origami

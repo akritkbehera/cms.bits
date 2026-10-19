@@ -5,13 +5,13 @@
 # pyg-lib builds through its own setup.py with FORCE_NINJA=1. It still uses that fragment's
 # PipPreBuild exports. Relies on cpp-standard ($CXXSTD) and compilation_flags ($arch_build_flags).
 
-# cmsdist: %define build_flags -Wall -Wextra %{?arch_build_flags}
+# cmsdist: define build_flags -Wall -Wextra $arch_build_flags
 # torch-extension-build (sourced after this file) redefines build_flags to
-# "-O2 ... $default_microarch"; cmsdist's last-%define-wins makes that the effective value,
+# "-O2 ... $default_microarch"; cmsdist's last-define-wins makes that the effective value,
 # preserved here by the source order in py-pyg-lib.file.
 build_flags="-Wall -Wextra ${arch_build_flags}"
 
-# cmsdist: %define patchsrc0 — runs in the unpacked source root ($PYPI_SRC) via runIt.
+# cmsdist: define patchsrc0 — runs in the unpacked source root ($PYPI_SRC) via runIt.
 # (This is in addition to Patch0 = pyg-lib.patch, applied from the frontmatter patches: list.)
 PipPatchSource=$(cat <<'EOF'
 grep -q 'CMAKE_CXX_STANDARD 20' CMakeLists.txt
@@ -21,7 +21,7 @@ sed -i -e '/-march=native/d' third_party/METIS/GKlib/GKlibSystem.cmake
 EOF
 )
 
-# cmsdist: %define PipPreBuildPy (leads with %{?AdditionalPipPreBuildPy}).
+# cmsdist: define PipPreBuildPy (leads with $AdditionalPipPreBuildPy).
 # The -cuda variant sets $AdditionalPipPreBuildPy (a script of export lines). We run it with an
 # inner eval so its quotes/$(...) parse correctly — a bare ${AdditionalPipPreBuildPy} would be
 # word-split when runIt evals PipPreBuildPy. Empty for the base -> eval "" (no-op).
@@ -36,12 +36,12 @@ export CMAKE_CXX_FLAGS="${build_flags}"
 EOF
 )
 
-# cmsdist: %define PipPostInstall — symlink pyg_lib headers + libpyg.so into the install tree.
+# cmsdist: define PipPostInstall — symlink pyg_lib headers + libpyg.so into the install tree.
 PipPostInstall=$(cat <<'EOF'
 pushd $INSTALLROOT
   mkdir -p include
   ln -s ../${PYTHON3_LIB_SITE_PACKAGES}/pyg_lib include/pyg_lib
-  ln -s ../${PYTHON3_LIB_SITE_PACKAGES}/libpyg.so lib/libpyg.so
+  ln -s ../${PYTHON3_LIB_SITE_PACKAGES}/pyg_lib/libpyg.so lib/libpyg.so
 popd
 EOF
 )

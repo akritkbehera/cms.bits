@@ -1,6 +1,7 @@
 package: cmsswdata
 version: vCMS
 requires:
+  - data-IOMC-Input
   - data-RecoTracker-LSTCore
   - data-L1Trigger-L1TMuon
   - data-RecoMuon-TrackerSeedGenerator

@@ -1,7 +1,7 @@
 package: SCRAMV1
-version: V3_00_95
+version: V3_00_96
 variables:
-  tag: 21a9cd17bdeb37d0ad4a42b3bcbbc4597a65aa2a
+  tag: fbedf8abcedfb808ebd9cb31a248071c1a66d501
 branch: SCRAMV3
 sources:
   - https://github.com/cms-sw/SCRAM/archive/%(tag)s.tar.gz

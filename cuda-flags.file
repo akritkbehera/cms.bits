@@ -35,13 +35,11 @@ nvcc_flags_lambda="--extended-lambda"
 #   variables and variable templates, with __attribute__((visibility("hidden")))
 nvcc_visibility_flags="--static-global-template-stub=true --device-entity-has-hidden-visibility=true"
 
-# parallel device code compilation, integrated with make:
-#   split-compile=0  automatically divide heavy translation units into multiple parallel
-#                    compilation units
-#   threads=0        use all available CPU cores for parallel compilation
-#   jobserver        integrate with make's jobserver, so the number of parallel jobs is
-#                    limited to the number of jobs make is allowed to run in parallel
-nvcc_flags_parallel_compile="--split-compile 0 --threads 0 --jobserver"
+# Match cmsdist: make-integrated parallel compilation is enabled on x86_64 only.
+nvcc_flags_parallel_compile=""
+if [ "$(uname -m)" = x86_64 ]; then
+  nvcc_flags_parallel_compile="--threads 0 --jobserver"
+fi
 
 # build support for the various compute architectures
 nvcc_flags_cuda_archs=""

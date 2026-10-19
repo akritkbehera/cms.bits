@@ -1,5 +1,5 @@
 package: gdb
-version: "16.2"
+version: "17.2"
 sources:
 - https://ftp.gnu.org/gnu/gdb/gdb-%(version)s.tar.gz
 requires:

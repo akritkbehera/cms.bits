@@ -4,11 +4,9 @@ variables:
   git_repo: igprof
   git_user: cms-externals
   git_branch: cms/master/c6882f4
-  git_commit: 16da627e12a806cd8ab072e7288223c91086ea25
+  git_commit: ce881b613a7de0be88eb322fade7ba10318a6fbd
 sources:
  - git://github.com/%(git_user)s/igprof.git?obj=%(git_branch)s/%(git_commit)s&export=igprof-%(git_commit)s&output=/igprof-%(git_commit)s.tgz
-patches: 
- - igprof-gcc12.patch
 build_requires:
  - CMake
 requires:
@@ -20,7 +18,6 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-patch -p1 <$SOURCEDIR/$PATCH0
 
 cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
    -DCMAKE_INSTALL_PREFIX=$INSTALLROOT -DCMAKE_VERBOSE_MAKEFILE=TRUE \

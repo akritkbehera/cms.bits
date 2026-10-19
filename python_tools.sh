@@ -3,6 +3,7 @@ version: "3.1"
 env:
   PYTHON3_LIB_SITE_PACKAGES: "lib/python$(echo $PYTHON_VERSION | cut -d. -f1,2 | sed 's|^v||')/site-packages"
 requires:
+  - py-pymongo
   - ROOT
   - curl
   - Python

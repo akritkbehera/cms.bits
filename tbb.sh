@@ -1,5 +1,5 @@
 package: TBB
-version: "v2022.3.0"
+version: "v2023.1.0"
 sources:
   - https://github.com/uxlfoundation/oneTBB/archive/%(version)s.tar.gz
 build_requires:

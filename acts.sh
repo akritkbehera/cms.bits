@@ -46,7 +46,7 @@ prepend_path:
 export build_test="1"
 
 # Eigen build flags (from the scram-tools eigen env / defaults)
-export CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64"
+export CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64 -DEIGEN_NO_DEBUG"
 
 # Detect CUDA and ROCm
 cuda_enabled="OFF"; [ -n "$CUDA_ROOT" ] && cuda_enabled="ON"

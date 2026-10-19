@@ -24,7 +24,7 @@ prepend_path:
 #!include <microarch-flags.file>
 
 # Eigen build flags (from the scram-tools eigen env)
-export CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64"
+export CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64 -DEIGEN_NO_DEBUG"
 if [ "$(uname -m)" = "aarch64" ]; then
   export CMS_EIGEN_CXX_FLAGS="-DEIGEN_NEON_GEBP_NR=4 ${CMS_EIGEN_CXX_FLAGS}"
 fi

@@ -62,6 +62,7 @@ requires:
  - EMTF_NN
  - L1METML
  - L1TSC4NGJetModel
+ - NNVtx
  - lhapdf
  - libjpeg-turbo
  - libpng
@@ -135,6 +136,7 @@ requires:
  - qd
  - blackhat
  - sherpa
+ - sherpa3
  - fasthadd
  - eigen
  - gdb
@@ -175,6 +177,7 @@ requires:
  - intel-vtune
  - ruff
  - rocm
+ - hipcc-parallel
  - cmsmon-tools
  - dip
  - tkonlinesw-fake

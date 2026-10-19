@@ -1,9 +1,9 @@
 package: cms-git-tools
-version: "251202"
+version: "260930"
 sources:
   - https://github.com/cms-sw/cms-git-tools/archive/%(tag)s.tar.gz
 variables:
-  tag: 3a9b0d4071871bf3a7ba4cfc105f8935978562f2
+  tag: da9235f1f257197714729c6fb55e0902bf6c16c7
 build_requires:
  - gmake
 architecture: share

@@ -1,5 +1,5 @@
 package: isal
-version: "v2.30.0"
+version: "v2.32.1"
 sources:
   - https://github.com/intel/isa-l/archive/%(version)s.tar.gz
 build_requires:

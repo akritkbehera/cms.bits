@@ -2,6 +2,8 @@ package: catch2
 version: 3.13.0
 sources:
  - https://github.com/catchorg/Catch2/archive/refs/tags/v%(version)s.tar.gz
+patches:
+ - catch2-suppress-parentheses-warn.patch
 build_requires:
  - CMake
  - gmake
@@ -12,6 +14,8 @@ requires:
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
+
+patch -p1 < "$SOURCEDIR/$PATCH0"
 
 CMAKE_ARGS=(
     -S "$BUILDDIR"

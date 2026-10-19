@@ -1,5 +1,6 @@
+source: https://github.com/akritkbehera/scram-tools.file.git
 sources:
-  - https://github.com/akritkbehera/scram-tools.file/archive/95c34a89349f361c7172a9884f48068fa089ebf1.tar.gz
+  - https://github.com/akritkbehera/scram-tools.file/archive/1c2615c84126247d09230a8d15dfc5549f759830.tar.gz
 requires:
   - AXOL1TL
   - TOPO
@@ -57,6 +58,7 @@ requires:
   - EMTF_NN
   - L1METML
   - L1TSC4NGJetModel
+  - NNVtx
   - lhapdf
   - libjpeg-turbo
   - libpng
@@ -138,6 +140,7 @@ requires:
   - qd
   - blackhat
   - sherpa
+  - sherpa3
   - fasthadd
   - eigen
   - gdb
@@ -178,6 +181,7 @@ requires:
   - intel-vtune
   - ruff
   - rocm
+  - hipcc-parallel
   - cmsmon-tools
   - log4cplus
   - tkonlinesw-fake

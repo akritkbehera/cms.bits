@@ -1,0 +1,658 @@
+{
+  "cmsdist_baseline": "fa77cb2b2",
+  "cmsdist_target": "5b180f4f50f60874ee1961ecbf2b4bab712db0b6",
+  "cms_bits_base": "05217a9",
+  "files": [
+    {
+      "cmsdist": "L1TSC4NGJetModel.spec",
+      "bits": [
+        "l1tsc4ngjetmodel.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "NNVtx.spec",
+      "bits": [
+        "nnvtx.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "SCRAMV1.spec",
+      "bits": [
+        "scramv1.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "alpaka.spec",
+      "bits": [
+        "alpaka.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "catch2-suppress-parentheses-warn.patch",
+      "bits": [
+        "patches/catch2-suppress-parentheses-warn.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "catch2.spec",
+      "bits": [
+        "catch2.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "cms-git-tools.spec",
+      "bits": [
+        "cms-git-tools.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "cmssw-tools.spec",
+      "bits": [
+        "CMSSW/cmssw-tools.yaml",
+        "cmssw-tools.yaml"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "cmsswdata.spec",
+      "bits": [
+        "cmsswdata.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "cuda-flags.file",
+      "bits": [
+        "cuda-flags.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "cuda.spec",
+      "bits": [
+        "cuda.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "data/cmsswdata.txt",
+      "bits": [
+        "data/packages.txt",
+        "all_data.sh",
+        "cmsswdata.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "dqmgui-gcc12.patch",
+      "bits": [],
+      "status": "no corresponding bits recipe"
+    },
+    {
+      "cmsdist": "dyninst/spec",
+      "bits": [
+        "dyninst.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "dyninst/tbb-version.patch",
+      "bits": [
+        "patches/dyninst-tbb-version.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "eigen.spec",
+      "bits": [
+        "eigen.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "gdb.spec",
+      "bits": [
+        "gdb.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "hipcc-parallel/spec",
+      "bits": [
+        "hipcc-parallel.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "igprof.spec",
+      "bits": [
+        "igprof.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "isal.spec",
+      "bits": [
+        "isal.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "nasm.spec",
+      "bits": [
+        "nasm.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "onnxruntime/absl_nvidia_bug_6302392.patch",
+      "bits": [
+        "onnxruntime.sh"
+      ],
+      "status": "obsolete upstream patches not selected"
+    },
+    {
+      "cmsdist": "onnxruntime/backport28736.patch",
+      "bits": [
+        "onnxruntime.sh"
+      ],
+      "status": "obsolete upstream patches not selected"
+    },
+    {
+      "cmsdist": "onnxruntime/cms-changes.patch",
+      "bits": [
+        "patches/onnxruntime-cms-changes.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "onnxruntime/cuda-remove-const-ones.patch",
+      "bits": [
+        "patches/onnxruntime-cuda-remove-const-ones.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "onnxruntime/migraphx-cxx20.patch",
+      "bits": [
+        "patches/onnxruntime-migraphx-cxx20.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "onnxruntime/migraphx-plugin-exports.patch",
+      "bits": [
+        "patches/onnxruntime-migraphx-plugin-exports.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "onnxruntime/migraphx-user-compute-stream.patch",
+      "bits": [
+        "patches/onnxruntime-migraphx-user-compute-stream.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "onnxruntime/spec",
+      "bits": [
+        "onnxruntime.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "openloops.spec",
+      "bits": [
+        "openloops.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/migraphx-cxx20-accumulate.patch",
+      "bits": [
+        "patches/migraphx-cxx20-accumulate.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/migraphx-rocm-add-version-resource.patch",
+      "bits": [
+        "patches/migraphx-rocm-add-version-resource.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/migraphx-tf-proto-names.patch",
+      "bits": [
+        "patches/migraphx-tf-proto-names.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/migraphx-without-hipblaslt.patch",
+      "bits": [
+        "patches/migraphx-without-hipblaslt.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/migraphx-without-mlir.patch",
+      "bits": [
+        "patches/migraphx-without-mlir.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/pip/pysqlite3.patch",
+      "bits": [
+        "patches/pysqlite3.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/pip/threadpoolctl-flit-core-4.patch",
+      "bits": [
+        "pypi/py-threadpoolctl.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/tensorflow-tf2xla-return-type.patch",
+      "bits": [
+        "patches/tensorflow-tf2xla-return-type.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "patches/tensorflow-xla-runtime-absl.patch",
+      "bits": [
+        "patches/tensorflow-xla-runtime-absl.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/deprecated.file",
+      "bits": [
+        "pypi/py-deprecated.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/dnspython.file",
+      "bits": [
+        "pypi/py-dnspython.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/files/pyg-lib-common.file",
+      "bits": [
+        "pypi/pyg-lib-common.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/pysqlite3.file",
+      "bits": [
+        "pypi/py-pysqlite3.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/requirements.txt",
+      "bits": [
+        "pypi/requirements.txt"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/tenacity.file",
+      "bits": [
+        "pypi/py-tenacity.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/tensorflow.file",
+      "bits": [
+        "pypi/py-tensorflow.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/threadpoolctl.file",
+      "bits": [
+        "pypi/py-threadpoolctl.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/torch-cuda.file",
+      "bits": [
+        "pypi/py-torch-cuda.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/torch-rocm.file",
+      "bits": [
+        "pypi/py-torch-rocm.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/torch.file",
+      "bits": [
+        "pypi/torch-common.file",
+        "pypi/py-torch.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "pip/virtualenv.file",
+      "bits": [
+        "pypi/py-virtualenv.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "python_tools.spec",
+      "bits": [
+        "python_tools.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "rocm/hipfile.spec",
+      "bits": [
+        "hipfile.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "rocm/migraphx.spec",
+      "bits": [
+        "migraphx.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "rocm/rocm.spec",
+      "bits": [
+        "rocm.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "root.spec",
+      "bits": [
+        "root.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-project-build.file",
+      "bits": [
+        "CMSSW/base/vars.yaml"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/NNVtx/nnvtx.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/cuda/cuda.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/eigen/env.file",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/gcc/gcc-cxxcompiler.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/gcc/openmp-simd.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/gcc/openmp.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/hipblas-common/hipblas-common.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/hipcc-parallel/hipcc-parallel.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/hipfile/hipfile.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/llvm/llvm-cxxcompiler.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/migraphx/migraphx.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/miopen/miopen.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/onnxruntime/onnxruntime.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/openloops/openloops.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/py3-torch-rocm/pytorch-rocm.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/rocm/rocm.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/root/rootgeomchecker.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/root/rootglew.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/root/rootrgl.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/sherpa3/env.sh",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "scram-tools.file/tools/sherpa3/sherpa3.xml",
+      "bits": [
+        "patches/scram-tools-cmsdist-sync.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "sherpa-3.0.5-libversioning.patch",
+      "bits": [
+        "patches/sherpa-3.0.5-libversioning.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "sherpa-3.0.5-reorder.patch",
+      "bits": [
+        "patches/sherpa-3.0.5-reorder.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "sherpa-3.0.5-versioning.patch",
+      "bits": [
+        "patches/sherpa-3.0.5-versioning.patch"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "sherpa3.spec",
+      "bits": [
+        "sherpa3.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "tbb.spec",
+      "bits": [
+        "tbb.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "tensorflow-sources-cache.spec",
+      "bits": [
+        "tensorflow-sources-cache.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "tensorflow-sources.spec",
+      "bits": [
+        "tensorflow-sources.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "tensorflow-xla-runtime.spec",
+      "bits": [
+        "tensorflow-xla-runtime.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "tensorflow/build.file",
+      "bits": [
+        "tensorflow-build.file"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "tensorflow/spec",
+      "bits": [
+        "tensorflow.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "tensorflow/tensorflow-requires.file",
+      "bits": [
+        "tensorflow-sources.sh",
+        "tensorflow-sources-cache.sh",
+        "tensorflow.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "tensorflow/version.file",
+      "bits": [
+        "tensorflow-sources.sh",
+        "tensorflow-sources-cache.sh",
+        "tensorflow.sh",
+        "tensorflow-xla-runtime.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "ucx.spec",
+      "bits": [
+        "ucx.sh"
+      ],
+      "status": "ported"
+    },
+    {
+      "cmsdist": "vectorization/cmsdist_packages.py",
+      "bits": [
+        "vectorization/package.py"
+      ],
+      "status": "RPM lookup change not applicable to native bits recipes"
+    }
+  ]
+}

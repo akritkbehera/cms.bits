@@ -1,5 +1,4 @@
-sources:
-  - https://github.com/akritkbehera/scram-tools.file/archive/1c2615c84126247d09230a8d15dfc5549f759830.tar.gz
+source: https://github.com/akritkbehera/scram-tools.file.git
 hook:
   POST_INSTALL: generate_module
 requires:
@@ -63,6 +62,7 @@ requires:
   - EMTF_NN
   - L1METML
   - L1TSC4NGJetModel
+  - NNVtx
   - L1TSC82ProngJetModel
   - lhapdf
   - libjpeg-turbo
@@ -145,6 +145,7 @@ requires:
   - qd
   - blackhat
   - sherpa
+  - sherpa3
   - fasthadd
   - eigen
   - gdb
@@ -189,6 +190,7 @@ requires:
   - NNPuppiTauModel
   - ruff
   - rocm
+  - hipcc-parallel
   - cmsmon-tools
   - log4cplus
   - tkonlinesw-fake

@@ -17,7 +17,7 @@ source $BUILDDIR/tool-env.file
 # =============================================================================
 # Translated from cmsdist/scram/tool-conf-src.file
 
-export CUDA_HOST_MIN_MICROARCH_NAME="%(cuda_host_min_microarch_name)s"
+export CUDA_HOST_MIN_MICROARCH_NAME="$default_microarch_name"
 
 rm -rf "$INSTALLROOT"
 mkdir -p "$INSTALLROOT/tools/selected" "$INSTALLROOT/tools/available"

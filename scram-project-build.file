@@ -39,8 +39,13 @@ log_section() {
   echo "${C_MAGENTA}${C_BOLD}=================================================================${C_RESET}"
 }
 _log_summary() {
-  rc=$?
-  [ -n "$_BLOCK_NAME" ] && \
+  local rc=$?
+  trap - EXIT
+  if ! archive_scram_logs; then
+    log_err "Could not archive SCRAM package logs"
+    [ "$rc" -ne 0 ] || rc=1
+  fi
+  [ -n "$_BLOCK_NAME" ] && [ "$rc" -eq 0 ] && \
     log_ok "Block '${_BLOCK_NAME}' finished in $(( $(date +%%s) - _BLOCK_T0 ))s"
   total=$(( $(date +%%s) - _SCRIPT_T0 ))
   echo ""
@@ -49,11 +54,45 @@ _log_summary() {
   else
     log_err "scram-project-build.sh FAILED (rc=$rc) in block '${_BLOCK_NAME}' after ${total}s"
   fi
+  exit "$rc"
 }
 trap _log_summary EXIT
 
 # Echo + run helper for the commands worth surfacing in the Jenkins log
 run() { log_cmd "$*"; "$@"; }
+
+# Keep transcripts outside INSTALLROOT: bits captures stdout in BUILD/<package>-latest/log,
+# while CMSDIST publishes package logs under WEB/build-logs/<arch>/<version>/logs.
+# An EXIT trap also archives logs when a build target fails before installation.
+SCRAM_LOGS_READY=0
+SCRAM_LOGS_ARCHIVED=0
+archive_scram_logs() {
+  [ "$SCRAM_LOGS_READY" = "1" ] || return 0
+  [ "$SCRAM_LOGS_ARCHIVED" = "0" ] || return 0
+  local source_logs="$INSTALLROOT/tmp/$ARCHITECTURE/cache/log/$SRCTREE"
+  if [ -d "$source_logs" ]; then
+    log_info "Archiving SCRAM package logs → $LOG_WEB_DIR/logs/src/src-logs.tgz"
+    tar cf "$LOG_WEB_DIR/logs/src/src-logs.tgz" --use-compress-program="$COMPRESS_PROG" \
+      -C "$source_logs" ./ || return $?
+  fi
+  SCRAM_LOGS_ARCHIVED=1
+}
+
+# Capture both streams, keep live output for bits/Jenkins, and preserve SCRAM's
+# status independently of tee and the caller's errexit/pipefail settings.
+run_scram_build() {
+  local phase="$1"
+  shift
+  local -a status
+  log_cmd "$SCRAMCMD build $*"
+  if $SCRAMCMD build "$@" </dev/null 2>&1 | tee -a "$LOG_WEB_DIR/logs/$phase.log"; then
+    status=("${PIPESTATUS[@]}")
+  else
+    status=("${PIPESTATUS[@]}")
+  fi
+  [ "${status[0]}" -eq 0 ] || return "${status[0]}"
+  return "${status[1]}"
+}
 
 # Parallelism knobs
 NPROC=${JOBS:-$(nproc 2>/dev/null || echo 4)}
@@ -241,9 +280,17 @@ cat > "$INSTALLROOT/config/toolbox/$ARCHITECTURE/tools/selected/cmssw-config.xml
 EOF
 run $SCRAMCMD setup cmssw-config
 
+LOG_WEB_DIR="$WORK_DIR/WEB/build-logs/$ARCHITECTURE/$PKGVERSION"
+mkdir -p "$LOG_WEB_DIR/logs/src"
+for phase in clean compiler prebuild llvm-ccdb build outputlog additional postbuild gindices; do
+  : > "$LOG_WEB_DIR/logs/$phase.log"
+done
+rm -f "$LOG_WEB_DIR/logs/src/src-logs.tgz" "$BUILDDIR/build-errors"
+SCRAM_LOGS_READY=1
+log_info "SCRAM logs: $LOG_WEB_DIR/logs (full bits transcript: ${BUILDROOT:-$BUILDDIR}/log)"
 export BUILD_LOG=yes
 export SCRAM_NOPLUGINREFRESH=yes
-run $SCRAMCMD b clean
+run_scram_build clean clean
 
 log_section "Block 6: BUILD — compile"
 
@@ -260,19 +307,22 @@ PGO_GENERATE="%(pgo_generate)s"
 # Set up SCRAM runtime environment (LD_LIBRARY_PATH, PATH, etc.) before build
 eval "$($SCRAMCMD runtime -sh)"
 export LD_LIBRARY_PATH
+# Runtime setup must not disable SCRAM package logging.
+export BUILD_LOG=yes
+export SCRAM_NOPLUGINREFRESH=yes
 
-$SCRAMCMD b -r echo_CXX </dev/null
+run_scram_build compiler -r echo_CXX
 
 if [ -n "$PREBUILDTARGET" ]; then
   log_info "Pre-build target: $PREBUILDTARGET"
-  run $SCRAMCMD b --verbose -f "$PREBUILDTARGET" </dev/null
+  run_scram_build prebuild --verbose -f -k -j "$NPROC" "$PREBUILDTARGET"
 fi
 
 # llvm-ccdb only for cmssw/cmssw-patch, skipped during PGO generate phase
 if [ "$PGO_GENERATE" = "0" ]; then
   case "$PKGNAME" in cmssw|cmssw-patch)
     log_info "Generating llvm compilation database (llvm-ccdb)"
-    $SCRAMCMD b -f -k ${JOBS:+-j $JOBS} llvm-ccdb </dev/null || true ;;
+    run_scram_build llvm-ccdb -f -k -j "$NPROC" llvm-ccdb || true ;;
   esac
 fi
 
@@ -282,37 +332,33 @@ grep -q 'name="SCRAM_TARGET"' "$INSTALLROOT/config/Self.xml" && \
 SCRAM_B_EXTRA=()
 [ -n "$EXTRA_CXXFLAGS" ] && SCRAM_B_EXTRA=("USER_CXXFLAGS=$EXTRA_CXXFLAGS")
 
-log_info "Main build: target='${BUILDTARGET}' jobs=${JOBS:-<default>} opts='$COMPILE_OPTIONS'"
+# CMSDIST's rpm-preamble.file supplies compileOptions=-k for keep-going builds.
+# Always finish independent targets here, but fail the recipe unless explicitly allowed.
+SCRAM_BUILD_TARGET=()
+[ -z "$BUILDTARGET" ] || SCRAM_BUILD_TARGET=("$BUILDTARGET")
+log_info "Main build: target='${BUILDTARGET:-<default>}' jobs=$NPROC opts='-k $COMPILE_OPTIONS'"
 _COMPILE_T0=$(date +%%s)
-$SCRAMCMD b --verbose -f $COMPILE_OPTIONS "${SCRAM_B_EXTRA[@]}" ${JOBS:+-j $JOBS} "$BUILDTARGET" </dev/null || {
-  log_err "Compilation reported errors after $(( $(date +%%s) - _COMPILE_T0 ))s"
+if run_scram_build build --verbose -f $COMPILE_OPTIONS -k "${SCRAM_B_EXTRA[@]}" -j "$NPROC" "${SCRAM_BUILD_TARGET[@]}"; then
+  log_ok "Compile phase done in $(( $(date +%%s) - _COMPILE_T0 ))s"
+else
+  _compile_rc=$?
+  log_err "Compilation reported errors (rc=$_compile_rc) after $(( $(date +%%s) - _COMPILE_T0 ))s"
   touch "$BUILDDIR/build-errors"
-  $SCRAMCMD b -f outputlog || true
-  if [ "$IGNORE_COMPILE_ERRORS" != "0" ]; then
-    log_warn "IGNORE_COMPILE_ERRORS set — continuing despite build errors"
-  else
-    exit 1
-  fi
-}
-log_ok "Compile phase done in $(( $(date +%%s) - _COMPILE_T0 ))s"
+  run_scram_build outputlog -f outputlog || log_warn "SCRAM outputlog failed; raw package logs will still be archived"
+  case "$IGNORE_COMPILE_ERRORS" in
+    1|yes|true)
+      log_warn "IGNORE_COMPILE_ERRORS set — continuing despite build errors" ;;
+    *) exit "$_compile_rc" ;;
+  esac
+fi
 
 if [ -n "$ADDITIONAL_BUILD_TARGET" ]; then
   log_info "Additional build target: $ADDITIONAL_BUILD_TARGET"
-  run $SCRAMCMD b --verbose -f "$ADDITIONAL_BUILD_TARGET" </dev/null
+  run_scram_build additional --verbose -f -k -j "$NPROC" "$ADDITIONAL_BUILD_TARGET"
 fi
 if [ -n "$POSTBUILDTARGET" ]; then
   log_info "Post-build target: $POSTBUILDTARGET"
-  run $SCRAMCMD b --verbose -f "$POSTBUILDTARGET" </dev/null
-fi
-
-# Move logs out so they don't get packaged
-LOG_WEB_DIR="$WORK_DIR/WEB/build-logs/$ARCHITECTURE/$PKGVERSION"
-rm -rf "$LOG_WEB_DIR"
-mkdir -p "$LOG_WEB_DIR/logs/src"
-if [ -d "$INSTALLROOT/tmp/$ARCHITECTURE/cache/log/src" ]; then
-  log_info "Archiving build logs → $LOG_WEB_DIR ($COMPRESS_PROG)"
-  tar cf "$LOG_WEB_DIR/logs/src/src-logs.tgz" --use-compress-program="$COMPRESS_PROG" \
-    -C "$INSTALLROOT/tmp/$ARCHITECTURE/cache/log/src" ./
+  run_scram_build postbuild --verbose -f -k -j "$NPROC" "$POSTBUILDTARGET"
 fi
 
 log_section "Block 7: saveDeps + edmPluginRefresh"
@@ -379,10 +425,11 @@ log_info "Linking externals"
 SCRAM_TOOL_HOME="$SCRAMV1_ROOT" \
   ./config/SCRAM/linkexternal${SCRAM_SCRIPT_PREFIX} --arch "$ARCHITECTURE"
 
-[ "$RUNGLIMPSE" != "0" ] && { log_info "Building glimpse indices"; $SCRAMCMD b --verbose -f gindices </dev/null; }
+[ "$RUNGLIMPSE" != "0" ] && { log_info "Building glimpse indices"; run_scram_build gindices --verbose -f -k -j "$NPROC" gindices; }
 
 log_info "Compressing $SRCTREE → ${SRCTREE}.tar.gz ($COMPRESS_PROG)"
 tar cf "${SRCTREE}.tar.gz" --use-compress-program="$COMPRESS_PROG" "$SRCTREE"
+archive_scram_logs
 rm -rf "$SRCTREE" tmp
 
 if [ "$SUBPACKAGE_DEBUG" != "0" ]; then

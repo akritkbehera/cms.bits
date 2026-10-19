@@ -1,5 +1,5 @@
-source: https://github.com/akritkbehera/scram-tools.file.git
-tag: db115ec11a9432f4eab88f312c9291e306707e7e
+sources:
+  - https://github.com/akritkbehera/scram-tools.file/archive/refs/heads/main.tar.gz
 hook:
   POST_INSTALL: generate_module
 requires:

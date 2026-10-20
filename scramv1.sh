@@ -1,7 +1,7 @@
 package: SCRAMV1
 version: V3_00_96
 variables:
-  tag: fbedf8abcedfb808ebd9cb31a248071c1a66d501
+  tag: 6c85a8a2ac4a5fc742eb2e8c16f02187f3ed63af
 branch: SCRAMV3
 sources:
   - https://github.com/cms-sw/SCRAM/archive/%(tag)s.tar.gz
@@ -9,8 +9,6 @@ architecture: "share"
 force_revision: ""
 env:
   SCRAMV1_VERSION: "$PKGVERSION"
-requires:
- - cms-common
 hook: disable
 ---
 if ! [[ "$PKGVERSION" =~ ^(V([0-9]+)_([0-9]+))_([0-9]+) ]]; then

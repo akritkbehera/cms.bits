@@ -1,11 +1,8 @@
-# Binary-only on PyPI: bits' pip:// download cannot fetch wheels, so use the direct URLs
-# (files.pythonhosted.org paths are per-file hashes; update them when bumping the version).
 variables:
-  x86_64_src: "05/41/07c259ea10a5eeb100a66222507e2ce3a01474fa8f13c250bf1a3559a5bb/jaxlib-%(version)s-cp312-cp312-manylinux_2_27_x86_64.whl"
-  aarch64_src: "77/d9/26613efbc0e219ef16b6069c38378a9b360f85926573e1995c391e48d73e/jaxlib-%(version)s-cp312-cp312-manylinux_2_27_aarch64.whl"
-  selected_src: "%%(%(platform_machine)s_src)s"
-sources:
-- https://files.pythonhosted.org/packages/%(selected_src)s
+  # jaxlib publishes wheels only. Ask bits' pip:// fallback to select the
+  # matching Python/platform wheel instead of pinning PyPI's opaque file path.
+  pypi_source_name: "jaxlib-%(version)s-cp%(python_major_minor_str)s-cp%(python_major_minor_str)s-manylinux_2_27_%(platform_machine)s.whl"
+  pypi_download_opts: "--python-version=%(python_major_minor_str)s+--abi=cp%(python_major_minor_str)s+--platform=manylinux_2_27_%(platform_machine)s+--no-deps+--only-binary=:all:"
 requires:
 - py-wheel
 - py-ml_dtypes

@@ -271,6 +271,39 @@ cd "$INSTALLROOT/$SRCTREE"
 
 [ "$ENABLE_BIGLIB" = "0" ] && { log_info "biglib disabled"; $SCRAMCMD build disable-biglib || true; }
 
+# Some coral-tool-conf generations miss tools/python because the tool source
+# directory is lowercase while the bits dependency is named Python. Supply the
+# interpreter tool from that dependency before SCRAM sets it up.
+if [ "$PKGNAME" = "coral" ] && [ ! -f "$INSTALLROOT/config/toolbox/$ARCHITECTURE/tools/selected/python.xml" ]; then
+  : "${PYTHON_ROOT:?Python is required to create the CORAL SCRAM tool}"
+  : "${PYTHON_VERSION:?Python version is required to create the CORAL SCRAM tool}"
+  : "${PYTHON_MAJOR_MINOR_VERSION:?Python ABI is required to create the CORAL SCRAM tool}"
+  python_tool_dir="$INSTALLROOT/config/toolbox/$ARCHITECTURE/tools/selected"
+  mkdir -p "$python_tool_dir"
+  cat > "$python_tool_dir/python.xml" <<EOF
+<tool name="python" version="$PYTHON_VERSION" path="$PYTHON_ROOT" revision="3">
+  <lib name="python$PYTHON_MAJOR_MINOR_VERSION"/>
+  <client>
+    <environment name="LIBDIR" default="\$TOOL_BASE/lib"/>
+    <environment name="INCLUDE" default="\$TOOL_BASE/include/python$PYTHON_MAJOR_MINOR_VERSION"/>
+    <environment name="PYTHON_COMPILE" default="\$TOOL_BASE/lib/python$PYTHON_MAJOR_MINOR_VERSION/compileall.py"/>
+  </client>
+  <runtime name="PATH" value="\$TOOL_BASE/bin" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="\$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+  <use name="sockets"/>
+</tool>
+EOF
+  log_info "Created missing python.xml from $PYTHON_ROOT"
+fi
+if [ "$PKGNAME" = "coral" ] && [ ! -f "$INSTALLROOT/config/toolbox/$ARCHITECTURE/tools/selected/python3.xml" ]; then
+  python_tool_dir="$INSTALLROOT/config/toolbox/$ARCHITECTURE/tools/selected"
+  sed -e 's/name="python"/name="python3"/' \
+      -e 's/PYTHON_COMPILE/PYTHON3_COMPILE/' \
+      "$python_tool_dir/python.xml" > "$python_tool_dir/python3.xml"
+  log_info "Created missing python3.xml from python.xml"
+fi
+
 for t in $EXTRA_TOOLS;  do log_info "scram setup $t";       $SCRAMCMD setup "$t";       done
 for t in $REMOVE_TOOLS; do log_info "scram tool remove $t"; $SCRAMCMD tool remove "$t"; done
 

@@ -55,4 +55,4 @@ requires:
 force_revision: ""
 ---
 source $WORK_DIR/cmsset_default.sh
-#!include <scram-project-build.sh>
+#!include <scram-project-build.file>

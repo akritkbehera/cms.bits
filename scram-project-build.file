@@ -305,6 +305,11 @@ if [ "$PKGNAME" = "coral" ] && [ ! -f "$INSTALLROOT/config/toolbox/$ARCHITECTURE
 fi
 
 for t in $EXTRA_TOOLS;  do log_info "scram setup $t";       $SCRAMCMD setup "$t";       done
+if [ "$PKGNAME" = "coral" ]; then
+  # PyCoral's BuildFile uses python3; setting up Python only activates python.
+  log_info "scram setup python3"
+  run $SCRAMCMD setup python3
+fi
 for t in $REMOVE_TOOLS; do log_info "scram tool remove $t"; $SCRAMCMD tool remove "$t"; done
 
 cat > "$INSTALLROOT/config/toolbox/$ARCHITECTURE/tools/selected/cmssw-config.xml" <<EOF

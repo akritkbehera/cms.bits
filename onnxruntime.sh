@@ -72,7 +72,9 @@ if [ -z "${without_cuda:-}" ] && [ "${cuda_gcc_support:-true}" = true ]; then
     -Donnxruntime_CUDA_HOME="$CUDA_ROOT" -Donnxruntime_CUDNN_HOME="$CUDNN_ROOT"
     -Donnxruntime_BUILD_CUDA_EP_AS_PLUGIN=ON -Donnxruntime_NVCC_THREADS=1
     -DCMAKE_CUDA_ARCHITECTURES="${cuda_arch// /;}"
-    -DCMAKE_CUDA_FLAGS="-isystem $PROTOBUF_ROOT/include -DTHRUST_IGNORE_DEPRECATED_API -DCUB_IGNORE_DEPRECATED_API -Wno-deprecated-gpu-targets --static-global-template-stub=false -cudart shared"
+    # The CUDA plugin treats NVCC warnings as errors. Abseil's hash.h now
+    # emits diagnostic 68-D, so handle it like the Protobuf headers.
+    -DCMAKE_CUDA_FLAGS="-isystem $PROTOBUF_ROOT/include -isystem $ABSEIL_CPP_ROOT/include -DTHRUST_IGNORE_DEPRECATED_API -DCUB_IGNORE_DEPRECATED_API -Wno-deprecated-gpu-targets --static-global-template-stub=false -cudart shared"
     -DCMAKE_CUDA_RUNTIME_LIBRARY=Shared
     -DCMAKE_TRY_COMPILE_PLATFORM_VARIABLES=CMAKE_CUDA_RUNTIME_LIBRARY
   )

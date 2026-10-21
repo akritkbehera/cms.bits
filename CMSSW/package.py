@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Virtual package generator for CMSSW and cmssw-tools.
+Virtual package generator for CMSSW, cmssw-tools, coral, and coral-tools.
 
 Command-line usage:
   cmssw:       package.py cmssw <ib_name> <release_queue> <suffix> <date_time> <branch> [os] [flavor]
   cmssw-tools: package.py cmssw-tools <release_queue> [os]
+  coral:       package.py coral
+  coral-tools: package.py coral-tools
 
 Generates YAML recipe to stdout in the format:
   <yaml header>
@@ -136,7 +138,7 @@ if pkg_type == 'cmssw':
     if exists(queue_override):
         spec, body = apply_override(spec, body, queue_override, spec.get('variables', {}))
 
-else:
+elif pkg_type == 'cmssw-tools':
     # argv: package.py cmssw-tools <release_queue> [os]
     release_queue = sys.argv[2]
 
@@ -151,18 +153,29 @@ else:
         queue=release_queue,
     )
 
-    body_file = join(dirname(pkg_dir), 'tool-conf-src.file') if pkg_type == 'cmssw-tools' \
-                else join(pkg_dir, pkg_type + '-build.sh')
-
-    # cmssw-tools is configured by cmssw-tools.yaml; ignore the old .file override.
     spec, body = build_spec(
         yaml_file=join(pkg_dir, pkg_type + '.yaml'),
-        body_file=body_file,
-        override_file=None if pkg_type == 'cmssw-tools' else join(pkg_dir, pkg_type + '.file'),
+        body_file=join(dirname(pkg_dir), 'tool-conf-src.file'),
+        override_file=None,
         package=pkg_type,
         version='100',
         config=config,
     )
+
+elif pkg_type in ('coral', 'coral-tools'):
+    # These recipes share the SCRAM project build workflow but are kept as
+    # generated packages under CMSSW/ so the CMSSW provider owns their specs.
+    version = 'CORAL_2_3_21' if pkg_type == 'coral' else 'v1'
+    spec, body = build_spec(
+        yaml_file=join(pkg_dir, pkg_type + '.yaml'),
+        body_file=join(pkg_dir, pkg_type + '-build.sh'),
+        override_file=None,
+        package=pkg_type,
+        version=version,
+    )
+
+else:
+    raise ValueError("Unknown generated package type: %s" % pkg_type)
 
 # Output the recipe
 print(yamlDump(spec).strip())

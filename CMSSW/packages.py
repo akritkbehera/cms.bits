@@ -66,6 +66,22 @@ def getPackages(virtual_packages, configDir, *args):
       ),
     }
 
+  # CORAL and its tool configuration share the SCRAM project workflow with
+  # CMSSW. Generate full recipes from their specs/build bodies in this
+  # directory so their dependencies resolve through this provider too.
+  for pkg_name, version in (("coral", "CORAL_2_3_21"), ("coral-tools", "v1")):
+    spec_file = join(pkg_dir, pkg_name + ".yaml")
+    body_file = join(pkg_dir, pkg_name + "-build.sh")
+    if pkg_name not in virtual_packages and os.path.isfile(spec_file) and os.path.isfile(body_file):
+      virtual_packages[pkg_name] = {
+        "version": version,
+        "pkgdir": configDir,
+        "url": pkg_name + ".yaml",
+        "command": 'PYTHONPATH=%s %s/package.py "%s"' % (
+          dirname(sys.argv[0]), pkg_dir, pkg_name,
+        ),
+      }
+
 
 def _extract_flavor(suffix):
   """

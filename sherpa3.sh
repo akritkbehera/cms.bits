@@ -58,4 +58,4 @@ cmake -S . -B build \
 cmake --build build --parallel "${JOBS:-1}"
 
 cmake --install build
-sed -i -e 's|^#!/.*|#!/usr/bin/env python3|' %{i}/bin/Sherpa3-generate-model
+sed -i -e 's|^#!/.*|#!/usr/bin/env python3|' "$INSTALLROOT/bin/Sherpa3-generate-model"

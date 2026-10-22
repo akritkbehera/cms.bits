@@ -7,6 +7,7 @@ requires:
  - cmssw-wm-tools
  - cms-git-tools
  - crab
+ - cms-common
 sources:
  - file://hooks/check_dependencies.py
 hook: disable

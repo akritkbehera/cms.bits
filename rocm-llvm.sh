@@ -34,6 +34,10 @@ CMAKE_PREFIX_PATH="$ROCM_CORE_ROOT;$LIBXML2_ROOT;$ZLIB_ROOT;$ROCPROFILER_REGISTE
 RUNTIMES_PREFIX_PATH="${CMAKE_PREFIX_PATH//;/\\;}"
 
 host_triple=$(gcc -dumpmachine)
+# GCC on EL9 omits the ABI component; the offload bundler requires it.
+case "$host_triple" in
+  *-linux) host_triple="${host_triple}-gnu" ;;
+esac
 cmake -G Ninja \
   -S "$BUILDDIR/llvm" \
   -B "$BUILDDIR/build-llvm" \

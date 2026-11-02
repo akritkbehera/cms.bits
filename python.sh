@@ -17,6 +17,7 @@ requires:
  - gcc
 build_requires:
  - gmake
+ - pkg-config
 env:
   PYTHON_MAJOR_MINOR_VERSION: "%(python_major_minor)s"
   PYTHON_MAJOR_MINOR_STR: "%(python_major_minor_str)s"
@@ -51,6 +52,13 @@ done
 export CPPFLAGS
 export LDFLAGS=" $LDFLAGS -Wl,-rpath,'\$\$ORIGIN/../lib' -z origin -Wl,--enable-new-dtags"
 
+# CMSDIST enables _tkinter against the build OS Tcl/Tk. Make that dependency
+# explicit instead of silently omitting the module in an isolated build env.
+TCLTK_PKG_CONFIG_PATH="/usr/lib64/pkgconfig:/usr/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+TCLTK_CFLAGS="$(PKG_CONFIG_PATH="$TCLTK_PKG_CONFIG_PATH" pkg-config --cflags tcl tk)"
+TCLTK_LIBS="$(PKG_CONFIG_PATH="$TCLTK_PKG_CONFIG_PATH" pkg-config --libs tcl tk)"
+export TCLTK_CFLAGS TCLTK_LIBS
+
 LDFLAGS="$LDFLAGS" CPPFLAGS="$CPPFLAGS" ./configure \
     --prefix="$INSTALLROOT" \
     --enable-shared \
@@ -61,6 +69,8 @@ LDFLAGS="$LDFLAGS" CPPFLAGS="$CPPFLAGS" ./configure \
 
 make ${JOBS:+-j $JOBS}
 make install
+mkdir -p "$INSTALLROOT/license"
+cp LICENSE "$INSTALLROOT/license/LICENSE"
 
 
 pythonv=$(echo ${PKGVERSION} | sed 's|^v||' | cut -d. -f 1,2)
@@ -78,6 +88,7 @@ export PYTHONPATH="$INSTALLROOT/lib/python${pythonv}/site-packages"
 which python${python_major}
 python${python_major} --version
 python${python_major} -c 'import sys; print(sys.executable)'
+python${python_major} -c 'import _tkinter'
 
 sed -i -e "s|^#!.*python${pythonv} *$|#!/usr/bin/env python${python_major}|" ${INSTALLROOT}/bin/* ${INSTALLROOT}/lib/python${pythonv}/*.py
 sed -i -e "s|^#!/.*|#!/usr/bin/env python${pythonv}m|" ${INSTALLROOT}/lib/python${pythonv}/config-*/python-config.py

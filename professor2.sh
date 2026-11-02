@@ -44,8 +44,20 @@ done
 
 export build_flags="CPPFLAGS=-I${EIGEN_ROOT}/include/eigen3 PYTHON=$(which python3) PROF_VERSION=$PKG_VERSION PYTHONPATH=./${PYTHON3_LIB_SITE_PACKAGES}:./pyext/professor2:${PYTHON3PATH}"
 
+# PIP_ROOT names the BITS dependency but pip treats it as --root.
+unset PIP_ROOT
 make PREFIX="$INSTALLROOT" $build_flags
 make install PREFIX="$INSTALLROOT" $build_flags
+
+# Install the Python extension explicitly: the upstream make install path can
+# copy the Python sources without the wheel-built core extension.
+CPPFLAGS="-I${EIGEN_ROOT}/include/eigen3 ${CPPFLAGS:-}" \
+PROF_ROOT="$BUILDDIR" PROF_VERSION="$PKGVERSION" python3 -m pip install \
+  --no-deps --no-index --no-build-isolation --upgrade \
+  --target "$INSTALLROOT/$PYTHON3_LIB_SITE_PACKAGES" "$BUILDDIR/pyext"
+PYTHONPATH="$INSTALLROOT/$PYTHON3_LIB_SITE_PACKAGES${PYTHONPATH:+:$PYTHONPATH}" \
+LD_LIBRARY_PATH="$INSTALLROOT/lib:$INSTALLROOT/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+  python3 -c 'import professor2.core'
 
 #mv $INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/$PKGNAME-$PKG_VERSION*.dist* $INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/$PKGNAME
 rm -f $INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/*.pth

@@ -11,6 +11,7 @@ sources:
 patches:
   - triton-inference-client-uint8.patch
 build_requires:
+  - setuptools
   - CMake
   - git
   - py-wheel
@@ -44,6 +45,7 @@ patch -p1 -s -i "$SOURCEDIR/$PATCH0"
 popd
 
 sed -i -e 's|import os|import os,sys|' "$PKGNAME-$PKGVERSION/src/python/library/build_wheel.py"
+sed -i '/^from distutils.dir_util import copy_tree/i import setuptools' "$PKGNAME-$PKGVERSION/src/python/library/build_wheel.py"
 sed -i '/^project/a option(BUILD_SHARED_LIBS "Build using shared libraries" ON)' ${CML_COM}
 
 TRITON_ENABLE_GPU_VALUE="ON"

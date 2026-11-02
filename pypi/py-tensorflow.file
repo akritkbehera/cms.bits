@@ -61,7 +61,10 @@ PipPrePrep='SOURCEDIR=$TENSORFLOW_SOURCES_ROOT SOURCE0=tensorflow-$PKG_VERSION-c
 PipPostBuild='
   rm -f "$INSTALLROOT/bin/tensorboard"*
   for f in "$INSTALLROOT/bin/"*; do
-    [ -f "$f" ] && mv "$f" "${f}3"
+    if [ -f "$f" ]; then
+      mv "$f" "${f}3"
+      ln -s "${f##*/}3" "$f"
+    fi
   done
 '
 PipDepsPost="grep -v '\<libclang\>'"

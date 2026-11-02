@@ -1,6 +1,5 @@
 package: cms-bootstrap
 version: "1.0"
-force_revision: ""
 requires:
  - SCRAMV1
  - SCRAMV2

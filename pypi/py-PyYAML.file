@@ -1,4 +1,11 @@
 package: py-PyYAML
+requires:
+ - libyaml
+build_requires:
+ - py-cython
 sources: 
 - https://pypi.io/packages/source/p/pyyaml/pyyaml-%(version)s.tar.gz
 ---
+PipBuildOptions='--config-settings="--global-option=--with-libyaml"'
+PipPreBuild='export CPPFLAGS="-I${LIBYAML_ROOT}/include ${CPPFLAGS:-}"; export LDFLAGS="-L${LIBYAML_ROOT}/lib -lyaml ${LDFLAGS:-}"'
+PipPostInstall='PYTHONPATH="$INSTALLROOT/$PYTHON3_LIB_SITE_PACKAGES${PYTHONPATH:+:$PYTHONPATH}" python3 -c "import yaml; import yaml._yaml; assert yaml.__with_libyaml__"'

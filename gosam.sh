@@ -5,6 +5,8 @@ variables:
   github_user: gudrunhe
 sources:
   - git+https://github.com/%(github_user)s/%(package)s.git?obj=%(branch)s/%(version)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
+build_requires:
+  - setuptools
 requires:
   - gcc
   - qgraf
@@ -27,6 +29,8 @@ CXX="$(which c++) -fPIC"
 CC="$(which gcc) -fPIC"
 FC="$(which gfortran)"
 PLATF_CONF_OPTS="--enable-shared --disable-static"
+# Activate setuptools' distutils compatibility for Python 3.12 and newer.
+sed -i '/^from distutils.core import setup/i import setuptools' setup.py
 python3 setup.py install --prefix=$INSTALLROOT
 
 perl -p -i -e "s|^#!.*python.*|#!/usr/bin/env python3|" $(grep -r -e "^#\!.*python.*" $INSTALLROOT | cut -d: -f1)

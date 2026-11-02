@@ -21,7 +21,7 @@ package_family:
     - CMSSW*
 auto_patch: false
 hook:
-  POST_INSTALL: check_dependencies,generate_module
+  POST_INSTALL: runtime-setup,check_dependencies,generate_module
 revision_policy: "hash"
 system:
   prefix: "/cvmfs"

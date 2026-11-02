@@ -4,6 +4,7 @@ Run with PYTHONPATH pointing to the bits checkout:
     python3 -m unittest discover -s tests -v
 """
 import json
+import hashlib
 import os
 from pathlib import Path
 import subprocess
@@ -12,7 +13,7 @@ import tempfile
 import unittest
 
 from bits_helpers.recipe import parseRecipe
-from bits_helpers.utilities import resolve_spec_data
+from bits_helpers.build import prepare_hash_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -29,15 +30,21 @@ def recipe(name):
     error, spec, body = parseRecipe(Reader(ROOT / (name + '.sh')))
     if error:
         raise RuntimeError(error)
-    body = resolve_spec_data(spec, body, ['release'], default_vars={
-        'override_microarch_name': '', 'cms_cxx_std': '20',
-        'cms_build_type': 'Release'}, strict=False)
-    return spec, body
+    error, defaults, _ = parseRecipe(Reader(ROOT / 'defaults-release.sh'))
+    if error:
+        raise RuntimeError(error)
+    spec['recipe'] = body
+    spec['scm_refs'] = {}
+    prepare_hash_inputs(spec, {'Python': {'version': '3.14'}}, ['release'],
+                        defaults['variables'], str(ROOT))
+    return spec, spec['recipe']
 
 
 MOCK_BAZEL = r'''#!/usr/bin/env python3
 import json, os, pathlib, sys
 args = sys.argv[1:]
+assert 'LLVM_VERSION' not in os.environ
+assert '--config=clang_local' in args
 with open(os.environ['BAZEL_TEST_LOG'], 'a') as f:
     f.write(json.dumps(args) + '\n')
 cache = pathlib.Path(next(a.split('=', 1)[1] for a in args if a.startswith('--repository_cache=')))
@@ -124,8 +131,9 @@ class TensorFlowCacheTest(unittest.TestCase):
         env.update({
             'PKG_VERSION': '2.21.0', 'BUILDDIR': str(work), 'INSTALLROOT': str(install),
             'SOURCEDIR': str(self.sources), 'SOURCE0': 'tensorflow.tgz',
+            'WORK_DIR': str(self.base / 'sw'), 'ARCHITECTURE': 'test_arch',
             'PATCH0': 'tensorflow.patch', 'JOBS': '2', 'JAVA_HOME': str(self.base),
-            'LLVM_VERSION': '21.1.4', 'PYTHON_MAJOR_MINOR_VERSION': '3.14',
+            'LLVM_VERSION': '23.1.3', 'PYTHON_MAJOR_MINOR_VERSION': '3.14',
             'PYTHON3_LIB_SITE_PACKAGES': 'lib/python3.14/site-packages',
             'PYTHON3PATH': '', 'LD_LIBRARY_PATH': '', 'CXXSTD': '23',
             'BAZEL_TEST_LOG': str(self.log),
@@ -160,6 +168,28 @@ class TensorFlowCacheTest(unittest.TestCase):
 
     def test_empty_cache_is_rejected(self):
         result, _ = self.run_stage('tensorflow-sources-cache', {'TEST_EMPTY_CACHE': '1'}, False)
+        self.assertIn('empty repository cache', result.stdout)
+
+    def test_fetch_reuses_verified_archives_from_an_old_installation(self):
+        old = self.base / 'sw/test_arch/external/tensorflow-sources-cache/2.21.0-old'
+        blob = old / 'repository_cache/content_addressable/sha256/fixture/file'
+        blob.parent.mkdir(parents=True)
+        blob.write_text('a fetched dependency')
+        manifest = hashlib.sha256(blob.read_bytes()).hexdigest() + '  ' + str(blob.relative_to(old)) + '\n'
+        (old / 'SHA256SUMS').write_text(manifest)
+        result, cache = self.run_stage('tensorflow-sources-cache', {'TEST_EMPTY_CACHE': '1'})
+        self.assertIn('Preloading verified TensorFlow sources', result.stdout)
+        self.assertEqual((cache / blob.relative_to(old)).read_bytes(), blob.read_bytes())
+        self.assertEqual((old / 'SHA256SUMS').read_text(), manifest)
+
+    def test_fetch_does_not_reuse_corrupted_old_archives(self):
+        old = self.base / 'sw/test_arch/external/tensorflow-sources-cache/2.21.0-old'
+        blob = old / 'repository_cache/content_addressable/sha256/fixture/file'
+        blob.parent.mkdir(parents=True)
+        blob.write_text('corrupted')
+        (old / 'SHA256SUMS').write_text('0' * 64 + '  ' + str(blob.relative_to(old)) + '\n')
+        result, _ = self.run_stage('tensorflow-sources-cache', {'TEST_EMPTY_CACHE': '1'}, False)
+        self.assertIn('Skipping invalid TensorFlow source cache', result.stdout)
         self.assertIn('empty repository cache', result.stdout)
 
     def test_corrupted_cache_is_rejected_before_compilation(self):

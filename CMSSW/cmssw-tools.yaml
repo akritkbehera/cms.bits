@@ -1,5 +1,5 @@
 sources:
-  -  https://github.com/akritkbehera/scram-tools.file/archive/14f7fdb59abea6aa0e03daae1d6c32ddd04eb208.tar.gz
+  -  https://github.com/akritkbehera/scram-tools.file/archive/34797bf9691d06dba474f2eb3f6c11c6d54814bc.tar.gz
 hook:
   POST_INSTALL: generate_module
 requires:
@@ -180,7 +180,6 @@ requires:
   - igprof
   - heaptrack
   - openloops
-  - mozsearch
   - tkonlinesw
   - oracle
   - icx
@@ -194,8 +193,6 @@ requires:
   - hipcc-parallel
   - cmsmon-tools
   - log4cplus
-  - tkonlinesw-fake
-  - oracle-fake
   - xtensor
   - xtl
   - xgboost

@@ -87,9 +87,8 @@ CONF_GCC_WITH_LTO="--enable-ld=default --enable-lto --enable-gold=yes"
 
 # Architecture-specific configure options
 CONF_GCC_ARCH_SPEC="--enable-frame-pointer"
-if [ "$(uname -m)" = "x86_64" ]; then
-    CONF_GCC_ARCH_SPEC="$CONF_GCC_ARCH_SPEC --with-arch=x86-64-v3"
-fi
+# Keep GCC's portable x86 baseline, as in CMSDIST. Consumers can select a
+# newer CPU explicitly with -march.
 if [ "$(uname -m)" = "aarch64" ]; then
     CONF_GCC_ARCH_SPEC="$CONF_GCC_ARCH_SPEC --enable-threads=posix --enable-initfini-array --disable-libmpx"
 fi
@@ -156,3 +155,12 @@ rm -rf "$INSTALLROOT/tmp"
 rm -f "$INSTALLROOT"/lib*/libstdc++.a "$INSTALLROOT"/lib*/libsupc++.a
 find "$INSTALLROOT/lib" "$INSTALLROOT/lib64" -name '*.la' -exec rm -f {} \; || true
 rm -rf "$INSTALLROOT/lib/pkg-config"
+
+# CMSDIST strips these binaries; skip scripts and symlinks in the same globs.
+for binary in "$INSTALLROOT"/libexec/*/*/*/{cc1,cc1plus,f951,lto1,collect2} \
+              "$INSTALLROOT"/x86_64*/bin/* "$INSTALLROOT"/lib/lib{mpfr,gmp}* \
+              "$INSTALLROOT"/bin/*{c++,g++,gcc,gfortran,gcov,cpp}*; do
+  [ -f "$binary" ] && [ ! -L "$binary" ] || continue
+  [ "$(head -c 4 "$binary")" = $'\177ELF' ] || continue
+  "$INSTALLROOT/bin/strip" --strip-debug "$binary"
+done

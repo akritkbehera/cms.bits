@@ -1,13 +1,13 @@
 package: clang-uml
-version: 0.6.2
+version: 0.6.3
 variables:
-  tag: 5e2993e75ebc88af6cb239f2ffae88da7431cb0d
-  branch: master
+  tag: a9ec80c0c2b474bfd8c5ec10f5f84bc78931d858
+  branch: v0.6.3
   github_user: bkryza
 sources:
   - git+https://github.com/%(github_user)s/clang-uml.git?obj=%(branch)s/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s-%(tag)s.tgz
 patches:
-  - clang-uml-clang21.patch
+  - clang-uml-clang23.patch
   - clang-uml-yamlcpp.patch
 build_requires:
   - CMake

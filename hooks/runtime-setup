@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+# The legacy generator uses the complete build dependency list in the deployed
+# init.sh. A runtime deployment may omit build-only packages. Modulefiles already
+# use RUNTIME_REQUIRES; make the legacy environment follow the same contract.
+python3 - <<'PY'
+import os
+from pathlib import Path
+import re
+
+root = Path(os.environ['INSTALLROOT'])
+init = root / 'etc/profile.d/init.sh'
+runtime = set(os.environ.get('RUNTIME_REQUIRES', '').split())
+build_only = set(os.environ.get('BUILD_REQUIRES', '').split()) - runtime
+prefixes = tuple('[ -n "${' + re.sub(r'[^A-Za-z0-9_]', '_', name).upper()
+                 + '_REVISION}" ] || ' for name in sorted(build_only))
+text = init.read_text()
+init.write_text(''.join(line for line in text.splitlines(keepends=True)
+                        if not line.startswith(prefixes)))
+PY

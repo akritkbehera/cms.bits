@@ -18,6 +18,20 @@ if [ "$fetch_externals" = no ]; then
   # Stage a writable copy: Bazel must not mutate the installed dependency.
   (cd "$TENSORFLOW_SOURCES_CACHE_ROOT" && sha256sum -c SHA256SUMS)
   cp -a "$TENSORFLOW_SOURCES_CACHE_ROOT/repository_cache/." "$repo_cache/"
+elif [ -n "${WORK_DIR:-}" ] && [ -n "${ARCHITECTURE:-}" ]; then
+  # Like cmsdist's fetch_cached_sources, preload verified source archives before
+  # Bazel fetch. Content-addressed entries remain valid across dependency hashes.
+  for previous_cache in "$WORK_DIR/$ARCHITECTURE/external/tensorflow-sources-cache/$PKG_VERSION-"*/repository_cache; do
+    [ -d "$previous_cache" ] || continue
+    previous_root="${previous_cache%%/repository_cache}"
+    [ -s "$previous_root/SHA256SUMS" ] || continue
+    if (cd "$previous_root" && sha256sum --quiet -c SHA256SUMS); then
+      echo "Preloading verified TensorFlow sources from $previous_root"
+      cp -an "$previous_cache/." "$repo_cache/"
+    else
+      echo "WARNING: Skipping invalid TensorFlow source cache: $previous_root" >&2
+    fi
+  done
 fi
 export USER="builder"
 
@@ -48,7 +62,10 @@ export TF_NEED_CLANG=1
 export CLANG_COMPILER_PATH="${LLVM_ROOT}/bin/clang"
 export CC_OPT_FLAGS="-Wno-sign-compare"
 export BAZEL_OPTS="--batch --output_user_root $bazel_user_root"
-export LLVM_VERSION=$(echo "$LLVM_VERSION" | sed 's|\..*||')
+# rules_ml_toolchain uses LLVM_VERSION to select a bundled LLVM (18--21),
+# independently of the CMS compiler. Match cmsdist: use clang_local and
+# CLANG_COMPILER_PATH above, without leaking BITS' LLVM version into that selector.
+unset LLVM_VERSION
 
 if [ $(${JAVA_HOME}/bin/java -version 2>&1 | grep -E -i 'openjdk version "[1-9]' | sed -E 's|.* "([0-9]+)[.].*|\1|') -ge 17 ] ; then
 BAZEL_OPTS="$BAZEL_OPTS --host_jvm_args=--add-opens=java.base/java.nio=ALL-UNNAMED"
@@ -92,6 +109,9 @@ BAZEL_OPTS+=" --config=clang_local"
 # (per_file_copt is applied after the global --cxxopt, so it wins).
 BAZEL_OPTS+=" --per_file_copt=external/onednn/.*[.]cpp@-std=c++17"
 BAZEL_OPTS+=" --per_file_copt=external/jpegxl/.*enc_fast_lossless.*@-O1"
+# Match cmsdist: Highway 1.3.0 runtime dispatch fails with clang 23's AVX-512
+# target checks. Compile jpegxl and Highway for the selected -march baseline.
+BAZEL_OPTS+=" --per_file_copt=external/jpegxl/.*,external/com_google_highway/.*@-DHWY_COMPILE_ONLY_STATIC=1"
 # Build-time tools (protoc_minimal, ...) run under bazel with a cleared env, so they lose
 # LD_LIBRARY_PATH and can't find the gcc libstdc++ nor any other external lib. Forward
 # the full ${LD_LIBRARY_PATH} into the action environment (build-time only, relocatable).

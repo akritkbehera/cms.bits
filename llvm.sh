@@ -1,10 +1,10 @@
 package: llvm
-version: 21.1.4
+version: 23.1.3
 variables:
- llvmCommit: 3063d23cfa249166b2e0c33a02c7300c20ffb2d
- llvmBranch: cms/llvmorg-21.1.4
- iwyuCommit: 791e69ea4662cb3e74e8128fd5fd69bd7f4ea6b3
- iwyuBranch: clang_21
+ llvmCommit: a241dacf7844d832e7177b544a08abc7f029ee85
+ llvmBranch: cms/llvmorg-23.1.3
+ iwyuCommit: c9cbc836a1af631610266c53cf1671b1671a0fdc
+ iwyuBranch: clang_23
 sources:
  - git+https://github.com/cms-externals/llvm-project.git?obj=%(llvmBranch)s/%(llvmCommit)s&export=llvm-%(version)s-%(llvmCommit)s&module=llvm-%(version)s-%(llvmCommit)s&output=/llvm-%(version)s-%(llvmCommit)s.tgz
  - git+https://github.com/include-what-you-use/include-what-you-use.git?obj=%(iwyuBranch)s/%(iwyuCommit)s&export=iwyu-%(version)s-%(iwyuCommit)s&module=iwyu-%(version)s-%(iwyuCommit)s&output=/iwyu-%(version)s-%(iwyuCommit)s.tgz
@@ -76,6 +76,13 @@ if [ -n "$CUDA_ROOT" ]; then
 fi
 
 cmake "${cmake_args[@]}" "$BUILDDIR/$PKGNAME-$PKGVERSION/$PKGNAME"
+
+# Configure build-tree tools before running them, as in cmsdist llvm.spec.
+if [ -z "${use_system_gcc}" ]; then
+  printf '%%s\n' "--gcc-toolchain=$GCC_ROOT" "--target=$host_triple" > bin/clang++.cfg
+  ln -s clang++.cfg bin/clang.cfg
+fi
+
 ninja -v ${JOBS:+-j $JOBS} install
 bin/clang-tidy --checks=* --list-checks | grep cms-handle
 
@@ -101,12 +108,7 @@ rm -f $INSTALLROOT/bin/FileRadar.scpt $INSTALLROOT/bin/GetRadarVersion.scpt
 rm -f $INSTALLROOT/bin/set-xcode-analyzer
 
 if [ -z "${use_system_gcc}" ]; then
-    pushd $INSTALLROOT/bin
-        [ -e clang++.cfg ] && exit 1
-        [ -e clang.cfg   ] && exit 1
-        echo "--gcc-toolchain=$GCC_ROOT" > clang++.cfg
-        echo "--target=$host_triple"    >> clang++.cfg
-        ln -s clang++.cfg clang.cfg
-    popd
+  mv bin/clang++.cfg "$INSTALLROOT/bin/clang++.cfg"
+  mv bin/clang.cfg "$INSTALLROOT/bin/clang.cfg"
 fi
 

@@ -135,7 +135,6 @@ requires:
   - py-numpy
   - py-sqlalchemy
   - py-pygithub
-  - py-dxr
   - py-PyYAML
   - py-pylint
   - pip

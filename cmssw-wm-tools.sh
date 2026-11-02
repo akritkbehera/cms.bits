@@ -5,7 +5,6 @@ variables:
 sources:
   - https://github.com/cms-sw/cmssw-wm-tools/archive/%(tag)s.tar.gz
 architecture: share
-force_revision: ""
 ---
 # Unpack the source tarball into the build directory.
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
@@ -29,7 +28,7 @@ fi
 mkdir -p \$WORK_DIR/share/overrides \$WORK_DIR/etc/$PKGNAME
 
 # Enter the installed package directory to use relative paths.
-cd \$WORK_DIR/share/$PKGFAMILY/$PKGNAME/$PKGVERSION
+cd \$WORK_DIR/share/$PKGFAMILY/$PKGNAME/$PKGVERSION-$PKGHASH
 
 # Sync bin/ and python/ directories to the shared overrides area.
 for d in bin python ; do

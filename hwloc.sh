@@ -46,16 +46,16 @@ if [[ -n "$CUDA_ROOT" ]]; then
   )
 fi
 
-if [[ -n "$ROCM_ROOT" ]]; then
+if [[ -n "$ROCM_SMI_LIB_ROOT" ]]; then
   args+=(
-    --with-rocm="$ROCM_ROOT"
+    --with-rocm="$ROCM_SMI_LIB_ROOT"
     --enable-rsmi
   )
 fi
 
 plugins=""
 [[ -n "$CUDA_ROOT" ]] && plugins="cuda,nvml"
-[[ -n "$ROCM_ROOT" ]] && plugins="${plugins:+$plugins,}rsmi"
+[[ -n "$ROCM_SMI_LIB_ROOT" ]] && plugins="${plugins:+$plugins,}rsmi"
 if [[ -n "$plugins" ]]; then
   args+=(--enable-plugins=$plugins)
 fi

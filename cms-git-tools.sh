@@ -7,7 +7,6 @@ variables:
 build_requires:
  - gmake
 architecture: share
-force_revision: ""
 hook: disable
 ---
 # Unpack the source tarball into the build directory.
@@ -30,13 +29,13 @@ mkdir -p \$WORK_DIR/share \$WORK_DIR/common \$WORK_DIR/etc/cms-git-tools \$WORK_
 # Check if a newer revision is already installed; skip if so.
 if [ -f \$WORK_DIR/etc/cms-git-tools/version ] ; then
   oldrev=\$(cat \$WORK_DIR/etc/cms-git-tools/version)
-  if [ \$oldrev -ge $PKG_VERSION ] ; then
+  if [ \$oldrev -ge $PKGVERSION ] ; then
     exit 0
   fi
 fi
 
 # Enter the installed package directory to use relative paths (matches spec's
-cd \$WORK_DIR/share/$PKGFAMILY/$PKGNAME/$PKGVERSION${PKGREVISION:+-$PKGREVISION}
+cd \$WORK_DIR/share/$PKGFAMILY/$PKGNAME/$PKGVERSION-$PKGHASH
 
 # Sync man pages and git-cms-* commands to the shared install area.
 [ -d ./share ]  && rsync -a ./share/  \$WORK_DIR/share/
@@ -47,6 +46,6 @@ rm -f \$WORK_DIR/common/git-addpkg
 rm -f \$WORK_DIR/common/git-checkdeps
 
 # Record the installed version for future upgrade checks.
-echo $PKG_VERSION > \$WORK_DIR/etc/cms-git-tools/version
+echo $PKGVERSION > \$WORK_DIR/etc/cms-git-tools/version
 EoF
 

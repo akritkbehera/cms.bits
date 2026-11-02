@@ -11,5 +11,5 @@ requires:
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
-mkdir -p $INSTALLROOT/include
-cp -ar clueLib/include $INSTALLROOT/include
+mkdir -p "$INSTALLROOT/include"
+cp -a clueLib/include/. "$INSTALLROOT/include/"

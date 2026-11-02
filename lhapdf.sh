@@ -9,6 +9,7 @@ sources:
  - file://lhapdf_pdfsetsindex.file
 build_requires:
  - py-cython
+ - setuptools
 requires:
  - Python
  - gcc
@@ -23,6 +24,7 @@ PYTHON=$(which python3) \
 
 # Delete wrappers/python/lhapdf.cpp and re-generate with newer cython
 rm -f wrappers/python/lhapdf.cpp
+sed -i '/^from distutils.core import setup/i import setuptools' wrappers/python/setup.py
 
 sed -i '/yaml-cpp\/null.h/a #include <cstdint>' src/yamlcpp/emitterutils.cpp
 

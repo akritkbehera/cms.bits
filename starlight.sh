@@ -33,3 +33,6 @@ cmake "${make_args[@]}"
 make ${JOBS:+-j$JOBS} -C "$BUILDDIR/build" VERBOSE=1
 make ${JOBS:+-j$JOBS} -C "$BUILDDIR/build" install VERBOSE=1
 rm -rf "$INSTALLROOT/lib/archive"
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

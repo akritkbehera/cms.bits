@@ -44,3 +44,6 @@ export PKG_CONFIG_PATH="$ROCDBGAPI_ROOT/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_
 
 make ${JOBS:+-j$JOBS}
 make install
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

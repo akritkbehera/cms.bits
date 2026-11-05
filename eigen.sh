@@ -32,3 +32,6 @@ cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -DCMAKE_CXX_STANDARD=%(cms_cxx_std)s
 
 make -C "$BUILDDIR/build" install
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

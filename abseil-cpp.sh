@@ -28,7 +28,9 @@ if [[ "$VERBOSE" == "1" ]]; then
     CMAKE_ARGS+=(-DCMAKE_VERBOSE_MAKEFILE=ON)
 fi
 
-cmake -S "$BUILDDIR" -B "$BUILDDIR" "${CMAKE_ARGS[@]}"
+# Keep CMake-generated directories out of the source headers being installed.
+build_dir="$BUILDDIR/bits-build"
+cmake -S "$BUILDDIR" -B "$build_dir" "${CMAKE_ARGS[@]}"
 
-make -C "$BUILDDIR" ${JOBS:+-j "$JOBS"} ${VERBOSE:+VERBOSE=1}
-make -C "$BUILDDIR" install
+make -C "$build_dir" ${JOBS:+-j "$JOBS"} ${VERBOSE:+VERBOSE=1}
+make -C "$build_dir" install

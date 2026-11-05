@@ -20,6 +20,7 @@ requires:
 ---
 #!include <compilation-flags.file>
 #!include <microarch-flags.file>
+#!include <compilation-flags-lto.file>
 
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
@@ -30,7 +31,7 @@ grep -q 'BUILD_SHARED_LIBS ON' "$BUILDDIR/CMakeLists.txt" && \
 grep -q 'BUILD_STATIC_LIBS OFF' "$BUILDDIR/CMakeLists.txt" && \
     sed -i -e 's|BUILD_STATIC_LIBS OFF|BUILD_STATIC_LIBS ON|' "$BUILDDIR/CMakeLists.txt"
 
-CMS_FLAGS="-fPIC ${arch_build_flags} ${selected_microarch}"
+CMS_FLAGS="-fPIC ${arch_build_flags} ${selected_microarch} ${lto_build_flags} ${pgo_build_flags}"
 
 use_vecgeom=OFF
 [ -n "$VECGEOM_REVISION" ] && use_vecgeom=ON

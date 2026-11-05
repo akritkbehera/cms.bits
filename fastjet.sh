@@ -68,3 +68,6 @@ make ${JOBS:+-j$JOBS}
 make install
 
 rm -rf $INSTALLROOT/lib/*.la
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

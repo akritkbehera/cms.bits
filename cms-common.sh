@@ -1,7 +1,7 @@
 package: cms-common
-version: "1261"
+version: "1262"
 variables:
-  tag: 817620fac9a30385b05efb2dd0f668c90b7ec89f
+  tag: c4a644c3bc0af70212eab5cd241a49c053933184
 sources:
   - https://github.com/cms-sw/cms-common/archive/%(tag)s.tar.gz
 force_revision: ""
@@ -9,21 +9,28 @@ architecture: "share"
 hook: disable
 ---
 # Unpack the source tarball into the build directory.
+mkdir -p "$BUILDDIR/source"
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
-    -C "$BUILDDIR"
+    -C "$BUILDDIR/source"
+pushd "$BUILDDIR/source"
 
 # Substitute CMS install prefix and architecture in all source files.
 # @CMS_PREFIX@ is replaced with the global install root (not the package dir).
 # @SCRAM_ARCH@ is replaced with the architecture string.
 find . -type f | xargs sed -i -e "s|@CMS_PREFIX@|$WORK_DIR|g;s|@SCRAM_ARCH@|$ARCHITECTURE|"
 
-rsync -a $BUILDDIR/ $INSTALLROOT/
+# Keep source payload separate from bits-generated package metadata, as CMSDIST
+# does with its revision directory. Only source files are copied to WORK_DIR.
+mkdir -p "$INSTALLROOT/$PKGVERSION"
+rsync -a "$BUILDDIR/source/" "$INSTALLROOT/$PKGVERSION/"
+popd
 
 # --- Post-relocate script ---
 # cms-common files are deployed to the root of the install area ($WORK_DIR).
 # This script copies package contents there, handling revision checks and
 # special directories (scramrc, share).
+mkdir -p "$INSTALLROOT/etc/profile.d"
 cat >"$INSTALLROOT/etc/profile.d/post-relocate.sh" <<EoF
 mkdir -p \$WORK_DIR/etc/$PKGNAME \$WORK_DIR/$ARCHITECTURE/etc/profile.d
 # Check if a newer revision is already installed.
@@ -36,7 +43,7 @@ if [ -f \$WORK_DIR/cmsset_default.csh ] && [ -f \$WORK_DIR/etc/cms-common/revisi
 fi
 
 # Enter the installed package directory to use relative paths for file operations.
-cd \$WORK_DIR/\$PP
+cd \$WORK_DIR/\$PP/$PKGVERSION
 
 mkdir -p \$WORK_DIR/share \$WORK_DIR/etc/scramrc
 # Sync SCRAM configuration database if present.

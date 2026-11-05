@@ -33,3 +33,6 @@ if [ -d "$INSTALLROOT/lib64" ]; then
   mv "$INSTALLROOT/lib64/"* "$INSTALLROOT/lib/"
   rmdir "$INSTALLROOT/lib64"
 fi
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

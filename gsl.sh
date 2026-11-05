@@ -1,7 +1,7 @@
 package: GSL
-version: "v2.6.0"
+version: "2.6"
 sources:
-  - https://github.com/ampl/gsl/archive/%(version)s.tar.gz
+  - https://ftp.gnu.org/gnu/gsl/gsl-%(version)s.tar.gz
 requires:
   - gcc
   - OpenBLAS

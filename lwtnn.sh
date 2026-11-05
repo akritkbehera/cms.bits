@@ -34,3 +34,6 @@ cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
 ninja -v ${JOBS:+-j$JOBS} -C "$BUILDDIR/build"
 ninja -v ${JOBS:+-j$JOBS} -C "$BUILDDIR/build" install
 
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

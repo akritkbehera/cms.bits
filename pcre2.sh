@@ -25,3 +25,9 @@ sh autogen.sh
 
 make ${JOBS:+-j$JOBS}
 make install
+
+# Match the CMSDIST package payload: omit pkg-config files and documentation.
+rm -rf "$INSTALLROOT/lib/pkgconfig" "$INSTALLROOT/share"
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

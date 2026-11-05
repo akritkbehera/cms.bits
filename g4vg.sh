@@ -2,6 +2,9 @@ package: g4vg
 version: 1.0.6
 sources:
   - https://github.com/celeritas-project/g4vg/releases/download/v%(version)s/g4vg-%(version)s.tar.gz
+#!include <compilation-flags.file>
+#!include <microarch-flags.file>
+#!include <compilation-flags-lto.file>
 build_requires:
   - CMake
   - gmake
@@ -16,7 +19,7 @@ requires:
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" -C "$BUILDDIR"
 
-build_flags="-Wall -Wextra -pedantic -fPIC"
+build_flags="-Wall -Wextra -pedantic -fPIC ${arch_build_flags} ${selected_microarch} ${lto_build_flags} ${pgo_build_flags}"
 
 cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT" \

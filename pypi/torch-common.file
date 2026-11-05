@@ -2,6 +2,13 @@
 # torch-cuda pulls in via ## INCLUDE pip/torch). Sourced by py-torch.file and py-torch-cuda.file;
 # each carries its own frontmatter (sources/patches/requires) since bits has no ## INCLUDE.
 # CUDA is OFF here; the -cuda variant flips it on afterwards via its PipPreBuildPy override.
+if [[ -z "${selected_microarch:-}" ]]; then
+  if [[ -n "${override_microarch_name:-}" ]]; then
+    selected_microarch="-march=${override_microarch_name}"
+  elif [[ "$(uname -m)" == "x86_64" ]]; then
+    selected_microarch="-march=x86-64-v3"
+  fi
+fi
 
 PipPatchSource='cp "$SOURCEDIR/$SOURCE1" "$BUILDDIR/py$Pypi_name-v$PKGVERSION/cmake/Modules/FindEigen3.cmake"'
 
@@ -11,8 +18,10 @@ export USE_CUDNN=OFF
 export USE_ROCM=OFF
 MEM_GB=$(/usr/bin/free -g | awk '/^Mem:/{print $2}')
 MAX_JOBS=$(( MEM_GB / 4 ))
+if [ $MAX_JOBS -lt 1 ] ; then MAX_JOBS=1; fi
 if [ $MAX_JOBS -gt $JOBS ] ; then MAX_JOBS=$JOBS; fi
 export MAX_JOBS
+export CMAKE_BUILD_PARALLEL_LEVEL="$MAX_JOBS"
 export GCC_ROOT=${GCC_ROOT}
 export LibLZMA_ROOT=${XZ_ROOT}
 export USE_SYSTEM_PSIMD=ON

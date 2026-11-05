@@ -1,8 +1,6 @@
-diff --git a/cmake/public/LoadHIP.cmake b/cmake/public/LoadHIP.cmake
-index 40aa87c65..616b99a6f 100644
 --- a/cmake/public/LoadHIP.cmake
 +++ b/cmake/public/LoadHIP.cmake
-@@ -301,6 +301,7 @@ if(PYTORCH_FOUND_HIP)
+@@ -319,6 +319,7 @@
    # These components will be searced for recursively in ${ROCM_PATH}
    message("\n***** Library versions from cmake find_package *****\n")
    find_package_and_print_version(amd_comgr REQUIRED)
@@ -10,9 +8,9 @@ index 40aa87c65..616b99a6f 100644
    find_package_and_print_version(rocrand REQUIRED)
    find_package_and_print_version(hiprand REQUIRED)
    find_package_and_print_version(rocblas REQUIRED)
-@@ -334,6 +335,32 @@ if(PYTORCH_FOUND_HIP)
-   # Optional components.
-   find_package_and_print_version(hipsparselt)  # Will be required when ready.
+@@ -358,6 +359,32 @@
+   # 'REQUIRED' once minimal ROCm version is bumped to 8.0 or later.
+   find_package_and_print_version(libhipcxx)
  
 +  # Some ROCm packages use target-based includes (INTERFACE_INCLUDE_DIRECTORIES)
 +  # instead of setting ${PACKAGE}_INCLUDE_DIR. Extract includes from these targets.

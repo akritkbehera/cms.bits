@@ -1,7 +1,7 @@
 package: lz4
-version: "v1.9.2"
+version: "1.10.0"
 sources:
-  - https://github.com/lz4/lz4/archive/%(version)s.tar.gz
+  - https://github.com/lz4/lz4/archive/v%(version)s.tar.gz
 build_requires:
   - gmake
 requires:
@@ -13,3 +13,6 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 make ${JOBS:+-j$JOBS}
 make install PREFIX=$INSTALLROOT
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

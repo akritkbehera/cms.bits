@@ -23,3 +23,16 @@ autoreconf -fiv
 
 make ${JOBS:+-j$JOBS}
 make install
+
+# CMSDIST's relocateConfig step materializes this upstream symlink as a file.
+# Keep the copied script relocatable while matching that installed layout.
+if [ -L "$INSTALLROOT/bin/libpng-config" ]; then
+  cp -L -p "$INSTALLROOT/bin/libpng-config" "$INSTALLROOT/bin/libpng-config.tmp"
+  mv -f "$INSTALLROOT/bin/libpng-config.tmp" "$INSTALLROOT/bin/libpng-config"
+fi
+
+# CMSDIST drops package documentation.
+rm -rf "$INSTALLROOT/share"
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

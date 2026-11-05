@@ -55,3 +55,6 @@ if [ "$ARCH" = "riscv64" ]; then
 fi
 
 make PREFIX=$INSTALLROOT install MAKE_NB_JOBS=$JOBS
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

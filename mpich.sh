@@ -1,7 +1,9 @@
 package: mpich
 version: 4.3.2
+variables:
+  tag: 15f59ab2b740539472dfd130f7fe01b61c28bba4
 sources: 
- - https://github.com/pmodels/mpich/releases/download/v%(version)s/mpich-%(version)s.tar.gz
+ - git+https://github.com/pmodels/mpich.git?obj=4.3.x/%(tag)s&export=mpich-%(version)s&submodules=1&output=/mpich-%(version)s.tar.gz
 build_requires:
  - autotools
 requires:
@@ -14,14 +16,12 @@ requires:
  - cuda
  - rocm-hip
 ---
-#!include <cuda-flags.file>
 #!include <rocm-flags.file>
 
 export PYTHONHOME=$PYTHON_ROOT
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
-export j=$(echo $cuda_arch | sed -e's/ \+/,/g')
 rm -rf modules/hwloc
 sed -e's/do_hwloc=.*/do_hwloc=no/' -i autogen.sh
 rm -rf modules/libfabric
@@ -60,12 +60,10 @@ configure_args=(
   --with-device=ch4:ucx
   )
 
-if [[ -z $CUDA_ROOT ]]; then
-  configure_args+=("--without-cuda")
-else
-  configure_args+=("--with-cuda=$CUDA_ROOT")
-  configure_args+=("--with-cuda-sm=$j")
-fi
+# The frozen CMSSW_20_1_X reference has no CUDA fatbin or CUDA runtime linkage
+# in libmpi. Keep CUDA in the declared dependency environment, as CMSDIST does,
+# but build this MPICH variant without CUDA device support to match that payload.
+configure_args+=("--without-cuda")
 
 ./configure "${configure_args[@]}"
 

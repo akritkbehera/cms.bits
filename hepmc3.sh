@@ -47,3 +47,6 @@ cmake "${CMAKE_ARGS[@]}"
 
 make -C "$BUILDDIR/build" ${JOBS:+-j$JOBS} VERBOSE=1
 make -C "$BUILDDIR/build" install
+
+# Match CMSDIST: keep documentation out of the deployed package.
+rm -rf "$INSTALLROOT/share/doc"

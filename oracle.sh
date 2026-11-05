@@ -42,7 +42,8 @@ fi
 chmod -Rf a+rX,u+w,g-w,o-w $client_dir
 cd $client_dir
 
-if [[ $(uname -m) == "aarch64" ]]; then
+# The supplemental x86-64 OCCI archive provides the GCC 5+ C++ ABI.
+if [[ $(uname -m) == "x86_64" ]]; then
   chmod +x libocci_gcc53.so.%(occi_lib)s
   ln -sf libocci_gcc53.so.%(occi_lib)s libocci.so.%(occi_lib)s
 fi
@@ -72,3 +73,6 @@ for f in lib*.{dylib,so}.[0-9]*; do
   rm -f $dest
   ln -s $f $dest
 done
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

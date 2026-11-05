@@ -1,11 +1,11 @@
 package: py-torch-cuda
-version: 2.13.0
+version: 2.14.1
 sources:
  - https://github.com/pytorch/pytorch/releases/download/v%(version)s/pytorch-v%(version)s.tar.gz
  - https://raw.githubusercontent.com/cms-sw/cmsdist/fa77cb2b2d69be33e49dd6b2fdcc121a2260589c/FindEigen3.cmake.file
 patches:
  - pytorch-system-fmt.patch
- # cmsdist Patch1 for torch 2.13.
+ # cmsdist Patch1 for the selected torch release.
  - pytorch-hipblaslt-include.patch
 build_requires:
  - CMake
@@ -58,6 +58,7 @@ PipPreBuildPy=$(cat <<'EOF'
  if [ $MAX_JOBS -lt 1 ] ; then MAX_JOBS=1; fi
  if [ $MAX_JOBS -gt $JOBS ] ; then MAX_JOBS=$JOBS; fi
  export MAX_JOBS
+ export CMAKE_BUILD_PARALLEL_LEVEL="$MAX_JOBS"
  export USE_CUDA=ON
  export USE_CUDNN=ON
  export TORCH_CUDA_ARCH_LIST="$(echo "$cuda_arch" | tr ' ' '\n' | sed -E 's|([0-9])$|.\1|' | tr '\n' ' ' | sed -e 's/ *$/+PTX/')"

@@ -30,3 +30,6 @@ ln -sf bzdiff bzcmp
 ln -sf bzgrep bzegrep
 ln -sf bzgrep bzfgrep
 ln -sf bzmore bzless
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

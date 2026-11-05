@@ -23,3 +23,6 @@ chmod +x "$TMPDIR"/config.{sub,guess}
 
 make ${JOBS:+-j$JOBS}
 make install
+
+# CMSDIST drops installed utilities from this package.
+rm -rf "$INSTALLROOT/bin"

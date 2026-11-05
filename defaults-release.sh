@@ -24,6 +24,7 @@ hook:
   POST_INSTALL: runtime-setup,check_dependencies,generate_module
 revision_policy: "hash"
 system:
+  fetch_cache: cms
   prefix: "/cvmfs"
   install_dir: "/home/akbehera/Desktop/x86-64/sw/el9_amd64_gcc14"
   module_dir: "/home/akbehera/Desktop/x86-64/sw/MODULES/el9_amd64_gcc14"

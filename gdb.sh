@@ -47,3 +47,7 @@ EOF_GDBINIT
 echo "#!/bin/bash" > gdb
 echo "PYTHONHOME=${PYTHON_ROOT} gdb-%(version)s \"\$@\"" >> gdb
 chmod +x gdb
+
+# Match CMSDIST package pruning while retaining the wrapped gdb executable.
+rm -rf "$INSTALLROOT/lib" "$INSTALLROOT/bin/gdbserver" "$INSTALLROOT/bin/gdbtui" \
+       "$INSTALLROOT/share/man" "$INSTALLROOT/share/info" "$INSTALLROOT/share/locale"

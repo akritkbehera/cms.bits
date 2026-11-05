@@ -1,8 +1,8 @@
 package: protobuf
-version: "%(tag_basename)s"
+version: "6.31.1"
 tag: v6.31.1
 sources:
-- https://github.com/protocolbuffers/protobuf/archive/refs/tags/%(tag_basename)s.tar.gz
+- https://github.com/protocolbuffers/protobuf/archive/refs/tags/%(tag)s.tar.gz
 requires:
 - gcc
 - zlib

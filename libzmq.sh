@@ -23,3 +23,6 @@ tar -xzf "$SOURCEDIR/$SOURCE0" \
 
 make all ${JOBS:+-j $JOBS}
 make install
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

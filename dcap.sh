@@ -33,3 +33,6 @@ autoconf
     LDFLAGS="-L${ZLIB_ROOT}/lib"
 make -C src ${JOBS:+-j$JOBS}
 make -C src install 
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

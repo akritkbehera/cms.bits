@@ -34,3 +34,6 @@ make -C "$BUILDROOT/build" install
 
 rm -rf $INSTALLROOT/lib/*.so
 rm -rf $INSTALLROOT/lib/*.la
+
+# CMSDIST drops the installed examples/documentation tree.
+rm -rf "$INSTALLROOT/share"

@@ -33,3 +33,6 @@ if grep -q ' liblzma' "$INSTALLROOT/lib/pkgconfig/libdw.pc"; then
   sed -i -e "s|^Cflags: |Cflags: -I${XZ_ROOT}/include |" "$INSTALLROOT/lib/pkgconfig/libdw.pc"
   sed -i -e "s|^Libs.private: |Libs.private: -L${XZ_ROOT}/lib -llzma |" "$INSTALLROOT/lib/pkgconfig/libdw.pc"
 fi
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

@@ -10,5 +10,6 @@ sed -i -e "s|\('use-system-libxgboost': *\)0)|\11)|" setup.py
 PipPostInstall='
 mkdir -p "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/xgboost/lib" && \
 cd "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/xgboost/lib" && \
-ln -s "$INSTALLROOT/xgboost/${XGBOOST_VERSION}/lib64/libxgboost.so" .
+test -r "${XGBOOST_ROOT}/lib64/libxgboost.so" && \
+ln -s "../../../../../../../xgboost/${XGBOOST_ROOT##*/}/lib64/libxgboost.so" .
 '

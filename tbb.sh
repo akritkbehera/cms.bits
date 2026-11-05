@@ -14,7 +14,7 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     -C "$BUILDDIR"
 
 cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
-      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+      -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_CXX_FLAGS="-Wno-error=use-after-free -Wno-error=address -Wno-error=uninitialized" \
       -DCMAKE_CXX_STANDARD=%(cms_cxx_std)s \
       -DCMAKE_INSTALL_PREFIX=${INSTALLROOT} \

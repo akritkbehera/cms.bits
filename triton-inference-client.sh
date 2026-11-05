@@ -46,6 +46,26 @@ popd
 
 sed -i -e 's|import os|import os,sys|' "$PKGNAME-$PKGVERSION/src/python/library/build_wheel.py"
 sed -i '/^from distutils.dir_util import copy_tree/i import setuptools' "$PKGNAME-$PKGVERSION/src/python/library/build_wheel.py"
+# Resolve packaged shared-memory libraries with the Python standard library.
+# pkg_resources is not present in the selected runtime stack.
+python3 - "$PKGNAME-$PKGVERSION/src/python/library/tritonclient/utils" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+for package in ("shared_memory", "cuda_shared_memory"):
+    path = Path(sys.argv[1]) / package / "__init__.py"
+    text = path.read_text()
+    if text.count("import pkg_resources") != 1:
+        raise RuntimeError(f"Unexpected resource import in {path}")
+    text = text.replace("import pkg_resources", "from importlib.resources import files")
+    text, count = re.subn(
+        r"pkg_resources\.resource_filename\(\s*'[^']+'\s*,\s*(_\w+_lib)\s*\)",
+        r"str(files(__package__).joinpath(\1))", text)
+    if count != 1:
+        raise RuntimeError(f"Unexpected resource lookup in {path}")
+    path.write_text(text)
+PY
 sed -i '/^project/a option(BUILD_SHARED_LIBS "Build using shared libraries" ON)' ${CML_COM}
 
 TRITON_ENABLE_GPU_VALUE="ON"
@@ -106,3 +126,6 @@ rsync -a library/linux/wheel/build/lib/ $INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES
 sed -i '/^#ifdef TRITON_ENABLE_GPU/i #define TRITON_ENABLE_GPU' $INSTALLROOT/include/ipc.h
 
 rm $INSTALLROOT/include/triton/common/triton_json.h
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

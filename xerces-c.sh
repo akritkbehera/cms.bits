@@ -1,9 +1,7 @@
 package: xerces-c
 version: "3.1.3"
-variables:
-  tag: xerces-3.1.3
 sources:
-  - https://github.com/apache/xerces-c/archive/%(tag)s.tar.gz
+  - https://archive.apache.org/dist/xerces/c/3/sources/xerces-c-%(version)s.tar.gz
 requires:
  - gcc
 ---
@@ -82,3 +80,6 @@ autoreconf -ivf
 
 make ${JOBS:+-j$JOBS}
 make install
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

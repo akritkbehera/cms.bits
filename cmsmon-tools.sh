@@ -25,9 +25,9 @@ mkdir -p "$INSTALLROOT"
 # Extract and install cmsmon-tools binaries
 CMSMON_DIR="$BUILDDIR/cmsmon-tools"
 mkdir -p "$CMSMON_DIR"
-tar -xzf "$SOURCEDIR/$SOURCE0" -C "$CMSMON_DIR"
+tar -xzf "$SOURCEDIR/$SOURCE0" --strip-components=1 -C "$CMSMON_DIR"
 for cmd in monit alert annotationManager nats-sub nats-pub dbs_vm; do
-    [ -f "$CMSMON_DIR/$cmd" ] && cp "$CMSMON_DIR/$cmd" "$INSTALLROOT/"
+    install -m 755 "$CMSMON_DIR/$cmd" "$INSTALLROOT/"
 done
 
 # prometheus

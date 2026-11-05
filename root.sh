@@ -1,7 +1,7 @@
 package: ROOT
 version: 6.40.05
 variables:
-  tag: 2808f92b2882db2ed042f8a6f6aa106e47b6eabf
+  tag: 89147c9689864e3cfb1031bc9cb564cae604d0d3
 sources:
   - https://github.com/cms-sw/root/archive/%(tag)s.tar.gz
 env:
@@ -199,6 +199,7 @@ done
 
 unset ROOT_INCLUDE_PATH
 for d in \
+  ${CUDA_ROOT} \
   ${GSL_ROOT} \
   ${LIBJPEG_TURBO_ROOT} \
   ${LIBPNG_ROOT} \
@@ -233,6 +234,7 @@ ninja -v ${JOBS:+-j$JOBS} install
 # Generate cuda.pcm if CUDA is available
 if [ -n "$CUDA_ROOT" ]; then
   echo '#include <cuda_runtime.h>' | $INSTALLROOT/bin/root -b -n -l
+  test -s "$INSTALLROOT/lib/cuda.pcm"
 fi
 
 find $INSTALLROOT -type f -name '*.py' | xargs chmod -x

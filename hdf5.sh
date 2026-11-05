@@ -33,3 +33,6 @@ LDFLAGS="-L${OPENMPI_ROOT}/lib -lmpi" \
             --with-zlib=${ZLIB_ROOT}
 make  ${JOBS:+-j $JOBS} V=1
 make install V=1
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

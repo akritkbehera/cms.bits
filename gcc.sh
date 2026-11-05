@@ -63,6 +63,13 @@ CC="$CC -fPIC"
 CXX="$CXX -fPIC"
 
 MARCH="$(gcc -dumpmachine)"
+# EL9's system GCC can report x86_64-redhat-linux, while the CMS toolchain
+# triplet used by CMSDIST and the deployed GCC is x86_64-redhat-linux-gnu.
+# Keep the configured build/host triplets consistent so downstream tools that
+# use gcc -dumpmachine (notably LLVM) select the same target directories.
+if [[ "$MARCH" == "x86_64-redhat-linux" ]]; then
+  MARCH="${MARCH}-gnu"
+fi
 
 # Stage gcc-prerequisites into the install tree, then rewrite the embedded
 # prerequisites path to the gcc install path in the relocated config files.

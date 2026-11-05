@@ -14,3 +14,6 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 echo "all:" > doc/Makefile
 make all ${JOBS:+-j$JOBS} LIBVER=$PKGVERSION LIBMAJOR=5 PREFIX=$INSTALLROOT
 make LIBVER=${PKGVERSION} LIBMAJOR=5 PREFIX=$INSTALLROOT install
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

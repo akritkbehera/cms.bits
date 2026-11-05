@@ -16,3 +16,6 @@ CONF_FLAGS="-fPIC -O3 -DUSE_MMAP -DUNALIGNED_OK -D_LARGEFILE64_SOURCE=1 -D_DEFAU
 CFLAGS="$CONF_FLAGS" ./configure --prefix="$INSTALLROOT"
 make ${JOBS:+-j$JOBS}
 make install
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

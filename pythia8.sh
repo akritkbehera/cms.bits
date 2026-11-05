@@ -21,4 +21,10 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 make ${JOBS:+-j$JOBS}
 make install
 test -f $INSTALLROOT/lib/libpythia8lhapdf6.so || exit 1
+# pythia8-config reads this configuration after the examples are removed.
+install -m 644 "$BUILDDIR/Makefile.inc" "$INSTALLROOT/Makefile.inc"
 rm -rf $INSTALLROOT/share/Pythia8/examples
+test "$("$INSTALLROOT/bin/pythia8-config" --prefix)" = "$INSTALLROOT"
+
+# Mirror CMSBUILD default archive cleanup for this recipe.
+rm -f "$INSTALLROOT"/lib/*.a "$INSTALLROOT"/lib/*.la

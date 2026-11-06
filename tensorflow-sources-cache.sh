@@ -11,6 +11,7 @@ sources:
  - git+https://github.com/%(github_user)s/tensorflow.git?obj=%(branch)s/%(tag)s&export=tensorflow-%(version)s&output=/tensorflow-%(version)s.tgz
 patches:
  - tensorflow-tf2xla-return-type.patch
+ - tensorflow-llvm-raw-checksum.patch
 build_requires:
  - bazel
  - java-env

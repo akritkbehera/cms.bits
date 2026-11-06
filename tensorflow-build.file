@@ -43,7 +43,10 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 # xla::cpu::EncodedBufferAllocationInfo::operator BufferAllocationInfo() so that
 # gcc does not fail the header with -Werror=return-type when it is included by
 # downstream CMSSW code (e.g. PhysicsTools/TensorFlowAOT).
-patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
+for ((num=0; num<${PATCH_COUNT:-0}; num++)); do
+  patch_name="PATCH${num}"
+  patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/${!patch_name}"
+done
 
 sed -i -e "s|lib/python[^/]*/site-packages/|lib/python$PYTHON_MAJOR_MINOR_VERSION/site-packages/|" third_party/systemlibs/pybind11.BUILD
 sed -i -e "s|site-packages/pybind11\"|site-packages/pybind11/include\"|g" third_party/systemlibs/pybind11.BUILD

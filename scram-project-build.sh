@@ -14,6 +14,7 @@ SRCTREE="%(srctree)s"
 BOOTSTRAPFILE="%(bootstrapfile)s"
 SUBPACKAGE_DEBUG="%(subpackageDebug)s"
 PACKAGE_VECTORIZATION="%(package_vectorization)s"
+DEFAULT_MICROARCH_NAME="%(default_microarch_name)s"
 USERCXXFLAGS="%(usercxxflags)s"
 
 # Derived — computed at runtime from environment
@@ -92,12 +93,11 @@ fi
 SCRAM_TARGET_DEFAULT="%(scram_target_default)s"
 RELEASE_USERCXXFLAGS="%(release_usercxxflags)s"
 RELEASE_USERLDFLAGS="%(release_userldflags)s"
-##PACKAGE_VECTORIZATION="%(package_vectorization)s"
-##if [ -z "$PACKAGE_VECTORIZATION" ] && [ -n "$SCRAM_TARGET_DEFAULT" ]; then
-##  export SCRAM_TARGET_DEFAULT="auto"
-##fi
+if [ -n "$PACKAGE_VECTORIZATION" ] && [ -z "$SCRAM_TARGET_DEFAULT" ]; then
+  SCRAM_TARGET_DEFAULT="auto"
+fi
 
-if [ "$PKGNAME" != "coral" ] && [ "$PACKAGE_VECTORIZATION" != "0" ]; then
+if [ "$PKGNAME" != "coral" ] && [ -n "$PACKAGE_VECTORIZATION" ] && [ "$PACKAGE_VECTORIZATION" != "0" ] && [ "$PACKAGE_VECTORIZATION" != "--" ]; then
   if [ -e "$TOOLCONF_PATH/vectorized_packages.txt" ]; then
     sed -i -e "s| SCRAM_TARGETS=.*\"| SCRAM_TARGETS=\"$PACKAGE_VECTORIZATION\"|" \
       "$BUILDDIR/config/Self.xml"

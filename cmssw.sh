@@ -1,3 +1,5 @@
+# SCRAM configures the external dependency environment.
+build_environment: direct
 package: cmssw
 version: "CMSSW_14_2_0"
 variables:

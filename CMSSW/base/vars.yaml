@@ -18,13 +18,9 @@ compile_options:  ""
 nolibchecks:      ""
 usercxxflags:     ""
 
-# --- Build-body compatibility ---
-# General compiler microarchitecture/vectorization support is disabled. These
-# two keys are kept empty only because scram-project-build.sh still references
-# them via %(...)s under strict substitution; leaving them empty disables
-# vectorization. CUDA host compilation has its own portable baseline below.
-package_vectorization: ""
-scram_target_default:  ""
+# Vectorization targets come from ../vectorization/config.yaml in package.py.
+# Layers may override package_vectorization (empty disables it) and
+# scram_target_default (normally auto).
 
 # --- Release flags ---
 release_usercxxflags: ""
@@ -39,7 +35,7 @@ cuda_gcc_support:              "true"
 cuda_host_min_microarch_name:  "x86-64-v2"
 
 # --- Debug / profiling ---
-subpackageDebug:        "0"
+subpackageDebug:        "yes"
 saveDeps:               "yes"
 runGlimpse:             "yes"
 enable_frame_pointer:   "1"

@@ -1,6 +1,6 @@
 source: https://github.com/akritkbehera/scram-tools.file.git
 sources:
-  - https://github.com/akritkbehera/scram-tools.file/archive/1c2615c84126247d09230a8d15dfc5549f759830.tar.gz
+  - https://github.com/akritkbehera/scram-tools.file/archive/7f4b0d4696debcba182bbb90611cf02c723374b7.tar.gz
 requires:
   - AXOL1TL
   - TOPO
@@ -133,7 +133,6 @@ requires:
   - pacparser
   - git
   - git-lfs
-  - fastjet
   - fastjet-contrib
   - opencl
   - opencl-cpp
@@ -189,3 +188,5 @@ requires:
   - xtensor
   - xtl
   - xgboost
+untracked_requires:
+ - fastjet

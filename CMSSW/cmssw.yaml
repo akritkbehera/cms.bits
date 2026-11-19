@@ -1,3 +1,5 @@
+# SCRAM configures the external dependency environment.
+build_environment: direct
 build_requires:
  - SCRAMV1
  - dwz

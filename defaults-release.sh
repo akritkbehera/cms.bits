@@ -3,7 +3,12 @@ version: vCMS
 variables:
   cms_cxx_std: "20"
   cms_build_type: "Release"
-  override_microarch_name: ""
+  override_microarch_name: "x86-64-v2"
+  default_microarch_name: "x86-64-v3"
+  min_microarch_name: "x86-64-v2"
+  package_vectorization: ""
+  vectorized_packages: ""
+  scram_target_default: ""
 env:
   CXXSTD: '20'
   DCMAKE_BUILD_TYPE: 'Release'

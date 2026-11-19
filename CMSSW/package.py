@@ -177,6 +177,30 @@ elif pkg_type in ('coral', 'coral-tools'):
 else:
     raise ValueError("Unknown generated package type: %s" % pkg_type)
 
+# Feed the same targets into SCRAM and the generated external packages.
+if pkg_type in ('cmssw', 'cmssw-tools'):
+    sys.path.insert(0, join(dirname(pkg_dir), 'vectorization'))
+    from vectorization_config import load_config
+    vectorization = load_config(dirname(pkg_dir))
+    variables = spec.setdefault('variables', {})
+    variables.setdefault('package_vectorization', ' '.join(vectorization['build_targets']))
+    variables.setdefault('scram_target_default', 'auto')
+    if pkg_type == 'cmssw-tools':
+        tools = []
+        for name in vectorization['enabled_packages']:
+            recipe = join(dirname(pkg_dir), name.lower() + '.sh')
+            with open(recipe) as f:
+                tool_spec = yamlLoad(f.read().split('---', 1)[0])
+            tools.append(tool_spec['package'])
+        variables.setdefault('vectorized_packages', ' '.join(tools))
+        targets = variables['package_vectorization'].split()
+        if targets not in (['0'], ['--']):
+            for tool in variables['vectorized_packages'].split():
+                for target in targets:
+                    dependency = '%s_%s' % (tool.lower(), target)
+                    if dependency not in spec['requires']:
+                        spec['requires'].append(dependency)
+
 # Output the recipe
 print(yamlDump(spec).strip())
 print('---')

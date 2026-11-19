@@ -11,6 +11,9 @@ hook: disable
 mkdir -p $INSTALLROOT/tools/{available,selected}
 
 rsync -a $CMSSW_TOOLS_ROOT/lib $INSTALLROOT/
+if [ -f "$CMSSW_TOOLS_ROOT/vectorized_packages.txt" ]; then
+  cp "$CMSSW_TOOLS_ROOT/vectorized_packages.txt" "$INSTALLROOT/"
+fi
 
 export PKGINSTROOT=$INSTALLROOT
 

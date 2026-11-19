@@ -1,0 +1,32 @@
+supported_packages:
+  - fastjet
+  - tensorflow-sources
+  - tensorflow
+  - tensorflow-xla-runtime
+  - OpenBlas
+  - rivet
+  - gbl
+  - lwtnn
+  - opencv
+  - pytorch
+  - ucx
+enabled_packages:
+  - fastjet
+  - OpenBLAS
+  - rivet
+  - gbl
+  - lwtnn
+  - opencv
+  - ucx
+  - tensorflow-sources
+  - tensorflow
+  - tensorflow-xla-runtime
+supported_targets:
+  - x86-64-v2
+  - x86-64-v3
+  - x86-64-v4
+build_targets:
+  - "%(override_microarch_name)s"
+  - "%(default_microarch_name)s"
+default_target:
+  - "%(default_microarch_name)s"

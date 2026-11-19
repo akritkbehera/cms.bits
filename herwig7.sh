@@ -17,13 +17,14 @@ requires:
  - thepeg
  - GSL
  - OpenBLAS
- - fastjet
  - gosamcontrib
  - gosam
  - madgraph5amcatnlo
  - Python
  - openloops
  - gcc
+untracked_requires:
+ - fastjet
 ---
 tar -xjf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

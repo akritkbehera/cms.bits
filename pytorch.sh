@@ -3,15 +3,14 @@ version: "2.6.0"
 tag: "2.6.0"
 sources: 
 - git+https://github.com/pytorch/pytorch?obj=main/v%(version)s&export=pytorch-%(version)s&submodules=1&output=/pytorch-%(version)s.tgz
-- https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/FindEigen3.cmake.file
-- https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/FindFMT.cmake.file
-- https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/scram-tools.file/tools/eigen/env.sh
+- file://sources/FindEigen3.cmake.file
 patches:
 - pytorch-missing-braces.patch
-- pytorch-system-fmt.patch
+- pytorch-2.6-system-fmt.patch
 build_requires:
 - CMake 
 - ninja
+- setuptools
 requires:
 - cuda
 - cudnn
@@ -21,6 +20,7 @@ requires:
 - numactl
 - openmpi
 - protobuf
+- abseil-cpp
 - psimd
 - Python
 - py-PyYAML
@@ -30,6 +30,7 @@ requires:
 - py-pybind11
 - py-typing-extensions
 ---
+#!include <microarch-flags.file>
 mkdir -p $BUILDDIR/$PKGNAME-$PKGVERSION/
 pushd $BUILDDIR/$PKGNAME-$PKGVERSION/
 
@@ -38,8 +39,6 @@ tar -xzf "$SOURCEDIR"/$SOURCE0 \
     -C "$BUILDDIR/$PKGNAME-$PKGVERSION"
 
 cp "$SOURCEDIR/FindEigen3.cmake.file" "$BUILDDIR/$PKGNAME-$PKGVERSION/cmake/Modules/FindEigen3.cmake"
-#cp "$SOURCEDIR/FindFMT.cmake.file" "$BUILDDIR/$PKGNAME-$PKGVERSION/cmake/Modules/FindFMT.cmake"
-cp "$SOURCEDIR"/env.sh "$BUILDDIR/$PKGNAME-$PKGVERSION"/
 
 patch -p1 < $SOURCEDIR/$PATCH0
 patch -p1 < $SOURCEDIR/$PATCH1
@@ -47,7 +46,6 @@ popd
 
 rm -rf build; mkdir build; cd build
 
-#source env.sh
 USE_CUDA=OFF
 
 if [ -z "${WITHOUT_CUDA}" ]; then
@@ -63,6 +61,8 @@ cmake_args=(
   -L
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
   -DCMAKE_INSTALL_LIBDIR=lib
+  -DCMAKE_C_FLAGS="${selected_microarch}"
+  -DCMAKE_CXX_FLAGS="${selected_microarch}"
   -DBUILD_TEST=OFF
   -DBUILD_BINARY=OFF
   -DBUILD_PYTHON=OFF

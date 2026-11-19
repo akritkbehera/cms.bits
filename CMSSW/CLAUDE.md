@@ -77,7 +77,7 @@ base/ → os/{os}/ → flavor/{flavor}/ → queue/{queue}/ → CMSSW IB override
 
 Each layer is `CMSSW/<layer_type>/<value>/vars.yaml` (except `base/vars.yaml`). A layer's file is optional — if absent, that layer contributes nothing. Existing layers: `base/`, `os/el9/`, `flavor/debug/`. Add a new one by creating the directory + `vars.yaml`.
 
-> **Note:** Arch-based configuration, vectorization, and microarch handling were **removed**. There is no `arch/` layer and no `-march`/vectorization plumbing on the CMSSW side. The build body `../scram-project-build.sh` still references `%(package_vectorization)s` and `%(scram_target_default)s`; both are kept defined as empty strings in `base/vars.yaml` so BITS' **strict** recipe substitution does not fail. Do not delete those two keys.
+> **Vectorization:** `package.py` loads selected `build_targets` from `../vectorization/config.yaml` through the shared config loader. CMSSW enables those SCRAM targets with `scram_target_default: auto`; cmssw-tools adds per-target external dependencies and generates vectorized tool XML and compiler flags. Layers can set `package_vectorization: ""` to disable this setup. The baseline `default_microarch_name` comes from defaults-release.sh.
 
 **Merge semantics (`_deep_merge`), important and non-obvious:**
 - Dicts merge recursively; **lists are replaced, not concatenated**

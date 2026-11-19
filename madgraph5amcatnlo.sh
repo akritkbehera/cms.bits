@@ -17,11 +17,12 @@ requires:
  - ROOT
  - lhapdf
  - gosamcontrib
- - fastjet
  - pythia8
  - thepeg
  - collier 
  - gcc
+untracked_requires:
+ - fastjet
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

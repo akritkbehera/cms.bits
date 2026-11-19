@@ -18,7 +18,6 @@ env:
 ---
 #!include <compilation-flags.file>
 #!include <compilation-flags-lto.file>
-#!include <microarch-flags.file>
 
 export BUILD_FLAGS="-fPIC $arch_build_flags $lto_build_flags $pgo_build_flags"
 
@@ -36,7 +35,7 @@ sed -i -e "s|set(VecGeom_VERSION *.*|set(VecGeom_VERSION ${vecgeom_version})|" "
 
 if [ "$(uname -m)" = "x86_64" ]; then
   if [[ "%(vecgeom_backend)s" == "Vc" ]]; then
-    SEL_ARCH="$(echo "$selected_microarch" | sed 's|^-m||')"
+    SEL_ARCH="$(echo "%(min_microarch_name)s" | sed 's|^-m||')"
     VECGEOM_VECTOR_INST="$(grep ' set(VECGEOM_ISAS ' "$BUILDDIR/CMakeLists.txt" | tr ' ' '\n' | grep -E "^${SEL_ARCH}$")"
   fi
 fi

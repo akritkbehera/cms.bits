@@ -26,7 +26,20 @@ find "$TREE" -type f | /usr/lib/rpm/rpmdeps --requires --define="_use_internal_d
 # have no provides.json and are skipped. Fall back to the arch glob when
 # <NAME>_ROOT is not available.
 : > "$OUTDIR/dependencies.json"
-jq -r '.dependencies.direct.runtime[] | [.name, .version, (.revision // "")] | @tsv' "$INSTALLROOT/.meta.json" |
+jq -r '
+  def dependency_row:
+    if type == "string" then [.]
+    else [.name, (.version // ""), (.revision // "")]
+    end;
+  [
+    (.dependencies.direct.runtime[]? | dependency_row),
+    (((.tracked_requires // []) + (.untracked_requires // []))[] | dependency_row)
+  ]
+  | group_by(.[0] | ascii_downcase)[]
+  | max_by(length)
+  | select((.[0] | ascii_downcase) != "defaults-release")
+  | @tsv
+' "$INSTALLROOT/.meta.json" |
 while IFS="$(printf '\t')" read -r name version revision; do
   var="$(echo "$name" | tr 'a-z-' 'A-Z_')_ROOT"
   eval "root=\${$var:-}"
@@ -44,7 +57,7 @@ while IFS="$(printf '\t')" read -r name version revision; do
       ;;
     esac
     printf '%s\n' "$dep_path/etc/deps/provides.json"
-  else
+  elif [ -n "$version" ]; then
     echo "\$WORK_DIR/$ARCHITECTURE/*/$name/$version${revision:+-$revision}/etc/deps/provides.json"
   fi
 done >> "$OUTDIR/dependencies.json"

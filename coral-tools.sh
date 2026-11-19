@@ -3,7 +3,7 @@ version: "v1"
 sources:
   - https://github.com/akritkbehera/scram-tools.file/archive/%(tag)s.tar.gz
 variables:
-  tag: b4aa6b6ef00452aebb21ec4744d99c792bc6b521
+  tag: 7f4b0d4696debcba182bbb90611cf02c723374b7
   skipreqtools: jcompiler
   override_microarch: "-march=x86-64-v2"
   package_vectorization: ""
@@ -15,6 +15,7 @@ variables:
   override_microarch_name: ""
   min_microarch_name: "-march=x86-64-v2"
   use_system_gcc: "0"
+  enable_frame_pointer: "0"
 requires:
   # Core build toolchain
   - gcc

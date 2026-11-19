@@ -28,7 +28,7 @@ XTARGETS="${XTARGETS} x86-64-v2=NEHALEM"
 XTARGETS="${XTARGETS} x86-64-v3=HASWELL"
 XTARGETS="${XTARGETS} x86-64-v4=SKYLAKEX"
 
-STARGET=$(echo "$default_microarch_name" | sed 's|^-m||;s|^arch=||')
+STARGET=$(echo "$selected_microarch_name" | sed 's|^-m||;s|^arch=||')
 TARGET_ARCH=$(echo ${XTARGETS} | tr ' ' '\n' | grep "^${STARGET}=" | sed "s|^${STARGET}=||")
 
 if [ "${TARGET_ARCH}" = "" ] ; then

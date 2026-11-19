@@ -7,7 +7,7 @@
 # default_microarch is formed from default_microarch_name. #!include this
 # where cmsdist's real spec does `## INCLUDE microarch_flags`.
 if [ "$(uname -m)" = "x86_64" ]; then
-  default_microarch_name="x86-64-v3"
+  default_microarch_name="%(default_microarch_name)s"
 else
   default_microarch_name=""
 fi

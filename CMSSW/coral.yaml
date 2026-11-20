@@ -24,11 +24,9 @@ variables:
   additionalBuildTarget0: ""
   postbuildtarget: ""
   ignore_compile_errors: ""
-  pgo_generate: ""
   runGlimpse: ""
   saveDeps: ""
   gpu_types: ""
-  pgo_build_flags: ""
 sources:
  - git+https://github.com/cms-sw/cmssw-config.git?obj=master/%(configtag)s&export=config&output=/cmssw-config-%(configtag)s.tgz
  - git+https://github.com/%(github_user)s/coral.git?protocol=https&obj=%(branch)s/%(tag)s&module=coral&export=%(srctree)s&output=/src.tar.gz

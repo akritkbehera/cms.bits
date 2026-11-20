@@ -338,7 +338,6 @@ PREBUILDTARGET="%(prebuildtarget)s"
 ADDITIONAL_BUILD_TARGET="%(additionalBuildTarget0)s"
 POSTBUILDTARGET="%(postbuildtarget)s"
 IGNORE_COMPILE_ERRORS="%(ignore_compile_errors)s"
-PGO_GENERATE="%(pgo_generate)s"
 
 [ "$NOLIBCHECKS" != "0" ] && { export SCRAM_NOLOADCHECK=true; export SCRAM_NOSYMCHECK=true; log_info "Library load/symbol checks disabled"; }
 
@@ -356,19 +355,25 @@ if [ -n "$PREBUILDTARGET" ]; then
   run_scram_build prebuild --verbose -f -k -j "$NPROC" "$PREBUILDTARGET"
 fi
 
-# llvm-ccdb only for cmssw/cmssw-patch, skipped during PGO generate phase
-if [ "$PGO_GENERATE" = "0" ]; then
-  case "$PKGNAME" in cmssw|cmssw-patch)
-    log_info "Generating llvm compilation database (llvm-ccdb)"
-    run_scram_build llvm-ccdb -f -k -j "$NPROC" llvm-ccdb || true ;;
-  esac
-fi
+case "$PKGNAME" in cmssw|cmssw-patch)
+  log_info "Generating llvm compilation database (llvm-ccdb)"
+  run_scram_build llvm-ccdb -f -k -j "$NPROC" llvm-ccdb || true ;;
+esac
 
 grep -q 'name="SCRAM_TARGET"' "$INSTALLROOT/config/Self.xml" && \
   touch "$INSTALLROOT/.SCRAM/$ARCHITECTURE/multi-targets"
 
 SCRAM_B_EXTRA=()
 [ -n "$EXTRA_CXXFLAGS" ] && SCRAM_B_EXTRA=("USER_CXXFLAGS=$EXTRA_CXXFLAGS")
+
+# Set CMSSW_USE_RECC=1 in the build environment to enable the compiler cache.
+case "$PKGNAME:${CMSSW_USE_RECC:-0}" in
+  CMSSW_*:1)
+    recc_path=$(type -P recc) || { log_err "CMSSW_USE_RECC=1 requires recc on PATH"; exit 1; }
+    export RECC_CACHE_ONLY=true
+    SCRAM_B_EXTRA+=("SCRAM_PREFIX_COMPILER_COMMAND=$recc_path")
+    ;;
+esac
 
 # CMSDIST's rpm-preamble.file supplies compileOptions=-k for keep-going builds.
 # Always finish independent targets here, but fail the recipe unless explicitly allowed.

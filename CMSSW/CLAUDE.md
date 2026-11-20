@@ -28,7 +28,7 @@ PYTHONPATH=/home/akbehera/Desktop/bitsorg/bits \
 PYTHONPATH=/home/akbehera/Desktop/bitsorg/bits \
   python3 package.py cmssw-tools 14_2 el9
 ```
-The generator prints the final YAML header, a `---` separator, then the bash body to stdout. Inspect the merged `variables:` block to confirm the layered config resolved as expected (e.g. `CMS_EIGEN_CXX_FLAGS: ...` proves the `os/el9` layer applied).
+The generator prints the final YAML header, a `---` separator, then the bash body to stdout. Inspect the merged `variables:` block to confirm the layered config resolved as expected.
 
 ### Build packages with bits
 ```bash
@@ -75,7 +75,7 @@ Variables are assembled by merging YAML layers in this order (**later wins**):
 base/ → os/{os}/ → flavor/{flavor}/ → queue/{queue}/ → CMSSW IB overrides
 ```
 
-Each layer is `CMSSW/<layer_type>/<value>/vars.yaml` (except `base/vars.yaml`). A layer's file is optional — if absent, that layer contributes nothing. Existing layers: `base/`, `os/el9/`, `flavor/debug/`. Add a new one by creating the directory + `vars.yaml`.
+Each layer is `CMSSW/<layer_type>/<value>/vars.yaml` (except `base/vars.yaml`). A layer's file is optional — if absent, that layer contributes nothing. Existing layers: `base/` and `flavor/debug/`. Add a new one by creating the directory + `vars.yaml`.
 
 > **Vectorization:** `package.py` loads selected `build_targets` from `../vectorization/config.yaml` through the shared config loader. CMSSW enables those SCRAM targets with `scram_target_default: auto`; cmssw-tools adds per-target external dependencies and generates vectorized tool XML and compiler flags. Layers can set `package_vectorization: ""` to disable this setup. The baseline `default_microarch_name` comes from defaults-release.sh.
 

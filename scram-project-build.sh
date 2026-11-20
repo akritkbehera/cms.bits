@@ -181,7 +181,6 @@ PREBUILDTARGET="%(prebuildtarget)s"
 ADDITIONAL_BUILD_TARGET="%(additionalBuildTarget0)s"
 POSTBUILDTARGET="%(postbuildtarget)s"
 IGNORE_COMPILE_ERRORS="%(ignore_compile_errors)s"
-PGO_GENERATE="%(pgo_generate)s"
 
 [ "$NOLIBCHECKS" != "0" ] && { export SCRAM_NOLOADCHECK=true; export SCRAM_NOSYMCHECK=true; }
 
@@ -193,12 +192,9 @@ $SCRAMCMD b -r echo_CXX </dev/null
 
 [ -n "$PREBUILDTARGET" ] && $SCRAMCMD b --verbose -f "$PREBUILDTARGET" </dev/null
 
-# llvm-ccdb only for cmssw/cmssw-patch, skipped during PGO generate phase
-if [ "$PGO_GENERATE" = "0" ]; then
-  case "$PKGNAME" in cmssw|cmssw-patch)
-    $SCRAMCMD b -f -k ${JOBS:+-j $JOBS} llvm-ccdb </dev/null || true ;;
-  esac
-fi
+case "$PKGNAME" in cmssw|cmssw-patch)
+  $SCRAMCMD b -f -k ${JOBS:+-j $JOBS} llvm-ccdb </dev/null || true ;;
+esac
 
 grep -q 'name="SCRAM_TARGET"' "$INSTALLROOT/config/Self.xml" && \
   touch "$INSTALLROOT/.SCRAM/$ARCHITECTURE/multi-targets"

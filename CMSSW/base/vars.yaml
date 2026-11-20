@@ -2,7 +2,6 @@
 # OS-specific settings live in os/{os}/vars.yaml; flavor settings in flavor/{flavor}/vars.yaml.
 
 # --- Source / config ---
-branch:        master
 configtag:     V09-11-03
 srctree:       src
 bootstrapfile: config/bootsrc.xml
@@ -29,28 +28,16 @@ release_userldflags:  ""
 # --- GPU ---
 gpu_backend_specific_packages: ""
 gpu_types:                     ""
-use_cuda:                      "1"
-use_rocm:                      "1"
 cuda_gcc_support:              "true"
-cuda_host_min_microarch_name:  "x86-64-v2"
 
 # --- Debug / profiling ---
-subpackageDebug:        "yes"
+subpackageDebug:        "0"
 saveDeps:               "yes"
 runGlimpse:             "yes"
 enable_frame_pointer:   "1"
-use_system_gcc:         "0"
 ignore_compile_errors:  ""
 
 # --- Build targets ---
 prebuildtarget:         ""
 additionalBuildTarget0: ""
 postbuildtarget:        ""
-
-# --- PGO ---
-pgo_generate:    ""
-pgo_build_flags: ""
-
-# --- Runtime / misc ---
-HFI_NO_BACKTRACE:   "1"
-IPATH_NO_BACKTRACE: "1"

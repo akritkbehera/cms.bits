@@ -103,7 +103,8 @@ for _req in ${RUNTIME_REQUIRES:-}; do
   if is_skipped "$_req"; then continue; fi
   _id=$(printf '%s' "$_req" | tr -c 'A-Za-z0-9_' '_' | tr 'a-z' 'A-Z')
   eval "_v=\${${_id}_VERSION:-}"
-  eval "_r=\${${_id}_REVISION:-}"
+  # A wrapper can expose the variant revision while its module uses a stable version.
+  eval "_r=\${_BITS_${_id}_MODULE_REVISION-\${${_id}_REVISION:-}}"
   # A runtime requirement whose _VERSION is absent means the dependency init.sh
   # chain did not set it up -- that would produce a `module load` of something
   # that does not exist, so drop it, but say so rather than silently shipping an

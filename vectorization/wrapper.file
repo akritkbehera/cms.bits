@@ -1,3 +1,49 @@
-# Record the selected variant for the wrapper's post-install hook.
-target_root="${%(wrapper_target_id)s_ROOT:?Missing default target installation}"
-printf '%%s\n' "$target_root" > "$INSTALLROOT/.bits-wrapper-target"
+# This is a wrapper package for the configured default microarchitecture.
+# The variant owns the payload and retains its own unmodified init.sh.
+profile="$INSTALLROOT/etc/profile.d"
+mkdir -p "$profile"
+cat > "$profile/wrapper-env.sh" <<'BITS_WRAPPER_ENV'
+# Export the selected variant's environment under the public package name.
+for _wrapper_field in ROOT VERSION REVISION HASH COMMIT INCLUDE_DIR; do
+  _wrapper_source="%(wrapper_target_id)s_${_wrapper_field}"
+  if [[ -v "$_wrapper_source" ]]; then
+    export "%(wrapper_id)s_${_wrapper_field}=${!_wrapper_source}"
+  fi
+done
+unset _wrapper_field _wrapper_source
+export _BITS_%(wrapper_id)s_MODULE_REVISION=""
+BITS_WRAPPER_ENV
+
+target_root="${%(wrapper_target_id)s_ROOT:?Missing default variant installation}"
+target_init="$target_root/etc/profile.d/init.sh"
+test -f "$target_init"
+relative_init=$(realpath -ms --relative-to="$WORK_DIR/$PKGPATH/etc/profile.d" "$target_init")
+[[ "$relative_init" != /* ]]
+
+{
+  printf '# Wrapper for %%s, using the configured default microarchitecture.\n' "$PKGNAME"
+  printf '. "$(dirname -- "${BASH_SOURCE[0]}")"/%%q || return $?\n' "$relative_init"
+  printf '. "$(dirname -- "${BASH_SOURCE[0]}")"/wrapper-env.sh\n'
+} > "$profile/wrapper-init.sh"
+
+# Keep the provider data in the archive so relocation can run independently.
+mkdir -p "$INSTALLROOT/etc/deps"
+cp "$target_root/etc/deps/provides.json" "$INSTALLROOT/etc/deps/wrapper-provides.json"
+
+cat > "$profile/post-relocate.sh" <<'BITS_WRAPPER_RELOCATE'
+set -e
+profile=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+# Replace bits' generated init.sh with the two wrapper source commands.
+cp "$profile/wrapper-init.sh" "$profile/init.sh.wrapper"
+mv -f "$profile/init.sh.wrapper" "$profile/init.sh"
+cp "$profile/../deps/wrapper-provides.json" "$profile/../deps/provides.json"
+
+module="$profile/../modulefiles/%(wrapper_package)s"
+if [[ -f "$module" ]] && ! grep -q '^setenv _BITS_%(wrapper_id)s_MODULE_REVISION ' "$module"; then
+  for field in ROOT VERSION REVISION HASH COMMIT INCLUDE_DIR; do
+    printf 'if {[info exists env(%%s_%%s)]} { setenv %%s_%%s $env(%%s_%%s) }\n' \
+      "%(wrapper_target_id)s" "$field" "%(wrapper_id)s" "$field" "%(wrapper_target_id)s" "$field"
+  done >> "$module"
+  printf 'setenv _BITS_%(wrapper_id)s_MODULE_REVISION ""\n' >> "$module"
+fi
+BITS_WRAPPER_RELOCATE

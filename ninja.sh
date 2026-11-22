@@ -1,7 +1,7 @@
 package: ninja
-version: "v1.11.1"
+version: "1.13.2"
 sources:
-  - https://github.com/ninja-build/ninja/archive/%(version)s.tar.gz
+  - https://github.com/ninja-build/ninja/archive/refs/tags/v%(version)s.tar.gz
 build_requires:
   - re2c
   - Python

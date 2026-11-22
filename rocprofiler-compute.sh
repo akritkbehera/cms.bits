@@ -43,7 +43,7 @@ requires:
 ---
 # ROCm (rocm-systems monorepo) package -- port of cmsdist rocprofiler-compute.spec.
 export PKG_CONFIG_PATH="${ELFUTILS_ROOT}/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
-export ROCM_CMAKE_EXTRA_ARGS='-DCMAKE_C_COMPILER="${ROCM_LLVM_ROOT}/bin/amdclang" -DCMAKE_CXX_COMPILER="${ROCM_LLVM_ROOT}/bin/amdclang++" -DBUILD_TESTING=OFF -DPython3_FIND_VIRTUALENV=STANDARD -DPython3_ROOT_DIR="$PYTHON_ROOT" -DPython3_EXECUTABLE="$PYTHON_ROOT/bin/python3.12"'
+export ROCM_CMAKE_EXTRA_ARGS='-DCMAKE_C_COMPILER="${ROCM_LLVM_ROOT}/bin/amdclang" -DCMAKE_CXX_COMPILER="${ROCM_LLVM_ROOT}/bin/amdclang++" -DBUILD_TESTING=OFF -DPython3_FIND_VIRTUALENV=STANDARD -DPython3_ROOT_DIR="$PYTHON_ROOT" -DPython3_EXECUTABLE="$PYTHON_ROOT/bin/python3"'
 # Prebuilt roofline binaries for other distros / ROCm majors are not usable here.
 export ROCM_POST_INSTALL_HOOK='rm -fr "$INSTALLROOT"/bin/roofline-rhel8-rocm6 "$INSTALLROOT"/bin/roofline-sles15sp6-rocm6 "$INSTALLROOT"/bin/roofline-ubuntu22_04-rocm6 "$INSTALLROOT"/bin/roofline-azurelinux3-rocm7 "$INSTALLROOT"/bin/roofline-sles15sp6-rocm7 "$INSTALLROOT"/bin/roofline-ubuntu22_04-rocm7'
 #!include <rocm-systems-build.sh>

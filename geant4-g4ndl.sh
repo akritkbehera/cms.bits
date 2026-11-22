@@ -1,5 +1,5 @@
 package: geant4-G4NDL
-version: "4.7"
+version: "4.7.1"
 sources:
 -  https://cern.ch/geant4-data/datasets/G4NDL.%(version)s.tar.gz
 ---

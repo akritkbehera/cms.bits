@@ -1,7 +1,7 @@
-packages: geant4-G4PhotonEvaporation
-version: "11.0"
+package: geant4-G4PhotonEvaporation
+version: "6.1.2"
 sources:
- - https://geant4-data.web.cern.ch/datasets/G4PhotonEvaporation.%(version)s.tar.gz
+ - https://cern.ch/geant4-data/datasets/G4PhotonEvaporation.%(version)s.tar.gz
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

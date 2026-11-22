@@ -18,14 +18,13 @@ requires:
  - blackhat
  - sqlite
  - Python
+ - fastjet
  - openmpi
  - openloops
  - zlib
  - qd
 prepend_path:
  LD_LIBRARY_PATH: $SHERPA_ROOT/lib/SHERPA-MC
-untracked_requires:
- - fastjet
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

@@ -366,7 +366,6 @@ requires:
   - py-tqdm
   - py-traitlets
   - py-trove-classifiers
-  - py-typed-ast
   - py-types-python-dateutil
   - py-typing-extensions
   - py-typing-inspection

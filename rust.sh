@@ -1,5 +1,5 @@
 package: rust
-version: "v%(tag_basename)s"
+version: "%(tag_basename)s"
 tag: 1.98.0
 sources: 
 - https://static.rust-lang.org/dist/rust-%(tag_basename)s-x86_64-unknown-linux-gnu.tar.gz

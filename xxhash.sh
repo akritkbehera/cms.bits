@@ -1,5 +1,5 @@
 package: xxhash
-version: "v%(tag_basename)s"
+version: "%(tag_basename)s"
 tag: "0.8.2"
 sources:
  - https://github.com/Cyan4973/xxHash/archive/refs/tags/v%(tag_basename)s.tar.gz

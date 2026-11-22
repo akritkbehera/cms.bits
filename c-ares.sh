@@ -1,7 +1,8 @@
 package: c-ares
-version: "1_15_0"
+version: "1.15.0"
+tag: cares-1_15_0
 sources:
- - https://github.com/c-ares/c-ares/archive/cares-%(version)s.tar.gz
+ - https://github.com/c-ares/c-ares/archive/%(tag)s.tar.gz
 build_requires:
  - CMake
  - gmake

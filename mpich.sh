@@ -1,5 +1,5 @@
 package: mpich
-version: 4.3.2
+version: v4.3.2
 variables:
   tag: 15f59ab2b740539472dfd130f7fe01b61c28bba4
 sources: 

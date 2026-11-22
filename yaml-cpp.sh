@@ -1,5 +1,5 @@
 package: yaml-cpp
-version: "v%(tag_basename)s"
+version: "%(tag_basename)s"
 tag: "0.8.0"
 build_requires:
 - CMake

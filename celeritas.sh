@@ -1,7 +1,7 @@
 package: celeritas
-version: 0.7.0-devX
+version: 0.7.0
 variables:
-  tag: 1fb77992ff4a8b6da8cc8d8630df3727a3c33cf3
+  tag: 9201fbaa66ec3cf396c412b0f7479ead90d734fe
   branch: develop
   github_user: celeritas-project
 sources:
@@ -25,7 +25,10 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-build_flags="-Wall -Wextra -pedantic -fPIC"
+#!include <compilation-flags.file>
+#!include <compilation-flags-lto.file>
+
+build_flags="-Wall -Wextra -pedantic -fPIC $arch_build_flags $lto_build_flags"
 
 use_vecgeom=OFF
 [ -n "$VECGEOM_REVISION" ] && use_vecgeom=ON

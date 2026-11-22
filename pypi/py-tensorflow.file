@@ -70,9 +70,9 @@ PipPostBuild='
 PipDepsPost="grep -v '\<libclang\>'"
 
 RelocateFiles="\
-lib/python3.12/site-packages/tensorflow/include/external/local_config_cuda/cuda/cuda/cuda_config.h \
-lib/python3.12/site-packages/tensorflow/include/third_party/gpus/cuda/cuda_config.h \
-lib/python3.12/site-packages/tensorflow/python/platform/build_info.py"
+${PYTHON3_LIB_SITE_PACKAGES}/tensorflow/include/external/local_config_cuda/cuda/cuda/cuda_config.h \
+${PYTHON3_LIB_SITE_PACKAGES}/tensorflow/include/third_party/gpus/cuda/cuda_config.h \
+${PYTHON3_LIB_SITE_PACKAGES}/tensorflow/python/platform/build_info.py"
 
 PipPostInstall='
   for f in $RelocateFiles; do
@@ -82,5 +82,5 @@ PipPostInstall='
   done
 
   sed -i "s|assert((arg_size(index)|assert(((size_t)arg_size(index)|" \
-    "$INSTALLROOT/lib/python3.12/site-packages/tensorflow/include/tensorflow/compiler/tf2xla/xla_compiled_cpu_function.h"
+    "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/tensorflow/include/tensorflow/compiler/tf2xla/xla_compiled_cpu_function.h"
 '

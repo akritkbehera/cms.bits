@@ -70,7 +70,6 @@ requires:
  - libungif
  - libxml2
  - lwtnn
- - meschach
  - pcre2
  - photospp
  - pyquen
@@ -129,6 +128,7 @@ requires:
  - pacparser
  - git
  - git-lfs
+ - fastjet
  - fastjet-contrib
  - opencl
  - opencl-cpp
@@ -195,8 +195,6 @@ requires:
  - py-tensorflow
 # - pytorch
 # - pytorch-custom-ops
-untracked_requires:
- - fastjet
 ---
 # =============================================================================
 # coral-tools: Generates SCRAM tool configuration files for CMS software

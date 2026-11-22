@@ -6,6 +6,7 @@ patches:
  - madgraph5amcatnlo-config.patch
  - madgraph5amcatnlo-py39.patch
  - madgraph5amcatnlo-py312.patch
+ - madgraph5amcatnlo-py314.patch
 variables:
  runpath_opts: "-m HEPTools -m basiceventgeneration"
  versiontag: "2_7_3"
@@ -17,12 +18,11 @@ requires:
  - ROOT
  - lhapdf
  - gosamcontrib
+ - fastjet
  - pythia8
  - thepeg
  - collier 
  - gcc
-untracked_requires:
- - fastjet
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

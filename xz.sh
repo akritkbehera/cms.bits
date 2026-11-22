@@ -1,19 +1,13 @@
 package: xz
 version: 5.8.3
-variables:
-  tag: v%(version)s
-build_requires:
- - autotools
 requires:
  - gcc
 sources:
-  - https://github.com/tukaani-project/xz/archive/%(tag)s.tar.gz
+  - https://tukaani.org/xz/xz-%(version)s.tar.gz
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
-
-./autogen.sh --no-po4a
 
 ./configure \
     CFLAGS='-fPIC -Ofast' \

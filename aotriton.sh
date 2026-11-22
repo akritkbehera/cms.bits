@@ -20,7 +20,9 @@ requires:
   - py-packaging
   - py-pluggy
   - py-numpy
+  - Python
   - setuptools
+  - pip
   - py-wheel
   - py-pybind11
   - py-pandas
@@ -43,16 +45,11 @@ export HIP_PLATFORM=amd
 # build environment cannot import the backend.
 PIP_PKG_ROOT="$PIP_ROOT"
 unset PIP_ROOT
-export PYTHONPATH="${SETUPTOOLS_ROOT}/lib/python3.12/site-packages:${PIP_PKG_ROOT}/lib/python3.12/site-packages${PYTHONPATH:+:${PYTHONPATH}}"
+export PYTHONPATH="${SETUPTOOLS_ROOT}/${PYTHON3_LIB_SITE_PACKAGES}:${PIP_PKG_ROOT}/${PYTHON3_LIB_SITE_PACKAGES}${PYTHONPATH:+:${PYTHONPATH}}"
 
 # pip ignores PIP_NO_BUILD_ISOLATION, so the flag has to go on the command line.
 sed -i 's|-m pip install |-m pip install --no-build-isolation |g' "$BUILDDIR/CMakeLists.txt"
 grep -q -- '--no-build-isolation' "$BUILDDIR/CMakeLists.txt"
-
-# cmsdist's rocm_gpus_cmake: bare gfx targets, ';'-separated. Strip both the ':sramecc+'
-# suffix and a glued-on 'sramecc+' -- this tree's rocm_archs has entries of both shapes
-# (gfx90a:ramecc+, gfx942sramecc+), so a plain ':'-split is not enough.
-rocm_gpus_cmake=$(for a in $rocm_archs; do printf '%s;' "$(echo "$a" | sed 's/:.*//; s/s\?ramecc+$//')"; done | sed 's/;$//')
 
 CMAKE_ARGS=(
   -S "$BUILDDIR" -B "$BUILDDIR/build"
@@ -60,7 +57,7 @@ CMAKE_ARGS=(
   -DCMAKE_BUILD_TYPE=%(cms_build_type)s
   -DCMAKE_INSTALL_PREFIX:STRING="$INSTALLROOT"
   -DAOTRITON_NOIMAGE_MODE=ON
-  -DAOTRITON_TARGET_ARCH="$rocm_gpus_cmake"
+  -DAOTRITON_TARGET_ARCH="$rocm_targets"
   -DAOTRITON_NO_PYTHON=OFF
   -DAOTRITON_USE_TORCH=OFF
   -DAOTRITON_INHERIT_SYSTEM_SITE_TRITON=ON

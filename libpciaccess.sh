@@ -1,7 +1,7 @@
 package: libpciaccess
-version: "libpciaccess_0.16"
+version: "0.16"
 sources: 
-- http://deb.debian.org/debian/pool/main/libp/libpciaccess/%(version)s.orig.tar.gz
+- http://deb.debian.org/debian/pool/main/libp/libpciaccess/libpciaccess_%(version)s.orig.tar.gz
 build_requires:
  - autotools
 requires:

@@ -48,3 +48,5 @@ for CONFIG_SUB_FILE in $(find "$BUILDDIR" -name 'config.sub' -not -path "*/confi
     echo "❌ Failed to chmod $CONFIG_SUB_FILE"
     exit 1
   }
+
+done

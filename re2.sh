@@ -1,5 +1,5 @@
 package: re2
-version: "2021_06_01"
+version: "2021-06-01"
 variables:
   tag: "2021-06-01"
 sources:

@@ -12,6 +12,7 @@ requires:
   - rocm-core
   - libxml2
   - zlib
+  - zstd
   - rocprofiler-register
   - gcc
 prepend_path:
@@ -28,7 +29,7 @@ mkdir -p "$BUILDDIR/rocm-systems"
 tar -xzf "$ROCM_SOURCES_ROOT/rocm_systems.tar.gz" --strip-components=1 -C "$BUILDDIR/rocm-systems"
 cp -rT "$BUILDDIR/rocm-systems/projects/rocr-runtime/runtime/hsa-runtime" "$BUILDDIR/hsa-runtime"
 
-CMAKE_PREFIX_PATH="$ROCM_CORE_ROOT;$LIBXML2_ROOT;$ZLIB_ROOT;$ROCPROFILER_REGISTER_ROOT"
+CMAKE_PREFIX_PATH="$ROCM_CORE_ROOT;$LIBXML2_ROOT;$ZLIB_ROOT;$ZSTD_ROOT;$ROCPROFILER_REGISTER_ROOT"
 # RUNTIMES_CMAKE_ARGS is itself a ';'-separated cmake list, so the nested
 # CMAKE_PREFIX_PATH separators must be escaped to survive list splitting.
 RUNTIMES_PREFIX_PATH="${CMAKE_PREFIX_PATH//;/\\;}"

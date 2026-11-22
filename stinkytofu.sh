@@ -20,7 +20,7 @@ requires:
   - rocm-comgr
   - Python
 prepend_path:
-  PYTHON3PATH: "%(root_dir)s/lib/python3.12/dist-packages"
+  PYTHON3PATH: "%(root_dir)s/lib/python${PYTHON_MAJOR_MINOR_VERSION}/dist-packages"
 ---
 export ROCM_LIBRARIES_DIR="shared"
 export ROCM_PRE_BUILD_HOOK='patch -p1 -d "$BUILDDIR/rocm-libraries/shared/stinkytofu" < "$SOURCEDIR/rocm-stinkytofu-gcc14.patch"'

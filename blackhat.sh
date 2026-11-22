@@ -14,7 +14,6 @@ requires:
  - qd
  - Python
  - gcc
- - py-disutils
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 patch -p1 < "$SOURCEDIR/$PATCH0"

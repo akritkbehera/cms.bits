@@ -1,7 +1,7 @@
 package: ROOT
 version: 6.40.05
 variables:
-  tag: 89147c9689864e3cfb1031bc9cb564cae604d0d3
+  tag: 0b6b5609aeee79964ddff1583b78d1c1ef458a16
 sources:
   - https://github.com/cms-sw/root/archive/%(tag)s.tar.gz
 env:
@@ -89,7 +89,7 @@ cmake_args=(
   -Dhdfs=OFF
   -Dqt=OFF
   -Dtmva=ON
-  -DPython3_EXECUTABLE="${PYTHON_ROOT}/bin/python3.12"
+  -DPython3_EXECUTABLE="${PYTHON_ROOT}/bin/python3"
   -Dqtgsi=OFF
   -Dpgsql=OFF
   -Dsqlite=OFF
@@ -243,4 +243,3 @@ for p in $(grep -rlI -m1 '^#\!.*python' $INSTALLROOT/bin $INSTALLROOT/etc); do
   lnum=$(grep -n -m1 '^#\!.*python' $p | sed 's|:.*||')
   sed -i -e "${lnum}c#!/usr/bin/env python3" $p
 done
-

@@ -122,8 +122,7 @@ deprecation==2.1.0
 dill==0.4.1
 distlib==0.4.4
 distro==1.9.0
-disutils==1.4.32
-dnspython==2.9.0
+dnspython==2.9.2
 docopt==0.6.2
 docstring-parser==0.18.0
 docutils==0.23
@@ -161,7 +160,7 @@ google-pasta==0.2.0
 grpcio==1.83.1
 grpcio-tools==1.83.1
 h11==0.16.0
-h5py==3.13.0
+h5py==3.15.1
 hatch-fancy-pypi-readme==25.1.0
 hatch-jupyter-builder==0.10.0
 hatch-nodejs-version==0.4.0
@@ -280,7 +279,7 @@ notebook-shim==0.2.4
 numexpr==2.14.2
 numpy==2.5.4
 nvidia-ml-py==13.615.71
-oauthlib==4.0.0
+oauthlib==4.0.1
 onnx==1.23.2
 onnxconverter-common==1.16.0
 onnxmltools==1.16.0
@@ -330,7 +329,7 @@ ptyprocess==0.7.0
 puccinialin==0.1.14
 pure-eval==0.2.4
 py-cpuinfo==9.0.0
-pyasn1==0.6.4
+pyasn1==0.6.5
 pyasn1-modules==0.4.2
 pybind11==3.1.0
 pybrain==0.3.3
@@ -417,7 +416,7 @@ six==1.17.0
 skl2onnx==1.20.0
 smmap==5.0.3
 sniffio==1.3.1
-soupsieve==3.0.3
+soupsieve==4.1
 sqlalchemy==1.3.24
 stack-data==0.6.3
 stevedore==5.9.1
@@ -461,12 +460,11 @@ torch-sparse==0.6.18
 torch-sparse-cuda==0.6.18
 torch-sparse-rocm==0.6.18.post7
 torchvision==0.29.1
-tornado==6.5.10
+tornado==6.6.1
 tqdm==4.70.1
 traitlets==5.16.1
 triton==3.8.0
 trove-classifiers==2026.9.21.13
-typed-ast==1.5.5
 types-python-dateutil==2.9.0.20261021
 typing-extensions==4.16.0
 typing-inspection==0.4.4
@@ -480,7 +478,7 @@ uv-build==0.13.4
 vcs-versioning==2.6.0
 vector==1.9.0
 versioneer==0.29
-virtualenv==21.14.12
+virtualenv==21.15.2
 virtualenv-clone==0.5.7
 virtualenvwrapper==6.1.1
 wcwidth==0.9.3

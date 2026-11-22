@@ -1,9 +1,7 @@
 package: Python
-version: "3.12.13"
-variables:
-  tag: "v%(version)s"
+version: "3.14.6"
 sources:
-  - https://github.com/python/cpython/archive/%(tag)s.tar.gz
+  - https://www.python.org/ftp/python/%(version)s/Python-%(version)s.tgz
 requires:
  - expat
  - bz2lib
@@ -11,6 +9,7 @@ requires:
  - gdbm
  - libffi
  - zlib
+ - zstd
  - sqlite
  - xz
  - libuuid
@@ -35,7 +34,7 @@ mkdir -p "${INSTALLROOT}"/{include,lib,bin};
 
 LDFLAGS=""
 CPPFLAGS=""
-for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${ZLIB_ROOT} ${SQLITE_ROOT} ${XZ_ROOT} ${LIBUUID_ROOT}; do
+for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${ZLIB_ROOT} ${SQLITE_ROOT} ${XZ_ROOT} ${LIBUUID_ROOT} ${ZSTD_ROOT}; do
     if [[ -n "$d" ]]; then
         if [[ -e "$d/lib" ]]; then
             LDFLAGS="$LDFLAGS -L$d/lib"
@@ -77,7 +76,7 @@ pythonv=$(echo ${PKGVERSION} | sed 's|^v||' | cut -d. -f 1,2)
 python_major=$(echo ${pythonv} | cut -d. -f 1)
 
 # Create symlink so python3 points to our custom python
-ln -sf "$INSTALLROOT/bin/python${pythonv}" "$INSTALLROOT/bin/python${python_major}"
+ln -sf "python${pythonv}" "$INSTALLROOT/bin/python${python_major}"
 
 # After install, ensure our Python is used
 export PATH="$INSTALLROOT/bin:$PATH"
@@ -88,11 +87,10 @@ export PYTHONPATH="$INSTALLROOT/lib/python${pythonv}/site-packages"
 which python${python_major}
 python${python_major} --version
 python${python_major} -c 'import sys; print(sys.executable)'
-python${python_major} -c 'import _tkinter'
+python${python_major} -c 'import _tkinter, compression.zstd'
 
 sed -i -e "s|^#!.*python${pythonv} *$|#!/usr/bin/env python${python_major}|" ${INSTALLROOT}/bin/* ${INSTALLROOT}/lib/python${pythonv}/*.py
-sed -i -e "s|^#!/.*|#!/usr/bin/env python${pythonv}m|" ${INSTALLROOT}/lib/python${pythonv}/config-*/python-config.py
-sed -i -e "s|^#! */usr/local/bin/python|#!/usr/bin/env python|" ${INSTALLROOT}/lib/python${pythonv}/cgi.py
+sed -i -e "s|^#!/.*|#!/usr/bin/env python${pythonv}|" ${INSTALLROOT}/lib/python${pythonv}/config-*/python-config.py
 
 # is executable, but does not start with she-bang so not valid
 # executable; this avoids problems with rpm 4.8+ find-requires

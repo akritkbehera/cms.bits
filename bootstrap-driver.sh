@@ -7,4 +7,4 @@ build_requires:
  - cms-common
  - fakesystem
 ---
-
+# Legacy bootstrap dependencies. The RPM driver lists are specific to cmsdist.

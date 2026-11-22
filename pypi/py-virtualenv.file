@@ -2,6 +2,7 @@ build_requires:
 - py-hatchling
 - py-hatch-vcs
 - py-setuptools-scm
+- py-hatch-fancy-pypi-readme
 requires:
 - py-appdirs
 - py-distlib

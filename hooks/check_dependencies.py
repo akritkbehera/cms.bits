@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 import argparse
 import glob
@@ -6,6 +6,8 @@ import json
 import os
 import re
 import sys
+from collections import defaultdict
+from operator import eq, ge, gt, le, lt
 from pathlib import Path
 
 
@@ -89,6 +91,38 @@ def resolve_provider_files(
     return provider_files, errors
 
 
+CAPABILITY = re.compile(r"^(.+?) (<=|>=|=|<|>) (\S+)$")
+COMPARE = {"=": eq, ">=": ge, ">": gt, "<=": le, "<": lt}
+
+
+def rpm_label(evr):
+    epoch, separator, version = evr.partition(":")
+    if not separator:
+        epoch, version = "0", epoch
+    version, _, release = version.partition("-")
+    return epoch, version, release
+
+
+def find_provider(requirement, exact, by_name):
+    if requirement in exact:
+        return exact[requirement]
+    match = CAPABILITY.fullmatch(requirement)
+    if not match:
+        candidates = by_name.get(requirement, ())
+        return candidates[0][1] if candidates else None
+    name, operator, expected = match.groups()
+    candidates = by_name.get(name, ())
+    if not candidates:
+        return None
+
+    import rpm
+
+    for version, path in candidates:
+        if COMPARE[operator](rpm.labelCompare(rpm_label(version), rpm_label(expected)), 0):
+            return path
+    return None
+
+
 def check_dependencies(deps_directory: Path) -> int:
     requires_path = deps_directory / "requires.json"
     provides_path = deps_directory / "provides.json"
@@ -102,6 +136,7 @@ def check_dependencies(deps_directory: Path) -> int:
 
     provider_files = [provides_path, *dependency_files]
     providers: dict[str, Path] = {}
+    by_name = defaultdict(list)
     loaded_provider_files = 0
     for provider_file in provider_files:
         try:
@@ -112,12 +147,16 @@ def check_dependencies(deps_directory: Path) -> int:
         loaded_provider_files += 1
         for capability in capabilities:
             providers.setdefault(capability, provider_file)
+            match = CAPABILITY.fullmatch(capability)
+            if match and match[2] == "=":
+                by_name[match[1]].append((match[3], provider_file))
 
-    missing = [requirement for requirement in requirements if requirement not in providers]
+    missing = []
 
     for requirement in requirements:
-        provider = providers.get(requirement)
+        provider = find_provider(requirement, providers, by_name)
         if provider is None:
+            missing.append(requirement)
             print(f"MISSING {requirement}")
         else:
             print(f"OK      {requirement} <- {provider}")

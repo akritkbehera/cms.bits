@@ -31,7 +31,6 @@ requires:
   - py-cmsml
   - py-law
   - py-protobuf
-  - py-backports-zstd
   - py-pyg-lib
   - py-torch
   - py-torch-cluster

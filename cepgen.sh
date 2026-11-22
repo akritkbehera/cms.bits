@@ -7,6 +7,7 @@ build_requires:
  - ninja
 requires:
  - gcc
+ - boost
  - GSL
  - OpenBLAS
  - hepmc
@@ -45,7 +46,7 @@ CMAKE_ARGS=(
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
     -DCMAKE_BUILD_TYPE=%(cms_build_type)s
     -DBoost_NO_SYSTEM_PATHS=ON
-    -DCMAKE_PREFIX_PATH="${BZ2LIB_ROOT};${ZLIB_ROOT};${XZ_ROOT};${JSON_ROOT}"
+    -DCMAKE_PREFIX_PATH="${GSL_ROOT};${OPENBLAS_ROOT};${HEPMC_ROOT};${HEPMC3_ROOT};${LHAPDF_ROOT};${PYTHIA6_ROOT};${ROOT_ROOT};${BZ2LIB_ROOT};${ZLIB_ROOT};${XZ_ROOT};${JSON_ROOT};${BOOST_ROOT};${PYTHON_ROOT}"
 )
 
 if [[ "$VERBOSE" == "1" ]]; then

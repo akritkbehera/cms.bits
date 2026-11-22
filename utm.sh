@@ -1,5 +1,5 @@
 package: utm
-version: "0.14.1"
+version: "utm_0.14.1"
 build_requires:
 - gmake
 requires:
@@ -7,7 +7,7 @@ requires:
 - boost
 - gcc
 sources: 
-- https://gitlab.cern.ch/cms-l1t-utm/utm/-/archive/utm_%(version)s/utm-utm_%(version)s.tar.gz
+- https://gitlab.cern.ch/cms-l1t-utm/utm/-/archive/%(version)s/utm-%(version)s.tar.gz
 patches:
 - utm-boost190.patch
 ---

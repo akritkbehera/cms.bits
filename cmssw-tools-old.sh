@@ -79,7 +79,6 @@ requires:
   - libungif
   - libxml2
   - lwtnn
-  - meschach
   - pcre2
   - photospp
   - pyquen

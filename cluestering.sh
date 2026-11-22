@@ -1,5 +1,5 @@
 package: CLUEstering
-version: 2.12.0
+version: 2.14.2
 sources:
   - https://gitlab.cern.ch/kalos/%(package)s/-/archive/%(version)s/%(package)s-%(version)s.tar.gz
 requires:
@@ -12,4 +12,3 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
 
 mkdir -p "$INSTALLROOT/include"
 cp -ar include "$INSTALLROOT/"
-

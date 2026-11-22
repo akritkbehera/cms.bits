@@ -12,6 +12,9 @@ requires:
   - eigen
   - boost
 ---
+if [[ "$(uname -m)" == aarch64 ]]; then
+  export CMS_EIGEN_CXX_FLAGS="-DEIGEN_NEON_GEBP_NR=4 ${CMS_EIGEN_CXX_FLAGS:-}"
+fi
 #!include <microarch-flags.file>
 
 tar -xzf "$SOURCEDIR/${SOURCE0}" \

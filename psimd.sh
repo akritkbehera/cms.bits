@@ -1,5 +1,5 @@
 package: psimd
-version: "v1"
+version: "2020-05-17"
 tag: 072586a71b55b7f8c584153d223e95687148a900
 sources: 
 - https://github.com/Maratyszcza/psimd/archive/%(tag_basename)s.tar.gz

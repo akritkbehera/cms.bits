@@ -1,5 +1,5 @@
 package: mille
-version: V01-00-00
+version: V01-01-03
 sources:
   - https://gitlab.desy.de/millepede/Mille/-/archive/%(version)s/mille-%(version)s.tar.gz
 build_requires:

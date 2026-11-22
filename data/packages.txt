@@ -1,4 +1,5 @@
 [github]
+RecoLocalTracker-SiPixelRecHits=V00-00-01
 IOMC-Input=V00-00-02
 RecoTracker-LSTCore=V00-01-00
 L1Trigger-L1TMuon=V01-13-00

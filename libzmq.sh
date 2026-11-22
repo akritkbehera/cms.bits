@@ -1,5 +1,5 @@
 package: libzmq
-version: "4.3.5"
+version: "4.3.5-5bf04ee"
 tag: 5bf04ee2ff207f0eaf34298658fe354ea61e1839
 variables:
  branch: master

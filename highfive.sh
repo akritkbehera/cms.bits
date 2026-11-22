@@ -1,8 +1,8 @@
 package: highfive
-version: "%(tag_basename)s"
-tag: v2.10.1
+version: "2.10.1"
+tag: ede97c8d51905c1640038561d12d41da173012ac
 sources:
- - https://github.com/BlueBrain/HighFive/archive/refs/tags/%(tag_basename)s.tar.gz
+ - https://github.com/BlueBrain/HighFive/archive/%(tag)s.tar.gz
 patches:
  - highfive-boost190.patch
 build_requires:

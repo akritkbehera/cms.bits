@@ -3,3 +3,4 @@ sources:
 patches:
  - py-tensorflow-io-gcs-filesystem.patch
 ---
+#!include <pypi/wheel-ignore-requires-python.file>

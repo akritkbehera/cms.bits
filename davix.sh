@@ -1,7 +1,8 @@
 package: davix
-version: "R_0_8_9"
+version: "0.8.9"
+tag: R_0_8_9
 sources:
-  - git+https://github.com/cern-fts/davix.git?obj=devel/%(version)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
+  - git+https://github.com/cern-fts/davix.git?obj=devel/%(tag)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
 build_requires:
  - CMake
  - gmake

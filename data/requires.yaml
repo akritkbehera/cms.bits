@@ -90,7 +90,7 @@ requires:
   - data-GeneratorInterface-ReggeGribovPartonMCInterface
   - data-Calibration-Tools
   - data-CondFormats-JetMETObjects
-  - data-DQM-DTMonitorClient
+  - data-RecoLocalTracker-SiPixelRecHits
   - data-DQM-PhysicsHWW
   - data-EventFilter-L1TRawToDigi
   - data-FastSimulation-TrackingRecHitProducer

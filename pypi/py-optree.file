@@ -1,5 +1,11 @@
 build_requires:
 - CMake
+- py-pybind11
 requires:
 - py-typing-extensions
 ---
+# Use the packaged headers and CMake config instead of fetching pybind11.
+PipPreBuild='
+  export pybind11_DIR="$PY_PYBIND11_ROOT/$PYTHON3_LIB_SITE_PACKAGES/pybind11/share/cmake/pybind11"
+  test -f "$pybind11_DIR/pybind11Config.cmake"
+'

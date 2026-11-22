@@ -1,7 +1,7 @@
 package: libffi
-version: "v3.5.2"
+version: "3.5.2"
 sources:
-  - https://github.com/libffi/libffi/archive/%(version)s.tar.gz
+  - https://github.com/libffi/libffi/archive/v%(version)s.tar.gz
 build_requires:
  - autotools
  - gmake

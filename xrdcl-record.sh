@@ -8,10 +8,14 @@ requires:
 - gcc
 sources:
 - https://github.com/xrootd/xrdcl-record/archive/refs/tags/v%(version)s.tar.gz
+patches:
+- xrdcl-record-xrootd-version-header.patch
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
+
+patch -p1 -d "$BUILDDIR" < "$SOURCEDIR/$PATCH0"
 
 cmake -S "$BUILDDIR" -B "$BUILDDIR/build" \
   -DCMAKE_BUILD_TYPE=Release \

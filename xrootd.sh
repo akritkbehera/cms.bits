@@ -1,5 +1,5 @@
 package: XRootD
-version: "6.0.2"
+version: "6.2.1"
 sources:
   - https://github.com/xrootd/xrootd/releases/download/v%(version)s/xrootd-%(version)s.tar.gz
 requires:

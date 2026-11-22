@@ -2,9 +2,12 @@ package: gdb
 version: "17.2"
 sources:
 - https://ftp.gnu.org/gnu/gdb/gdb-%(version)s.tar.gz
+build_requires:
+ - pkg-config
 requires:
  - Python
  - zlib
+ - zstd
  - xz
  - expat
  - py-six
@@ -20,6 +23,7 @@ patch -p1 < $SOURCEDIR/$PATCH0
 
 rm -rf "$BUILDDIR/build"; mkdir "$BUILDDIR/build"; cd "$BUILDDIR/build"
 
+PKG_CONFIG_PATH="${ZSTD_ROOT}/lib/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}" \
 "$BUILDDIR/configure" \
     --prefix="$INSTALLROOT" \
     --disable-rpath \
@@ -27,6 +31,7 @@ rm -rf "$BUILDDIR/build"; mkdir "$BUILDDIR/build"; cd "$BUILDDIR/build"
     --with-expat=yes \
     --with-libexpat-prefix=${EXPAT_ROOT} \
     --with-zlib=yes \
+    --with-zstd \
     --with-python=$PYTHON_ROOT/bin/python3 \
     --with-python-libdir="${PYTHON_ROOT}/lib" \
     --with-lzma=yes \

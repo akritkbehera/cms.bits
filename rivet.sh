@@ -2,6 +2,7 @@ package: rivet
 version: 4.1.2
 requires:
  - hepmc3
+ - fastjet
  - fastjet-contrib
  - yoda
  - hdf5
@@ -21,8 +22,6 @@ patches:
  - rivet-postrelease.patch
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
-untracked_requires:
- - fastjet
 ---
 #!include <compilation-flags.file>
 #!include <compilation-flags-lto.file>

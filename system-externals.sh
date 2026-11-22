@@ -1,7 +1,7 @@
 package: system-externals
 version: "1"
 variables:
- seeds: 'bash glibc glibc-headers openssl-libs libX11 libxcrypt readline ncurses-libs tcl tk mesa-libGLU libglvnd-glx libglvnd-opengl libXext libXft libXpm perl perl-libs libbrotli python3 perl-base perl-lib perl-filetest perl-overload perl-vars libcom_err krb5-libs libaio libgcc libmount'
+ seeds: 'bash glibc glibc-headers openssl-libs libX11 libxcrypt readline ncurses-libs tcl tk mesa-libGLU libglvnd-glx libglvnd-opengl libXext libXft libXpm perl perl-libs libbrotli python3 perl-base perl-lib perl-filetest perl-overload perl-vars libcom_err krb5-libs libaio libgcc libmount libattr papi-libs perl-sort'
 hook: disable
 ---
 provides_arr=(
@@ -13,6 +13,7 @@ provides_arr=(
     "libdrm.so.2()(64bit)"
     "libdrm_amdgpu.so.1()(64bit)"
     "/usr/bin/python"
+    "/usr/bin/python3"
     "perl(Cwd)"
     "perl(File::Basename)"
     "perl(File::stat)"
@@ -90,6 +91,6 @@ for req in \$seeds; do
 done
 
 printf '%%s\n%%s\n' "\$seed_provides" "\$fake_provides" \
-  | grep . \
+  | awk 'NF { print; if (sub(/ [<>=]+ .+$/, "")) print }' \
   | to_json > "\$WORK_DIR/$ARCHITECTURE/system-provides.json"
 EoF

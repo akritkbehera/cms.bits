@@ -1,5 +1,5 @@
 package: millepede
-version: V05-00-00
+version: V05-01-08
 sources:
  - https://gitlab.desy.de/millepede/millepede-ii/-/archive/%(version)s/%(package)s-ii-%(version)s.tar.gz
 build_requires:
@@ -19,6 +19,8 @@ cmake_args=(
     -B "$BUILDDIR/build"
     -DCMAKE_BUILD_TYPE=%(cms_build_type)s
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
+    -DCMAKE_Fortran_COMPILER="$GCC_ROOT/bin/gfortran"
+    -DCMAKE_CXX_COMPILER="$GCC_ROOT/bin/g++"
     -DCMAKE_PREFIX_PATH="${GCC_ROOT};${ROOT_ROOT};${MILLE_ROOT}"
     -DCMAKE_CXX_STANDARD="%(cms_cxx_std)s"
     -DLAPACK_OPENBLAS=off

@@ -1,5 +1,5 @@
 package: g4hepem
-version: "20251114"
+version: "20261106"
 variables:
   tag:         "%(version)s"
   branch:      master
@@ -59,4 +59,3 @@ pushd "$BUILDDIR/tmp_archive"
   $(which gcc-ar) rcs "$INSTALLROOT/lib64/libg4hepem-static.a" *.o
 popd
 rm -rf "$BUILDDIR/tmp_archive"
-

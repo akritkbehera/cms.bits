@@ -1,9 +1,7 @@
 package: gbl
-version: V04-00-00
-variables:
- tag: 6e60cdf1f1a296ce0a4e08833ebbfa58e9ad2787
+version: V04-00-08
 sources:
- - git+https://gitlab.desy.de/millepede/general-broken-lines.git?obj=main/%(tag)s&export=%(package)s-%(version)s&output=/%(package)s-%(version)s.tgz
+ - https://gitlab.desy.de/millepede/general-broken-lines/-/archive/%(version)s/general-broken-lines-%(version)s.tar.gz
 build_requires:
  - CMake
 requires:
@@ -19,14 +17,12 @@ tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
     -C "$BUILDDIR"
 
-grep -q 'CMAKE_CXX_STANDARD  *17' "$BUILDDIR/cpp/CMakeLists.txt"
-sed -i -e 's|CMAKE_CXX_STANDARD  *17|CMAKE_CXX_STANDARD %(cms_cxx_std)s|' "$BUILDDIR/cpp/CMakeLists.txt"
-
 CMAKE_ARGS=(
     -S "$BUILDDIR/cpp"
     -B "$BUILDDIR/build"
     -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
     -DCMAKE_BUILD_TYPE=%(cms_build_type)s
+    -DCMAKE_CXX_STANDARD=%(cms_cxx_std)s
     -DCMAKE_VERBOSE_MAKEFILE=ON
     -DEIGEN3_INCLUDE_DIR="${EIGEN_ROOT}/include/eigen3"
     -DSUPPORT_ROOT=False

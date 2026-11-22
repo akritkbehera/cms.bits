@@ -7,3 +7,4 @@ requires:
 - py-python-dateutil
 - py-tenacity
 ---
+#!include <pypi/wheel-ignore-requires-python.file>

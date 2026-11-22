@@ -14,14 +14,13 @@ requires:
  - hepmc3
  - lhapdf
  - blackhat
+ - fastjet
  - openmpi
  - rivet
  - pythia8
  - libzip
  - Python
  - openloops
-untracked_requires:
- - fastjet
 ---
 tar -xzf "$SOURCEDIR/$SOURCE0" --strip-components=1 -C "$BUILDDIR"
 for ((num=0; num<PATCH_COUNT; num++)); do

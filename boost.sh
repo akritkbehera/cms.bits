@@ -40,6 +40,11 @@ pushd "$BUILDDIR/tools/build"
     export PATH="${PWD}/tmp-boost-build/bin:${PATH}"
 popd
 
+# Pass architecture flags through Boost.Build for the GCC toolset.
+if [[ "$TOOLSET" == gcc && -n "$arch_build_flags" ]]; then
+    echo "using gcc : : : <cxxflags>\"$arch_build_flags\" <cflags>\"$arch_build_flags\" ;" > "$BUILDDIR/user-config.jam"
+fi
+
 # Configure python and mpi
 PYTHONV=$(echo "$PYTHON_VERSION" | sed 's/^v//' | cut -f1,2 -d.)
 echo "using mpi ;" >> "$BUILDDIR/user-config.jam"
@@ -108,4 +113,3 @@ find "$INSTALLROOT/lib/cmake" -name '*.cmake' -print0 | xargs -0 sed -i \
 for l in $(find "$INSTALLROOT/lib" -name "*.so.*"); do
   ln -sf "$(basename "$l")" "$(echo "$l" | sed -e 's|[.]so[.].*|.so|')"
 done
-

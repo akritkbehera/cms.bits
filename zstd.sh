@@ -3,7 +3,7 @@ version: "1.5.7"
 variables:
   tag: v%(version)s
 sources:
-  - https://github.com/facebook/zstd/archive/%(tag)s.tar.gz
+  - https://github.com/facebook/zstd/releases/download/%(tag)s/zstd-%(version)s.tar.gz
 build_requires:
  - CMake
  - gmake

@@ -3,6 +3,4 @@ requires:
  - py-logistro
  - py-orjson
  - py-packaging
- # kaleido 1.x lists pytest-timeout as a core runtime dependency (not a test extra).
- - py-pytest-timeout
 ---

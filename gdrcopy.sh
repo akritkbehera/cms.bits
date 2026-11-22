@@ -1,7 +1,7 @@
 package: gdrcopy
-version: "v2.6"
+version: "2.6"
 sources:
-  - https://github.com/NVIDIA/gdrcopy/archive/%(version)s.tar.gz
+  - https://github.com/NVIDIA/gdrcopy/archive/v%(version)s.tar.gz
 build_requires:
  - gmake
 requires:

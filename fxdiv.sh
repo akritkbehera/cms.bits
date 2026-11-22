@@ -1,5 +1,5 @@
 package: fxdiv
-version: "%(tag_basename)s"
+version: "2020-04-17"
 tag: b408327ac2a15ec3e43352421954f5b1967701d1
 sources: 
  - https://github.com/Maratyszcza/FXdiv/archive/%(tag_basename)s.tar.gz

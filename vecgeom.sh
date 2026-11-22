@@ -1,5 +1,5 @@
 package: vecgeom
-version: "2.1.1"
+version: "2.2.1"
 variables:
  vecgeom_backend: Scalar
  tag: v%(version)s

@@ -7,7 +7,7 @@ requires:
   - gcc
 env:
   SWIG_HOME: "$SWIG_ROOT"
-  SWIG_LIB: "$SWIG_ROOT/share/swig/$SWIG_VERSION"
+  SWIG_LIB: "$SWIG_ROOT/share/swig/%(version)s"
 prepend_path:
   LD_LIBRARY_PATH: $SWIG_ROOT/lib/SHERPA-MC/lib
 ---

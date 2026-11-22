@@ -29,6 +29,8 @@ for f in "$SOURCEDIR"/*; do
     esac
 done
 
+#!include <config.sh>
+
 pushd $BUILDDIR/m4-%(m4_version)s
   env CFLAGS="-O2 -std=gnu17" ./configure --disable-dependency-tracking --prefix="$INSTALLROOT"
   make ${JOBS:+-j$JOBS}

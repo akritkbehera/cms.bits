@@ -17,11 +17,10 @@ requires:
  - OpenBLAS
  - hepmc
  - zlib
+ - fastjet
 prepend_path:
   LD_LIBRARY_PATH: $THEPEG_ROOT/lib/ThePEG
   DYLD_LIBRARY_PATH: $THEPEG_ROOT/lib/ThePEG
-untracked_requires:
- - fastjet
 ---
 tar -xjf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

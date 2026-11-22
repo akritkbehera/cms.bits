@@ -2,7 +2,7 @@ package: xgboost
 version: "%(tag_basename)s"
 tag: 1.7.5
 sources: 
-- https://github.com/dmlc/xgboost/releases/download/v%(tag_basename)s/xgboost.tar.gz
+- git+https://github.com/dmlc/xgboost.git?obj=master/v%(tag_basename)s&export=%(package)s-%(version)s&submodules=1&output=/%(package)s-%(version)s.tgz
 build_requires:
 - CMake
 patches:

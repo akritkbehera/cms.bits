@@ -1,0 +1,8 @@
+# Match cmsdist: bypass the old Python upper bound during both steps.
+function PipInstallCommand() {
+  local wheel_dir
+  wheel_dir=$(mktemp -d "$TMPDIR/wheel.XXXXXX")
+  pip3 wheel --no-deps --no-index --no-build-isolation --ignore-requires-python \
+    --wheel-dir "$wheel_dir" "$PYPI_SRC"
+  pip3 install --no-deps --no-index --user --ignore-requires-python "$wheel_dir"/*.whl
+}

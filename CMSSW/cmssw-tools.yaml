@@ -72,7 +72,6 @@ requires:
   - libungif
   - libxml2
   - lwtnn
-  - meschach
   - pcre
   - pcre2
   - photospp
@@ -139,6 +138,7 @@ requires:
   - pacparser
   - git
   - git-lfs
+  - fastjet
   - fastjet-contrib
   - opencl
   - opencl-cpp
@@ -198,5 +198,3 @@ requires:
   - xtd
   - dip
   - aotriton
-untracked_requires:
- - fastjet

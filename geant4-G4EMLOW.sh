@@ -1,7 +1,7 @@
-package: geant4-G4EMLOWc
-version: "8.5"
+package: geant4-G4EMLOW
+version: "8.8"
 sources:
- - https://geant4-data.web.cern.ch/datasets/G4EMLOW.%(version)s.tar.gz
+ - https://cern.ch/geant4-data/datasets/G4EMLOW.%(version)s.tar.gz
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \

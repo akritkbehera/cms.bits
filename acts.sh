@@ -16,6 +16,7 @@ requires:
   - dd4hep
   - eigen
   - expat
+  - fastjet
   - geant4
   - vecgeom
   - clhep
@@ -35,10 +36,9 @@ requires:
   - rocm-hip
 prepend_path:
   PYTHON3PATH: "%(root_dir)s/python"
-untracked_requires:
- - fastjet
 ---
 #!include <compilation-flags.file>
+#!include <microarch-flags.file>
 #!include <compilation-flags-lto.file>
 #!include <cuda-flags.file>
 #!include <rocm-flags.file>
@@ -47,6 +47,9 @@ export build_test="1"
 
 # Eigen build flags (from the scram-tools eigen env / defaults)
 export CMS_EIGEN_CXX_FLAGS="-DEIGEN_DONT_PARALLELIZE -DEIGEN_MAX_ALIGN_BYTES=64 -DEIGEN_NO_DEBUG"
+if [[ "$(uname -m)" == aarch64 ]]; then
+  export CMS_EIGEN_CXX_FLAGS="-DEIGEN_NEON_GEBP_NR=4 $CMS_EIGEN_CXX_FLAGS"
+fi
 
 # Detect CUDA and ROCm
 cuda_enabled="OFF"; [ -n "$CUDA_ROOT" ] && cuda_enabled="ON"
@@ -67,7 +70,7 @@ cmake_args=(
     "-DCMAKE_PREFIX_PATH=$GCC_ROOT;$BOOST_ROOT;$BZ2LIB_ROOT;$CLHEP_ROOT;$DD4HEP_ROOT;$EIGEN_ROOT;$EXPAT_ROOT;$FASTJET_ROOT;$GEANT4_ROOT;$HEPMC3_ROOT;$JSON_ROOT;$PY_PYBIND11_ROOT;$PYTHON_ROOT;$ROOT_ROOT;$TBB_ROOT;$XERCES_C_ROOT;$XZ_ROOT;$ZLIB_ROOT;$ZSTD_ROOT;$CUDA_ROOT;$ROCM_ROOT"
     "-DCMAKE_CXX_COMPILER=$GCC_ROOT/bin/g++"
     "-DCMAKE_CXX_STANDARD=$CXXSTD"
-    "-DCMAKE_CXX_FLAGS=-fPIC $CMS_EIGEN_CXX_FLAGS ${arch_build_flags} -march=%(default_microarch_name)s ${lto_build_flags}"
+    "-DCMAKE_CXX_FLAGS=-fPIC $CMS_EIGEN_CXX_FLAGS ${arch_build_flags} ${selected_microarch} ${lto_build_flags}"
     "-DCMAKE_AR=$GCC_ROOT/bin/gcc-ar"
     "-DCMAKE_RANLIB=$GCC_ROOT/bin/gcc-ranlib"
     "-DCMAKE_BUILD_TYPE=%(cms_build_type)s"

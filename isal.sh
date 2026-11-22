@@ -1,7 +1,7 @@
 package: isal
-version: "v2.32.1"
+version: "2.32.1"
 sources:
-  - https://github.com/intel/isa-l/archive/%(version)s.tar.gz
+  - https://github.com/intel/isa-l/archive/v%(version)s.tar.gz
 build_requires:
  - nasm
  - autotools

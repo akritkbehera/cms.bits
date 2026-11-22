@@ -60,7 +60,7 @@ package.py (generator, one invocation per package)
   - Builds a ConfigLoader(pkg_dir)
   - loader.load_config(pkg_type, os, flavor, queue) → merged+resolved variables
   - Loads cmssw.yaml / cmssw-tools.yaml static spec
-  - Reads build body (scram-project-build.sh or tool-conf-src.file from parent dir)
+  - Reads build body (scram-project-build.file or tool-conf-src.file from parent dir)
   - Applies cmssw.file and <release_queue>.file overrides to CMSSW IBs
   - Prints YAML header + "---" + bash body to stdout
     ↓
@@ -99,10 +99,10 @@ A layer file with bare key-value pairs (no `variables:`, `requires:`, `sources:`
 | `base/vars.yaml` | Core default variables |
 | `os/{os}/vars.yaml` | OS-specific flags (e.g. el9 Eigen/LTO flags) |
 | `flavor/{flavor}/vars.yaml` | Build-flavor overrides (e.g. debug: `-O0 -g3`) |
-| `../scram-project-build.sh` | Build body template for CMSSW IBs (parent dir) |
+| `../scram-project-build.file` | Build body template for CMSSW IBs (parent dir) |
 | `../tool-conf-src.file` | Build body template for cmssw-tools (parent dir) |
 
-`package.py` reads `../scram-project-build.sh` for the CMSSW body and prefixes it with `source $WORK_DIR/cmsset_default.sh`.
+`package.py` reads `../scram-project-build.file` for the CMSSW body and prefixes it with `source $WORK_DIR/cmsset_default.sh`.
 
 ### Override Files
 
@@ -123,7 +123,7 @@ Override `variables:` **merge** with (not replace) the layered variables; other 
 - Put build-wide defaults in `base/vars.yaml`; scope specifics to the right `os/`, `flavor/`, or `queue/` layer
 - Edit `cmssw.yaml` / `cmssw-tools.yaml` for requires/sources changes
 - Create `CMSSW/<release_queue>.file` for queue-specific overrides
-- Edit `../scram-project-build.sh` / `../tool-conf-src.file` for build-script changes
+- Edit `../scram-project-build.file` / `../tool-conf-src.file` for build-script changes
 - Verify changes by running the generator and inspecting the merged `variables:` block
 
 **DO NOT:**

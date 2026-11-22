@@ -1,6 +1,6 @@
 source: https://github.com/akritkbehera/scram-tools.file.git
 sources:
-  - https://github.com/akritkbehera/scram-tools.file/archive/7f4b0d4696debcba182bbb90611cf02c723374b7.tar.gz
+  - https://github.com/akritkbehera/scram-tools.file/archive/016780b8a6b4fa22b29e1bff331d636803fa032f.tar.gz
 requires:
   - AXOL1TL
   - TOPO

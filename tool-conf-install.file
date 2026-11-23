@@ -1,0 +1,21 @@
+set -e
+
+mkdir -p "$INSTALLROOT/tools/available" "$INSTALLROOT/tools/selected"
+
+if [ -d "$TOOL_CONF_SOURCE_ROOT/lib" ]; then
+  rsync -a "$TOOL_CONF_SOURCE_ROOT/lib" "$INSTALLROOT/"
+fi
+if [ -f "$TOOL_CONF_SOURCE_ROOT/vectorized_packages.txt" ]; then
+  cp "$TOOL_CONF_SOURCE_ROOT/vectorized_packages.txt" "$INSTALLROOT/vectorized_packages.txt"
+fi
+
+export PKGINSTROOT=$INSTALLROOT
+template=$(mktemp "$INSTALLROOT/tools/.template.XXXXXX")
+trap 'rm -f "$template"' EXIT
+
+for type in selected available; do
+  source_template="$TOOL_CONF_SOURCE_ROOT/tools/$type.tmpl"
+  [ -f "$source_template" ] || continue
+  envsubst '$PKGINSTROOT' < "$source_template" > "$template"
+  bash "$template"
+done

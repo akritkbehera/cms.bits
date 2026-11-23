@@ -4,17 +4,9 @@ requires:
  - coral-tools
 hook: disable
 ---
-# =============================================================================
-# coral-tool-conf: Deploys tool configuration files from coral-tools templates
-# =============================================================================
-
-# Create the directory structure for tool configurations
-mkdir -p $INSTALLROOT/tools/{available,selected}
-
-export PKGINSTROOT=$INSTALLROOT
-
+TOOL_CONF_SOURCE_ROOT="$CORAL_TOOLS_ROOT"
 export CMS_CXX_STANDARD="${CXXSTD:-20}"
-bash $CORAL_TOOLS_ROOT/tools/selected.tmpl
+#!include <tool-conf-install.file>
 
 # Create python3.xml as alias to python.xml (boost_python uses python3)
 if [ -f "$INSTALLROOT/tools/selected/python.xml" ] && [ ! -f "$INSTALLROOT/tools/selected/python3.xml" ]; then

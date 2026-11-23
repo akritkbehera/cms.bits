@@ -18,7 +18,8 @@ to_json() {
 }
 
 find "$TREE" -type f | /usr/lib/rpm/rpmdeps --provides --define="_use_internal_dependency_generator 1" --define '__elf_flags %{nil}' | to_json > "$OUTDIR/provides.json"
-find "$TREE" -type f | /usr/lib/rpm/rpmdeps --requires --define="_use_internal_dependency_generator 1" | to_json > "$OUTDIR/requires.json"
+find "$TREE" -type f | /usr/lib/rpm/rpmdeps --requires --define="_use_internal_dependency_generator 1" \
+    --define '__script_flags %{nil}' --define '__elf_flags %{nil}' | to_json > "$OUTDIR/requires.json"
 
 # Locate each runtime dependency via its <NAME>_ROOT (set by the dependency's
 # init.sh), which already accounts for shared-architecture packages such as

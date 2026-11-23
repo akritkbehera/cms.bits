@@ -2,6 +2,7 @@
 # scram-project-build.sh
 # Template script — do not execute directly.
 # Variables substituted by resolve_meta.py before execution.
+#!include <compilation-flags-lto.file>
 
 # ===========================================================================
 # Logging library — colored, Jenkins-friendly (requires AnsiColor plugin)
@@ -207,6 +208,8 @@ run "$BUILDDIR/config/updateConfig.py" \
   -t "$TOOLCONF_PATH" \
   --keys SCRAM_COMPILER="$SCRAM_COMPILER" \
   --keys PROJECT_GIT_HASH="${GITCOMMIT:-$PKGVERSION}" \
+  --keys ENABLE_LTO="$([ -n "$lto_build_flags" ] && echo 1 || echo 0)" \
+  --keys ENABLE_PGO=0
 
 sed -i -e 's| SCRAM_TARGETS=.*"| SCRAM_TARGETS=""|' "$BUILDDIR/config/Self.xml"
 

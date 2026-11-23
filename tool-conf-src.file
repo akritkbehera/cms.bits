@@ -17,13 +17,13 @@ source $BUILDDIR/tool-env.file
 find "$BUILDDIR/tools" -type f \( -name '*.xml' -o -name '*.tmpl' \) -exec sed -Ei \
   -e 's/^([[:space:]]*#[[:space:]]*ifn?def[[:space:]]+)@([A-Za-z_][A-Za-z0-9_]*)@/\1\2/' \
   -e 's/^([[:space:]]*#[[:space:]]*if[[:space:]]+)@([A-Za-z_][A-Za-z0-9_]*_REVISION)@/\1defined(\2)/' {} +
-case "%(enable_frame_pointer)s" in
-  1|true|yes) export enable_frame_pointer=1 ;;
-  *) unset enable_frame_pointer ;;
-esac
 package_vectorization="%(package_vectorization)s"
 vectorized_packages="%(vectorized_packages)s"
 export PKG_VECTORIZATION="$package_vectorization"
+export GCC_DEFAULT_MICROARCH="" GCC_MICROARCH_TARGETS=""
+if [ -n "$package_vectorization" ] && [ "$package_vectorization" != "0" ] && [ "$package_vectorization" != "--" ] && [ -n "$vectorized_packages" ] && [ "$vectorized_packages" != "--" ]; then
+  export GCC_DEFAULT_MICROARCH="$default_microarch" GCC_MICROARCH_TARGETS="$package_vectorization"
+fi
 # =============================================================================
 # tool-conf-src.file - SCRAM tool configuration generator for bits
 # =============================================================================
@@ -50,7 +50,7 @@ done
 wait
 
 # Generate per-target SCRAM tools and compiler flags, as in cmsdist.
-if [ -n "$package_vectorization" ] && [ "$package_vectorization" != "0" ] && [ "$package_vectorization" != "--" ] && [ -n "$vectorized_packages" ] && [ "$vectorized_packages" != "--" ]; then
+if [ -n "$GCC_MICROARCH_TARGETS" ]; then
   test -x "$BUILDDIR/bin/get_vectorized_tools"
   echo "$vectorized_packages" > "$INSTALLROOT/vectorized_packages.txt"
   for vec in $package_vectorization; do
@@ -63,9 +63,6 @@ if [ -n "$package_vectorization" ] && [ "$package_vectorization" != "0" ] && [ "
       : "${!version_var:?Missing vectorized package version}"
       "$BUILDDIR/bin/get_vectorized_tools" "${!root_var}" "${!version_var}" "$INSTALLROOT" "$tool" "$vec"
     done
-    if [ -f "$INSTALLROOT/tools/selected/gcc-cxxcompiler.xml" ]; then
-      sed -i -e "s# *</tool>#    <flags CXXFLAGS_TARGETS_${ucvec}=\"-march=${vec}\"/>\\n    <flags REM_CXXFLAGS_TARGETS_${ucvec}=\"${default_microarch}\"/>\\n  </tool>#" "$INSTALLROOT/tools/selected/gcc-cxxcompiler.xml"
-    fi
   done
 fi
 

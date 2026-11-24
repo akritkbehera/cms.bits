@@ -87,10 +87,12 @@ for req in \$seeds; do
     fi
     _rpm=\$(printf '%%s\n' "\$_rpm" | head -n 1)
     seed_provides="\${seed_provides}
-\$(rpm -q --provides "\$_rpm" 2> /dev/null || true)"
+\$(rpm -q "\$_rpm" --provides 2> /dev/null | sed 's!<*=.*!!; s!^!Provides: !' || true)
+\$(rpm -q "\$_rpm" --list 2> /dev/null | grep -F .so | grep -F -v -e /lib/. -e /lib64/. | sed 's!^.*/!Provides: !' || true)
+\$(rpm -q "\$_rpm" --list 2> /dev/null | grep -F /bin/ | sed 's!^!Provides: !' || true)"
 done
 
 printf '%%s\n%%s\n' "\$seed_provides" "\$fake_provides" \
-  | awk 'NF { print; if (sub(/ [<>=]+ .+$/, "")) print }' \
+  | awk 'NF { sub(/^Provides: /, ""); print; if (sub(/ [<>=]+ .+$/, "")) print }' \
   | to_json > "\$WORK_DIR/$ARCHITECTURE/system-provides.json"
 EoF

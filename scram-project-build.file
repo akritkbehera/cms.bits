@@ -229,8 +229,13 @@ fi
 
 if [ "$PKGNAME" != "coral" ] && [ -n "$PACKAGE_VECTORIZATION" ] && [ "$PACKAGE_VECTORIZATION" != "0" ] && [ "$PACKAGE_VECTORIZATION" != "--" ]; then
   if [ -e "$TOOLCONF_PATH/vectorized_packages.txt" ]; then
-    log_info "Vectorization targets: $PACKAGE_VECTORIZATION (default: $SCRAM_TARGET_DEFAULT)"
-    sed -i -e "s| SCRAM_TARGETS=.*\"| SCRAM_TARGETS=\"$PACKAGE_VECTORIZATION\"|" \
+    SCRAM_EXTRA_TARGETS=""
+    for target in $PACKAGE_VECTORIZATION; do
+      [ "$target" = "$DEFAULT_MICROARCH_NAME" ] && continue
+      SCRAM_EXTRA_TARGETS="${SCRAM_EXTRA_TARGETS:+$SCRAM_EXTRA_TARGETS }$target"
+    done
+    log_info "Vectorization targets: ${SCRAM_EXTRA_TARGETS:-none} (default: $DEFAULT_MICROARCH_NAME)"
+    sed -i -e "s| SCRAM_TARGETS=.*\"| SCRAM_TARGETS=\"$SCRAM_EXTRA_TARGETS\"|" \
       "$BUILDDIR/config/Self.xml"
     sed -i -e "s|</tool>| <runtime name=\"SCRAM_MIN_SUPPORTED_MICROARCH\" value=\"$DEFAULT_MICROARCH_NAME\"/>\n</tool>|" \
       "$BUILDDIR/config/Self.xml"

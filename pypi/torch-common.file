@@ -80,6 +80,15 @@ EOF
 )
 
 PipPostInstall=$(cat <<'EOF'
+for module in \
+  "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/torch/distributed/launcher/__init__.py" \
+  "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/torch/distributed/elastic/__init__.py" \
+  "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/torch/distributed/elastic/metrics/__init__.py" \
+  "$INSTALLROOT/${PYTHON3_LIB_SITE_PACKAGES}/torch/distributed/elastic/events/__init__.py"; do
+  [ -f "$module" ] || continue
+  sed -i '1s|^#!/usr/bin/env/python3$|#!/usr/bin/env python3|' "$module"
+done
+
 pushd $INSTALLROOT
   ln -sf ${PYTHON3_LIB_SITE_PACKAGES}/torch/share share
   ln -s ${PYTHON3_LIB_SITE_PACKAGES}/torch/include include

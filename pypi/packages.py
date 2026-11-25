@@ -1,10 +1,23 @@
 def getPackages(virtual_packages, configDir, *args):
+  from functools import partial
+  from importlib.util import module_from_spec, spec_from_file_location
   from re import match
   from os.path import dirname,join, exists
   import os, sys, platform
   pkg_dir = dirname(__file__)
   req = join(pkg_dir,'requirements.txt')
   if not exists(req): return
+  generate_recipe = None
+
+  def generate(package, version):
+    nonlocal generate_recipe
+    if generate_recipe is None:
+      spec = spec_from_file_location("pypi_recipe_generator", join(pkg_dir, "package.py"))
+      generator = module_from_spec(spec)
+      spec.loader.exec_module(generator)
+      generate_recipe = generator.generateRecipe
+    return generate_recipe(package, version)
+
   extra_match = {}
   extra_match['platform_machine'] = platform.machine()
   extra_match['sys_platform'] = sys.platform
@@ -29,6 +42,7 @@ def getPackages(virtual_packages, configDir, *args):
           "version": ver,
           "pkgdir" : configDir,
           "url": py_pkg + ".sh",
+          "generate": partial(generate, py_pkg, ver),
           "command" : 'PYTHONPATH=%s %s/package.py "%s" "%s" "py3"' % (dirname(sys.argv[0]), pkg_dir, py_pkg, ver),
         }
   return
